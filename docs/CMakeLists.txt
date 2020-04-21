@@ -9,7 +9,7 @@ file(GLOB SOURCE_LIST CONFIGURE_DEPENDS
 
 doxygen_add_docs(docs
     ${SOURCE_LIST}
-    "${CMAKE_CURRENT_SOURCE_DIR}/README.md"
+    "README.md"
     WORKING_DIRECTORY
-    "${PROJECT_SOURCE_DIR}/include"
+    "../../../include"
 )

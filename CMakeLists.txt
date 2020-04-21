@@ -68,6 +68,15 @@ add_subdirectory(apps)
 # The tests are here.
 add_subdirectory(tests)
 
+#set(CURL_LIBRARY C:/Users/isaac/CLionProjects/Cinder/my-projects/final-project-isaacjs2/cpr/opt/curl/lib)
+#set(CURL_INCLUDE_DIR C:/Users/isaac/CLionProjects/Cinder/my-projects/final-project-isaacjs2/cpr/opt/curl/include)
+#set(DCMAKE_TOOLCHAIN_FILE C:/Users/isaac/vcpkg/scripts/buildsystems/vcpkg.cmake)
+#set(USE_SYSTEM_CURL ON)
+#add_subdirectory(cpr)
+#include_directories(${CPR_INCLUDE_DIRS})
+#target_link_libraries(cinder-myapp ${CPR_LIBRARIES})
+
+
 ############## Third-party Libraries #####################
 
 # Testing library. Header-only.
