@@ -68,17 +68,9 @@ add_subdirectory(apps)
 # The tests are here.
 add_subdirectory(tests)
 
-#set(CURL_LIBRARY C:/Users/isaac/CLionProjects/Cinder/my-projects/final-project-isaacjs2/cpr/opt/curl/lib)
-#set(CURL_INCLUDE_DIR C:/Users/isaac/CLionProjects/Cinder/my-projects/final-project-isaacjs2/cpr/opt/curl/include)
-#set(DCMAKE_TOOLCHAIN_FILE C:/Users/isaac/vcpkg/scripts/buildsystems/vcpkg.cmake)
-#set(USE_SYSTEM_CURL ON)
 add_subdirectory(cpr)
 include_directories(${CPR_INCLUDE_DIRS})
 target_link_libraries(cinder-myapp ${CPR_LIBRARIES})
-
-#add_subdirectory(cpr/cpr)
-#include_directories(${CPR_SOURCE_DIR}/include)
-#target_link_libraries(cinder-myapp ${CPR_SOURCE_DIR}/opt/curl/lib)
 
 ############## Third-party Libraries #####################
 
@@ -97,17 +89,6 @@ if(NOT catch2_POPULATED)
     add_library(catch2 INTERFACE)
     target_include_directories(catch2 INTERFACE ${catch2_SOURCE_DIR}/single_include)
 endif()
-
-# Add more CMake libraries here ...
-#FetchContent_Declare(
-#        cpr
-#        GIT_REPOSITORY https://github.com/whoshuu/cpr.git
-#)
-#FetchContent_GetProperties(cpr)
-#if(NOT cpr_POPULATED)
-#    FetchContent_Populate(cpr)
-#    add_subdirectory(${cpr_SOURCE_DIR} ${cpr_BINARY_DIR})
-#endif()
 
 FetchContent_Declare(
         sqlite-modern-cpp
