@@ -8,6 +8,12 @@
 
 namespace myapp {
 
+enum class GameState {
+  kMenu,
+  kPlaying,
+  kGameOver,
+};
+
 class MyApp : public cinder::app::App {
  public:
   MyApp();
