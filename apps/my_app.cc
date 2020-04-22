@@ -26,23 +26,24 @@ MyApp::MyApp()
 void MyApp::setup() {
   ci::gl::enableDepthWrite();
   ci::gl::enableDepthRead();
+
+  auto r = cpr::Post(cpr::Url{"https://minesweeper-api.herokuapp.com/games"},
+                     cpr::Payload{{"difficulty", "1"}});
+  std::cout << r.status_code << std::endl;
 }
 
 void MyApp::update() {
-//  auto r = cpr::Get(cpr::Url{"https://api.github.com/repos/whoshuu/cpr/contributors"},
-//                   cpr::Authentication{"user", "pass"},
-//                   cpr::Parameters{{"anon", "true"}, {"key", "value"}});
-//  std::cout << r.text << std::endl;
+
 }
 
 void MyApp::draw() {
-  if (state_ == GameState::kMenu) {
-    DrawMenu();
-  }
-
-  if (state_ == GameState::kPlaying) {
-    DrawGrid();
-  }
+//  if (state_ == GameState::kMenu) {
+//    DrawMenu();
+//  }
+//
+//  if (state_ == GameState::kPlaying) {
+//    DrawGrid();
+//  }
 }
 
 template <typename C>
