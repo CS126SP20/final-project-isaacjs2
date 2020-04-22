@@ -15,24 +15,24 @@ file(GLOB SOURCE_LIST CONFIGURE_DEPENDS
 
 
 ci_make_library(
-        LIBRARY_NAME mylibrary
+        LIBRARY_NAME minesweeper
         CINDER_PATH  ${CINDER_PATH}
         SOURCES      ${SOURCE_LIST}
         INCLUDES     "${FinalProject_SOURCE_DIR}/include"
-        LIBRARIES
+        LIBRARIES    sqlite-modern-cpp sqlite3
         BLOCKS
 )
 
 # All users of this library will need at least C++14
-target_compile_features(mylibrary PUBLIC cxx_std_14)
+target_compile_features(minesweeper PUBLIC cxx_std_14)
 
-set_property(TARGET mylibrary PROPERTY
+set_property(TARGET minesweeper PROPERTY
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 # Cross-platform compiler lints
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
         OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    target_compile_options(mylibrary PRIVATE
+    target_compile_options(minesweeper PRIVATE
             -Wall
             -Wextra
             -Wswitch
@@ -45,7 +45,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
             -pedantic-errors)
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     cmake_policy(SET CMP0091 NEW)
-    target_compile_options(mylibrary PRIVATE
+    target_compile_options(minesweeper PRIVATE
             /W3)
 endif ()
 

@@ -2,5 +2,9 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cpr" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cpr/opt/curl" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cpr/opt/googletest" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cpr/opt/mongoose" vcs="Git" />
   </component>
 </project>
