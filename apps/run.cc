@@ -2,7 +2,6 @@
 
 #include <cinder/app/App.h>
 #include <cinder/app/RendererGl.h>
-#include <mylibrary/HTTPRequest.hpp>
 
 #include "my_app.h"
 
