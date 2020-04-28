@@ -4,6 +4,7 @@
 #define FINALPROJECT_APPS_MYAPP_H_
 
 #include <cinder/app/App.h>
+#include <cinder/gl/Texture.h>
 
 #include <array>
 
@@ -36,10 +37,12 @@ class MyApp : public cinder::app::App {
   int default_text_size_;
   bool is_penciling_;
   std::vector<std::vector<ci::vec2>> menu_buttons_;
+  std::vector<std::vector<ci::vec2>> game_buttons_;
   std::vector<std::vector<ci::vec2>> game_grid_;
   std::vector<std::string> game_modes_;
   std::vector<std::string> board_entries_;
   std::vector<std::vector<std::string>> board_pencil_marks_;
+  std::vector<ci::gl::Texture2dRef> entry_type_images_;
 };
 
 }  // namespace myapp

@@ -32,7 +32,11 @@ void MyApp::setup() {
   ci::gl::enableDepthWrite();
   ci::gl::enableDepthRead();
 
-  //ci::gl::Texture2dRef pencil_image = ci::gl::Texture2d::create(ci::loadImage(loadAsset("pencil.png")));
+  // Load entry mode images
+  ci::gl::Texture2dRef marker_image = ci::gl::Texture2d::create(ci::loadImage(loadAsset("marker.png")));
+  entry_type_images_.push_back(marker_image);
+  ci::gl::Texture2dRef pencil_image = ci::gl::Texture2d::create(ci::loadImage(loadAsset("pencil2.png")));
+  entry_type_images_.push_back(pencil_image);
 
   // Fill vectors with empty values so I can access by index later
   for (size_t i = 0; i < board_size_ * board_size_; i++) {
@@ -70,6 +74,19 @@ void MyApp::setup() {
       game_grid_.push_back(box_bounds);
     }
   }
+
+  // Record the positions of extra boxes on game screen
+  std::vector<ci::vec2> menu_button;
+  menu_button.emplace_back(0, 0);
+  menu_button.emplace_back(100, 50);
+  game_buttons_.push_back(menu_button);
+
+  std::vector<ci::vec2> entry_mode_indicator;
+  entry_mode_indicator.emplace_back(window_center_.x - 50, getWindowSize().y - 100);
+  entry_mode_indicator.emplace_back(window_center_.x + 50, getWindowSize().y);
+  game_buttons_.push_back(entry_mode_indicator);
+
+
 }
 
 void MyApp::update() {
@@ -104,7 +121,7 @@ void PrintText(const std::string& text,
       .font(cinder::Font(font, font_size))
       .size(size)
       .color(color)
-      .backgroundColor(ci::ColorA(0, 1, 0, 0))
+      .backgroundColor(ci::ColorA(0, 0, 0, 0))
       .text(text);
 
   const auto box_size = box.getSize();
@@ -118,11 +135,18 @@ void MyApp::draw() {
   cinder::gl::enableAlphaBlending();
   cinder::gl::clear(ci::Color((float) 188/256, (float) 188/256, (float) 188/256));
 
-  //draw(pencil_image);
-
   if (state_ == GameState::kMenu) {
     DrawMenu();
   } else if (state_ == GameState::kPlaying) {
+
+    //ci::Rectf mode_box(game_buttons_[1][0].x, game_buttons_[1][0].y, game_buttons_[1][1].x, game_buttons_[1][1].y);
+    ci::Area box(game_buttons_[1][0], game_buttons_[1][1]);
+    if (is_penciling_) {
+      ci::gl::draw(entry_type_images_[1], box);
+    } else {
+      ci::gl::draw(entry_type_images_[0], box);
+    }
+
     // Highlight the box that the player has selected
     if (selected_box_ != -1) {
       ci::Color color(1, 0, 0);
@@ -148,9 +172,7 @@ void MyApp::draw() {
     }
 
     // Show what mode player is in
-    if (is_penciling_) {
 
-    }
   }
 }
 
