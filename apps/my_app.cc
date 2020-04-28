@@ -213,26 +213,17 @@ void MyApp::DrawGrid() const {
   float tile_size = std::floor(600 / board_size_);
   ci::Color color = ci::Color::black();
 
-  float left_bound = getWindowCenter().x - (board_size_ / 2) * tile_size;
-  float right_bound = getWindowCenter().x + (board_size_ / 2) * tile_size;
-  float top_bound = getWindowCenter().y - (board_size_ / 2) * tile_size;
-  float bottom_bound = getWindowCenter().y + (board_size_ / 2) * tile_size;
+  for (std::vector<ci::vec2> box : game_grid_) {
+    DrawBox(box[0], box[1], color);
+  }
 
-  for (size_t i = 0; i < board_size_ + 1; i++) {
-    // Vertical lines
-    DrawLine(left_bound + i * tile_size, top_bound, left_bound + i * tile_size, bottom_bound, color);
+  // Make the lines around each 3x3 box thicker
+  for (size_t i = 0; i < board_size_ + 1; i+= 3) {
+    DrawLine(game_grid_[0][0].x + i * tile_size - 1, game_grid_[0][0].y, game_grid_[0][0].x + i * tile_size - 1, game_grid_[board_size_ * board_size_ - 1][1].y, color);
+    DrawLine(game_grid_[0][0].x + i * tile_size + 1, game_grid_[0][0].y, game_grid_[0][0].x + i * tile_size + 1, game_grid_[board_size_ * board_size_ - 1][1].y, color);
 
-    // Horizontal lines
-    DrawLine(left_bound, top_bound + i * tile_size, right_bound, top_bound + i * tile_size, color);
-
-    // Make the lines around each 3x3 box thicker
-    if (i % 3 == 0 || i == board_size_) {
-      DrawLine(left_bound + i * tile_size - 1, top_bound, left_bound + i * tile_size - 1, bottom_bound, color);
-      DrawLine(left_bound + i * tile_size + 1, top_bound, left_bound + i * tile_size + 1, bottom_bound, color);
-
-      DrawLine(left_bound, top_bound + i * tile_size - 1, right_bound, top_bound + i * tile_size - 1, color);
-      DrawLine(left_bound, top_bound + i * tile_size + 1, right_bound, top_bound + i * tile_size + 1, color);
-    }
+    DrawLine(game_grid_[0][0].x, game_grid_[0][0].y + i * tile_size - 1, game_grid_[board_size_ - 1][1].x, game_grid_[0][0].y + i * tile_size - 1, color);
+    DrawLine(game_grid_[0][0].x, game_grid_[0][0].y + i * tile_size + 1, game_grid_[board_size_ - 1][1].x, game_grid_[0][0].y + i * tile_size + 1, color);
   }
 }
 
