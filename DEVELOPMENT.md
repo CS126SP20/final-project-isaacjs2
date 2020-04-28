@@ -19,4 +19,9 @@
 - Added a bunch of instance variables to track information about the state of the game/app
 - Added functionality for clicking on things
 - Added logic for filling in numbers and started doing the same for pencil marks
-- 
+
+**4/27/20**
+- Added indicator in game screen to show if the user is penciling or not
+- Added button to go back to the menu
+- Updated draw() to use more instance variables and helpers
+- Cleaned up long lines
