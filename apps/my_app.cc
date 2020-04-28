@@ -328,83 +328,25 @@ void MyApp::keyDown(KeyEvent event) {
   }
 
   if (selected_box_ != -1) {
-    if (is_penciling_) {
-      switch (event.getCode()) {
-        case event.KEY_1:
-          if (!HasValue(board_pencil_marks_[selected_box_], 1)) {
-            board_pencil_marks_[selected_box_].emplace_back("1");
+    // Update current pencil marks
+    if (is_penciling_ && board_entries_[selected_box_] == "0") {
+      for (size_t i = 1; i < board_size_ + 1; i++) {
+        if (event.getCode() == i + 48) {
+          if (!HasValue(board_pencil_marks_[selected_box_], i)) {
+            board_pencil_marks_[selected_box_].emplace_back(std::to_string(i));
           }
+
           break;
-        case event.KEY_2:
-          if (!HasValue(board_pencil_marks_[selected_box_], 2)) {
-            board_pencil_marks_[selected_box_].emplace_back("2");
-          }
-          break;
-        case event.KEY_3:
-          if (!HasValue(board_pencil_marks_[selected_box_], 3)) {
-            board_pencil_marks_[selected_box_].emplace_back("3");
-          }
-          break;
-        case event.KEY_4:
-          if (!HasValue(board_pencil_marks_[selected_box_], 4)) {
-            board_pencil_marks_[selected_box_].emplace_back("4");
-          }
-          break;
-        case event.KEY_5:
-          if (!HasValue(board_pencil_marks_[selected_box_], 5)) {
-            board_pencil_marks_[selected_box_].emplace_back("5");
-          }
-          break;
-        case event.KEY_6:
-          if (!HasValue(board_pencil_marks_[selected_box_], 6)) {
-            board_pencil_marks_[selected_box_].emplace_back("6");
-          }
-          break;
-        case event.KEY_7:
-          if (!HasValue(board_pencil_marks_[selected_box_], 7)) {
-            board_pencil_marks_[selected_box_].emplace_back("7");
-          }
-          break;
-        case event.KEY_8:
-          if (!HasValue(board_pencil_marks_[selected_box_], 8)) {
-            board_pencil_marks_[selected_box_].emplace_back("8");
-          }
-          break;
-        case event.KEY_9:
-          if (!HasValue(board_pencil_marks_[selected_box_], 9)) {
-            board_pencil_marks_[selected_box_].emplace_back("9");
-          }
-          break;
+        }
       }
-    } else {
-      switch (event.getCode()) {
-        case event.KEY_1:
-          board_entries_[selected_box_] = "1";
+    // Update board entries
+    } else if (!is_penciling_) {
+      for (size_t i = 1; i < board_size_ + 1; i++) {
+        if (event.getCode() == i + 48) {
+          board_entries_[selected_box_] = std::to_string(i);
+
           break;
-        case event.KEY_2:
-          board_entries_[selected_box_] = "2";
-          break;
-        case event.KEY_3:
-          board_entries_[selected_box_] = "3";
-          break;
-        case event.KEY_4:
-          board_entries_[selected_box_] = "4";
-          break;
-        case event.KEY_5:
-          board_entries_[selected_box_] = "5";
-          break;
-        case event.KEY_6:
-          board_entries_[selected_box_] = "6";
-          break;
-        case event.KEY_7:
-          board_entries_[selected_box_] = "7";
-          break;
-        case event.KEY_8:
-          board_entries_[selected_box_] = "8";
-          break;
-        case event.KEY_9:
-          board_entries_[selected_box_] = "9";
-          break;
+        }
       }
     }
   }
