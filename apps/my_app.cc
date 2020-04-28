@@ -33,9 +33,11 @@ void MyApp::setup() {
   ci::gl::enableDepthRead();
 
   // Load entry mode images
-  ci::gl::Texture2dRef marker_image = ci::gl::Texture2d::create(ci::loadImage(loadAsset("marker.png")));
+  ci::gl::Texture2dRef marker_image = ci::gl::Texture2d::create(
+      ci::loadImage(loadAsset("marker.png")));
   entry_type_images_.push_back(marker_image);
-  ci::gl::Texture2dRef pencil_image = ci::gl::Texture2d::create(ci::loadImage(loadAsset("pencil2.png")));
+  ci::gl::Texture2dRef pencil_image = ci::gl::Texture2d::create(
+      ci::loadImage(loadAsset("pencil2.png")));
   entry_type_images_.push_back(pencil_image);
 
   // Fill vectors with empty values so I can access by index later
@@ -48,8 +50,10 @@ void MyApp::setup() {
 
   // Record the positions of the menu buttons
   for (size_t i = 0; i < game_modes_.size(); i++) {
-    ci::vec2 top_left(window_center_.x - 120, window_center_.y - 120 + i * 90);
-    ci::vec2 bottom_right(window_center_.x + 120, window_center_.y - 60 + i * 90);
+    ci::vec2 top_left(window_center_.x - 120,
+                      window_center_.y - 120 + i * 90);
+    ci::vec2 bottom_right(window_center_.x + 120,
+                          window_center_.y - 60 + i * 90);
 
     std::vector<ci::vec2> button_bounds;
     button_bounds.push_back(top_left);
@@ -65,8 +69,10 @@ void MyApp::setup() {
 
   for (size_t row = 0; row < board_size_; row++) {
     for (size_t col = 0; col < board_size_; col++) {
-      ci::vec2 top_left(left_bound + col * tile_size, top_bound + row * tile_size);
-      ci::vec2 bottom_right(left_bound + (col + 1) * tile_size, top_bound + (row + 1) * tile_size);
+      ci::vec2 top_left(left_bound + col * tile_size,
+                        top_bound + row * tile_size);
+      ci::vec2 bottom_right(left_bound + (col + 1) * tile_size,
+                            top_bound + (row + 1) * tile_size);
 
       std::vector<ci::vec2> box_bounds;
       box_bounds.push_back(top_left);
@@ -82,18 +88,20 @@ void MyApp::setup() {
   game_buttons_.push_back(menu_button);
 
   std::vector<ci::vec2> entry_mode_indicator;
-  entry_mode_indicator.emplace_back(window_center_.x - 50, getWindowSize().y - 100);
-  entry_mode_indicator.emplace_back(window_center_.x + 50, getWindowSize().y);
+  entry_mode_indicator.emplace_back(window_center_.x - 50,
+                                    getWindowSize().y - 100);
+  entry_mode_indicator.emplace_back(window_center_.x + 50,
+                                        getWindowSize().y);
   game_buttons_.push_back(entry_mode_indicator);
-
-
 }
 
 void MyApp::update() {
   mouse_pos_ = getMousePos() - getWindowPos();
 }
 
-void DrawBox(const ci::vec2& top_left, const ci::vec2& bottom_right, const ci::Color& color) {
+void DrawBox(const ci::vec2& top_left,
+             const ci::vec2& bottom_right,
+             const ci::Color& color) {
   ci::gl::color(color);
 
   ci::Path2d box;
@@ -125,7 +133,8 @@ void PrintText(const std::string& text,
       .text(text);
 
   const auto box_size = box.getSize();
-  const cinder::vec2 locp = {loc.x - box_size.x / 2, loc.y - box_size.y / 2};
+  const cinder::vec2 locp = {loc.x - box_size.x / 2,
+                             loc.y - box_size.y / 2};
   const auto surface = box.render();
   const auto texture = cinder::gl::Texture::create(surface);
   cinder::gl::draw(texture, locp);
@@ -133,7 +142,9 @@ void PrintText(const std::string& text,
 
 void MyApp::draw() {
   cinder::gl::enableAlphaBlending();
-  cinder::gl::clear(ci::Color((float) 188/256, (float) 188/256, (float) 188/256));
+  cinder::gl::clear(ci::Color((float) 188/256,
+                                  (float) 188/256,
+                                   (float) 188/256));
 
   if (state_ == GameState::kMenu) {
     DrawMenu();
@@ -141,9 +152,19 @@ void MyApp::draw() {
     // Highlight the box that the player has selected
     if (selected_box_ != -1) {
       ci::Color color(1, 0, 0);
-      DrawBox(game_grid_[selected_box_][0], game_grid_[selected_box_][1], color);
-      DrawBox(ci::vec2(game_grid_[selected_box_][0].x - 1, game_grid_[selected_box_][0].y - 1), ci::vec2(game_grid_[selected_box_][1].x + 1, game_grid_[selected_box_][1].y + 1), color);
-      DrawBox(ci::vec2(game_grid_[selected_box_][0].x + 1, game_grid_[selected_box_][0].y + 1), ci::vec2(game_grid_[selected_box_][1].x - 1, game_grid_[selected_box_][1].y - 1), color);
+      DrawBox(game_grid_[selected_box_][0],
+          game_grid_[selected_box_][1],
+                      color);
+      DrawBox(ci::vec2(game_grid_[selected_box_][0].x - 1,
+                               game_grid_[selected_box_][0].y - 1),
+          ci::vec2(game_grid_[selected_box_][1].x + 1,
+                               game_grid_[selected_box_][1].y + 1),
+                      color);
+      DrawBox(ci::vec2(game_grid_[selected_box_][0].x + 1,
+                               game_grid_[selected_box_][0].y + 1),
+          ci::vec2(game_grid_[selected_box_][1].x - 1,
+                               game_grid_[selected_box_][1].y - 1),
+                      color);
     }
 
     DrawGameScreen();
@@ -163,22 +184,31 @@ void DrawLine(float x1, float y1, float x2, float y2, const ci::Color& color) {
 void MyApp::DrawMenu() const {
   PrintGameModes();
 
-  ci::Color color((float) 17 / 256, (float) 157 / 256, (float) 164 / 256);
+  ci::Color color((float) 17 / 256,
+                (float) 157 / 256,
+                 (float) 164 / 256);
 
   for (size_t i = 0; i < game_modes_.size(); i++) {
-    DrawBox(ci::vec2(window_center_.x - 120, window_center_.y - 120 + i * 90), ci::vec2(window_center_.x + 120, window_center_.y - 60 + i * 90), color);
+    DrawBox(ci::vec2(window_center_.x - 120,
+                             window_center_.y - 120 + i * 90),
+        ci::vec2(window_center_.x + 120,
+                             window_center_.y - 60 + i * 90),
+                    color);
   }
 }
 
 void MyApp::PrintGameModes() const {
-  ci::Color color = ci::Color((float) 255/256, (float) 94/256, (float) 91/256);
+  ci::Color color = ci::Color((float) 255/256,
+                            (float) 94/256,
+                             (float) 91/256);
   ci::vec2 button_size(200, 25);
 
   for (size_t i = 0; i < game_modes_.size(); i++) {
     PrintText(game_modes_[i],
               color,
               button_size,
-              ci::vec2(window_center_.x, window_center_.y - 90 + (float) 90 * i),
+              ci::vec2(window_center_.x,
+                        window_center_.y - 90 + (float) 90 * i),
               default_text_size_);
   }
 }
@@ -193,18 +223,44 @@ void MyApp::DrawGrid() const {
 
   // Make the lines around each 3x3 box thicker
   for (size_t i = 0; i < board_size_ + 1; i+= 3) {
-    DrawLine(game_grid_[0][0].x + i * tile_size - 1, game_grid_[0][0].y, game_grid_[0][0].x + i * tile_size - 1, game_grid_[board_size_ * board_size_ - 1][1].y, color);
-    DrawLine(game_grid_[0][0].x + i * tile_size + 1, game_grid_[0][0].y, game_grid_[0][0].x + i * tile_size + 1, game_grid_[board_size_ * board_size_ - 1][1].y, color);
+    DrawLine(game_grid_[0][0].x + i * tile_size - 1,
+                 game_grid_[0][0].y,
+                 game_grid_[0][0].x + i * tile_size - 1,
+                 game_grid_[board_size_ * board_size_ - 1][1].y,
+                 color);
+    DrawLine(game_grid_[0][0].x + i * tile_size + 1,
+                 game_grid_[0][0].y,
+                 game_grid_[0][0].x + i * tile_size + 1,
+                 game_grid_[board_size_ * board_size_ - 1][1].y,
+                 color);
 
-    DrawLine(game_grid_[0][0].x, game_grid_[0][0].y + i * tile_size - 1, game_grid_[board_size_ - 1][1].x, game_grid_[0][0].y + i * tile_size - 1, color);
-    DrawLine(game_grid_[0][0].x, game_grid_[0][0].y + i * tile_size + 1, game_grid_[board_size_ - 1][1].x, game_grid_[0][0].y + i * tile_size + 1, color);
+    DrawLine(game_grid_[0][0].x,
+        game_grid_[0][0].y + i * tile_size - 1,
+        game_grid_[board_size_ - 1][1].x,
+        game_grid_[0][0].y + i * tile_size - 1,
+        color);
+    DrawLine(game_grid_[0][0].x,
+        game_grid_[0][0].y + i * tile_size + 1,
+        game_grid_[board_size_ - 1][1].x,
+        game_grid_[0][0].y + i * tile_size + 1,
+        color);
   }
 }
 
 void MyApp::DrawGameScreen() const {
   // Draw back to menu button
-  DrawBox(game_buttons_[0][0], game_buttons_[0][1], ci::Color((float) 17 / 256, (float) 157 / 256, (float) 164 / 256));
-  PrintText("Menu", ci::Color((float) 255/256, (float) 94/256, (float) 91/256), ci::vec2(95, 50), ci::vec2(55, 30), default_text_size_);
+  DrawBox(game_buttons_[0][0],
+      game_buttons_[0][1],
+      ci::Color((float) 17 / 256,
+                    (float) 157 / 256,
+                     (float) 164 / 256));
+  PrintText("Menu",
+      ci::Color((float) 255/256,
+                    (float) 94/256,
+                     (float) 91/256),
+       ci::vec2(95, 50),
+       ci::vec2(55, 30),
+       default_text_size_);
 
   // Draw entry mode indicator
   ci::Area box(game_buttons_[1][0], game_buttons_[1][1]);
@@ -225,9 +281,14 @@ void MyApp::DrawGameScreen() const {
       ci::vec2 text_size(35, 35);
 
       float tile_size = std::floor(600 / board_size_);
-      ci::vec2 text_loc(game_grid_[i][0].x + tile_size / 2, game_grid_[i][0].y + tile_size / 2);
+      ci::vec2 text_loc(game_grid_[i][0].x + tile_size / 2,
+                        game_grid_[i][0].y + tile_size / 2);
 
-      PrintText(board_entries_[i], ci::Color::black(), text_size, text_loc, 50);
+      PrintText(board_entries_[i],
+                ci::Color::black(),
+                text_size,
+                text_loc,
+                50);
     }
   }
 }
@@ -362,5 +423,4 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
     is_penciling_ = !is_penciling_;
   }
 }
-
 }  // namespace myapp
