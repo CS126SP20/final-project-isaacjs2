@@ -318,8 +318,13 @@ void MyApp::PrintBoardEntries() const {
 }
 
 void MyApp::keyDown(KeyEvent event) {
-  if (event.KEY_g) {
-    state_ = GameState::kPlaying;
+  // Erase the current contents of a box
+  if (event.getCode() == KeyEvent::KEY_BACKSPACE && selected_box_ != -1) {
+    if (board_entries_[selected_box_] == "0") {
+      board_pencil_marks_[selected_box_].clear();
+    } else {
+      board_entries_[selected_box_] = "0";
+    }
   }
 
   if (selected_box_ != -1) {
