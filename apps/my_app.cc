@@ -93,14 +93,14 @@ void MyApp::update() {
   mouse_pos_ = getMousePos() - getWindowPos();
 }
 
-void DrawBox(float x1, float y1, float x2, float y2, const ci::Color& color) {
+void DrawBox(const ci::vec2& top_left, const ci::vec2& bottom_right, const ci::Color& color) {
   ci::gl::color(color);
 
   ci::Path2d box;
-  box.moveTo(ci::vec2(x1, y1));
-  box.lineTo(ci::vec2(x2, y1));
-  box.lineTo(ci::vec2(x2, y2));
-  box.lineTo(ci::vec2(x1, y2));
+  box.moveTo(top_left);
+  box.lineTo(ci::vec2(bottom_right.x, top_left.y));
+  box.lineTo(bottom_right);
+  box.lineTo(ci::vec2(top_left.x, bottom_right.y));
 
   box.close();
   ci::gl::draw(box);
@@ -139,7 +139,7 @@ void MyApp::draw() {
     DrawMenu();
   } else if (state_ == GameState::kPlaying) {
     // Draw back to menu button
-    DrawBox(game_buttons_[0][0].x, game_buttons_[0][0].y, game_buttons_[0][1].x, game_buttons_[0][1].y, ci::Color((float) 17 / 256, (float) 157 / 256, (float) 164 / 256));
+    DrawBox(game_buttons_[0][0], game_buttons_[0][1], ci::Color((float) 17 / 256, (float) 157 / 256, (float) 164 / 256));
     PrintText("Menu", ci::Color((float) 255/256, (float) 94/256, (float) 91/256), ci::vec2(95, 50), ci::vec2(55, 30), default_text_size_);
 
     // Draw entry mode indicator
@@ -153,9 +153,9 @@ void MyApp::draw() {
     // Highlight the box that the player has selected
     if (selected_box_ != -1) {
       ci::Color color(1, 0, 0);
-      DrawBox(game_grid_[selected_box_][0].x, game_grid_[selected_box_][0].y, game_grid_[selected_box_][1].x, game_grid_[selected_box_][1].y, color);
-      DrawBox(game_grid_[selected_box_][0].x - 1, game_grid_[selected_box_][0].y - 1, game_grid_[selected_box_][1].x + 1, game_grid_[selected_box_][1].y + 1, color);
-      DrawBox(game_grid_[selected_box_][0].x + 1, game_grid_[selected_box_][0].y + 1, game_grid_[selected_box_][1].x - 1, game_grid_[selected_box_][1].y - 1, color);
+      DrawBox(game_grid_[selected_box_][0], game_grid_[selected_box_][1], color);
+      DrawBox(ci::vec2(game_grid_[selected_box_][0].x - 1, game_grid_[selected_box_][0].y - 1), ci::vec2(game_grid_[selected_box_][1].x + 1, game_grid_[selected_box_][1].y + 1), color);
+      DrawBox(ci::vec2(game_grid_[selected_box_][0].x + 1, game_grid_[selected_box_][0].y + 1), ci::vec2(game_grid_[selected_box_][1].x - 1, game_grid_[selected_box_][1].y - 1), color);
     }
 
     DrawGrid();
@@ -173,9 +173,6 @@ void MyApp::draw() {
         PrintText(board_entries_[i], ci::Color::black(), text_size, text_loc, 50);
       }
     }
-
-    // Show what mode player is in
-
   }
 }
 
@@ -195,7 +192,7 @@ void MyApp::DrawMenu() const {
   ci::Color color((float) 17 / 256, (float) 157 / 256, (float) 164 / 256);
 
   for (size_t i = 0; i < game_modes_.size(); i++) {
-    DrawBox(window_center_.x - 120, window_center_.y - 120 + i * 90, window_center_.x + 120, window_center_.y - 60 + i * 90, color);
+    DrawBox(ci::vec2(window_center_.x - 120, window_center_.y - 120 + i * 90), ci::vec2(window_center_.x + 120, window_center_.y - 60 + i * 90), color);
   }
 }
 
