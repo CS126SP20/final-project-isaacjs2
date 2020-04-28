@@ -77,8 +77,8 @@ void MyApp::setup() {
 
   // Record the positions of extra boxes on game screen
   std::vector<ci::vec2> menu_button;
-  menu_button.emplace_back(0, 0);
-  menu_button.emplace_back(100, 50);
+  menu_button.emplace_back(5, 5);
+  menu_button.emplace_back(105, 55);
   game_buttons_.push_back(menu_button);
 
   std::vector<ci::vec2> entry_mode_indicator;
@@ -138,8 +138,11 @@ void MyApp::draw() {
   if (state_ == GameState::kMenu) {
     DrawMenu();
   } else if (state_ == GameState::kPlaying) {
+    // Draw back to menu button
+    DrawBox(game_buttons_[0][0].x, game_buttons_[0][0].y, game_buttons_[0][1].x, game_buttons_[0][1].y, ci::Color((float) 17 / 256, (float) 157 / 256, (float) 164 / 256));
+    PrintText("Menu", ci::Color((float) 255/256, (float) 94/256, (float) 91/256), ci::vec2(95, 50), ci::vec2(55, 30), default_text_size_);
 
-    //ci::Rectf mode_box(game_buttons_[1][0].x, game_buttons_[1][0].y, game_buttons_[1][1].x, game_buttons_[1][1].y);
+    // Draw entry mode indicator
     ci::Area box(game_buttons_[1][0], game_buttons_[1][1]);
     if (is_penciling_) {
       ci::gl::draw(entry_type_images_[1], box);
@@ -350,6 +353,10 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
         // engine.start("Time Trial);
       }
     } else if (state_ == GameState::kPlaying) {
+      if (IsMouseInBox(mouse_pos_, game_buttons_[0])) {
+        state_ = GameState::kMenu;
+      }
+
       for (size_t i = 0; i < game_grid_.size(); i++) {
         if (IsMouseInBox(mouse_pos_, game_grid_[i])) {
           selected_box_ = i;
@@ -358,7 +365,7 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
     }
   }
 
-  if (event.isRight()) {
+  if (event.isRight() && state_ == GameState::kPlaying) {
     is_penciling_ = !is_penciling_;
   }
 }
