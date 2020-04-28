@@ -1,13 +1,13 @@
 // Copyright (c) 2020 CS126SP20. All rights reserved.
 
-#include <minesweeper/leaderboard.h>
-#include <minesweeper/player.h>
+#include <sudoku/leaderboard.h>
+#include <sudoku/player.h>
 #include <sqlite_modern_cpp.h>
 
 #include <string>
 #include <vector>
 
-namespace minesweeper {
+namespace sudoku {
 
 using std::string;
 using std::vector;
@@ -86,4 +86,4 @@ vector<Player> LeaderBoard::RetrieveHighScores(const Player& player,
   return rows;
 }
 
-}  // namespace minesweeper
+}  // namespace sudoku

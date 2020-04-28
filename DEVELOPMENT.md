@@ -7,6 +7,16 @@
 
 **4/21/20** 
 - Got CMake file to build
-- Now experiencing lots of unresolved external symbol errors
 - Started adding helpers for draw function
-- Add basic leaderboard database
+- Added basic leaderboard database
+
+**4/24/20**
+- Added menu screen
+
+**4/26/20**
+- Made menu setup abstract and scalable
+- Added basic grid for game
+- Added a bunch of instance variables to track information about the state of the game/app
+- Added functionality for clicking on things
+- Added logic for filling in numbers and started doing the same for pencil marks
+- 

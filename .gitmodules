@@ -1,3 +1,9 @@
 [submodule "cpr2"]
 	path = cpr
 	url = https://github.com/whoshuu/cpr.git
+[submodule "curl-cpp-wrapper"]
+	path = curl-cpp-wrapper
+	url = https://github.com/zenden2k/curl-cpp-wrapper.git
+[submodule "curlpp"]
+	path = curlpp
+	url = https://github.com/jpbarrette/curlpp.git

@@ -68,10 +68,6 @@ add_subdirectory(apps)
 # The tests are here.
 add_subdirectory(tests)
 
-add_subdirectory(cpr)
-include_directories(${CPR_INCLUDE_DIRS})
-target_link_libraries(cinder-myapp ${CPR_LIBRARIES})
-
 ############## Third-party Libraries #####################
 
 # Testing library. Header-only.
@@ -115,3 +111,8 @@ if (NOT sqlite3_POPULATED)
     add_subdirectory(${sqlite3_SOURCE_DIR} ${sqlite3_BINARY_DIR})
     target_include_directories(sqlite3 INTERFACE ${sqlite3_SOURCE_DIR}/src)
 endif ()
+
+#add_subdirectory(curlpp)
+#include_directories(curlpp/include)
+##find_package(curlpp CONFIG REQUIRED)
+#target_link_libraries(cinder-myapp curlpp)

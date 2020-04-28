@@ -2,9 +2,11 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cpr" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cpr/opt/curl" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cpr/opt/googletest" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cpr/opt/mongoose" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/catch2-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/cpr-src/opt/curl" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/cpr-src/opt/googletest" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/cpr-src/opt/mongoose" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/sqlite-modern-cpp-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/sqlite3-src" vcs="Git" />
   </component>
 </project>

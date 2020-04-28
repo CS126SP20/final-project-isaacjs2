@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
+  <component name="CidrRootsConfiguration">
+    <excludeRoots>
+      <file path="$PROJECT_DIR$/cmake-build-debug/_deps/cpr-build" />
+      <file path="$PROJECT_DIR$/cmake-build-debug/_deps/cpr-src" />
+      <file path="$PROJECT_DIR$/cmake-build-debug/_deps/cpr-subbuild" />
+      <file path="$PROJECT_DIR$/cpr" />
+      <file path="$PROJECT_DIR$/curl-cpp-wrapper" />
+      <file path="$PROJECT_DIR$/curlpp" />
+    </excludeRoots>
+  </component>
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="ES6" />
   </component>

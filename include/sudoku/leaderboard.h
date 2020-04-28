@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace minesweeper {
+namespace sudoku {
 
 class LeaderBoard {
  public:
@@ -32,6 +32,6 @@ class LeaderBoard {
   sqlite::database db_;
 };
 
-}  // namespace minesweeper
+}  // namespace sudoku
 
 #endif  // FINALPROJECT_LEADERBOARD_H

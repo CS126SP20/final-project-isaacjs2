@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace minesweeper {
+namespace sudoku {
 
 struct Player {
   Player(const std::string& name, size_t time) : name(name), time(time) {}
@@ -11,6 +11,6 @@ struct Player {
   size_t time;
 };
 
-}  // namespace minesweeper
+}  // namespace sudoku
 
 #endif  // FINALPROJECT_PLAYER_H

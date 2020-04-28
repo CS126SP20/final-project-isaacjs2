@@ -3,7 +3,7 @@
 #define CATCH_CONFIG_MAIN
 
 #include <cinder/Rand.h>
-#include <minesweeper/engine.h>
+#include <sudoku/engine.h>
 
 #include <catch2/catch.hpp>
 

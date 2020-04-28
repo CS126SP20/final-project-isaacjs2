@@ -5,6 +5,7 @@
 
 #include <cinder/app/App.h>
 
+#include <array>
 
 namespace myapp {
 
@@ -21,11 +22,24 @@ class MyApp : public cinder::app::App {
   void update() override;
   void draw() override;
   void keyDown(cinder::app::KeyEvent) override;
+  void mouseDown(cinder::app::MouseEvent) override;
 
  private:
   void DrawGrid() const;
   void DrawMenu() const;
+  void PrintGameModes() const;
   GameState state_;
+  ci::vec2 mouse_pos_;
+  ci::vec2 window_center_;
+  float board_size_;
+  int selected_box_;
+  int default_text_size_;
+  bool is_penciling_;
+  std::vector<std::vector<ci::vec2>> menu_buttons_;
+  std::vector<std::vector<ci::vec2>> game_grid_;
+  std::vector<std::string> game_modes_;
+  std::vector<std::string> board_entries_;
+  std::vector<std::vector<std::string>> board_pencil_marks_;
 };
 
 }  // namespace myapp

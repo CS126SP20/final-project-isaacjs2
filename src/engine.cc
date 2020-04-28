@@ -1,7 +1,7 @@
 // Copyright (c) 2020 [Your Name]. All rights reserved.
 
-#include <minesweeper/engine.h>
+#include <sudoku/engine.h>
 
-namespace minesweeper {
+namespace sudoku {
 
-}  // namespace minesweeper
+}  // namespace sudoku
