@@ -276,6 +276,10 @@ void MyApp::DrawGameScreen() const {
 
   DrawGrid();
 
+  PrintBoardEntries();
+}
+
+void MyApp::PrintBoardEntries() const {
   // Print pencil marks and board entries
   float tile_size = std::floor(600 / board_size_);
 
@@ -284,9 +288,18 @@ void MyApp::DrawGameScreen() const {
       // Print pencil marks
       for (size_t j = 1; j < board_size_ + 1; j++) {
         if (HasValue(board_pencil_marks_[i], j)) {
-          ci::vec2 mark_loc(game_grid_[i][0].x + tile_size / 6 + ((j- 1) % 3) * tile_size / 3, game_grid_[i][0].y + tile_size / 6 + ((j - 1) / 3) * tile_size / 3);
+          ci::vec2 mark_loc(game_grid_[i][0].x
+                            + tile_size / 6
+                            + ((j- 1) % 3) * tile_size / 3,
+                            game_grid_[i][0].y
+                            + tile_size / 6
+                            + ((j - 1) / 3) * tile_size / 3);
 
-          PrintText(std::to_string(j), ci::Color::black(), ci::vec2(tile_size / 3, tile_size / 3), mark_loc, tile_size / 3);
+          PrintText(std::to_string(j),
+                    ci::Color::black(),
+                    ci::vec2(tile_size / 3, tile_size / 3),
+                    mark_loc,
+                    tile_size / 3);
         }
       }
     } else {
