@@ -138,18 +138,6 @@ void MyApp::draw() {
   if (state_ == GameState::kMenu) {
     DrawMenu();
   } else if (state_ == GameState::kPlaying) {
-    // Draw back to menu button
-    DrawBox(game_buttons_[0][0], game_buttons_[0][1], ci::Color((float) 17 / 256, (float) 157 / 256, (float) 164 / 256));
-    PrintText("Menu", ci::Color((float) 255/256, (float) 94/256, (float) 91/256), ci::vec2(95, 50), ci::vec2(55, 30), default_text_size_);
-
-    // Draw entry mode indicator
-    ci::Area box(game_buttons_[1][0], game_buttons_[1][1]);
-    if (is_penciling_) {
-      ci::gl::draw(entry_type_images_[1], box);
-    } else {
-      ci::gl::draw(entry_type_images_[0], box);
-    }
-
     // Highlight the box that the player has selected
     if (selected_box_ != -1) {
       ci::Color color(1, 0, 0);
@@ -158,21 +146,7 @@ void MyApp::draw() {
       DrawBox(ci::vec2(game_grid_[selected_box_][0].x + 1, game_grid_[selected_box_][0].y + 1), ci::vec2(game_grid_[selected_box_][1].x - 1, game_grid_[selected_box_][1].y - 1), color);
     }
 
-    DrawGrid();
-
-    for (size_t i = 0; i < board_entries_.size(); i++) {
-      if (board_entries_[i] == "0") {
-        // Print pencil marks
-
-      } else {
-        ci::vec2 text_size(35, 35);
-
-        float tile_size = std::floor(600 / board_size_);
-        ci::vec2 text_loc(game_grid_[i][0].x + tile_size / 2, game_grid_[i][0].y + tile_size / 2);
-
-        PrintText(board_entries_[i], ci::Color::black(), text_size, text_loc, 50);
-      }
-    }
+    DrawGameScreen();
   }
 }
 
@@ -224,6 +198,37 @@ void MyApp::DrawGrid() const {
 
     DrawLine(game_grid_[0][0].x, game_grid_[0][0].y + i * tile_size - 1, game_grid_[board_size_ - 1][1].x, game_grid_[0][0].y + i * tile_size - 1, color);
     DrawLine(game_grid_[0][0].x, game_grid_[0][0].y + i * tile_size + 1, game_grid_[board_size_ - 1][1].x, game_grid_[0][0].y + i * tile_size + 1, color);
+  }
+}
+
+void MyApp::DrawGameScreen() const {
+  // Draw back to menu button
+  DrawBox(game_buttons_[0][0], game_buttons_[0][1], ci::Color((float) 17 / 256, (float) 157 / 256, (float) 164 / 256));
+  PrintText("Menu", ci::Color((float) 255/256, (float) 94/256, (float) 91/256), ci::vec2(95, 50), ci::vec2(55, 30), default_text_size_);
+
+  // Draw entry mode indicator
+  ci::Area box(game_buttons_[1][0], game_buttons_[1][1]);
+  if (is_penciling_) {
+    ci::gl::draw(entry_type_images_[1], box);
+  } else {
+    ci::gl::draw(entry_type_images_[0], box);
+  }
+
+  DrawGrid();
+
+  // Print pencil marks and board entries
+  for (size_t i = 0; i < board_entries_.size(); i++) {
+    if (board_entries_[i] == "0") {
+      // Print pencil marks
+
+    } else {
+      ci::vec2 text_size(35, 35);
+
+      float tile_size = std::floor(600 / board_size_);
+      ci::vec2 text_loc(game_grid_[i][0].x + tile_size / 2, game_grid_[i][0].y + tile_size / 2);
+
+      PrintText(board_entries_[i], ci::Color::black(), text_size, text_loc, 50);
+    }
   }
 }
 
