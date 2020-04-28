@@ -224,27 +224,31 @@ void MyApp::DrawGrid() const {
   // Make the lines around each 3x3 box thicker
   for (size_t i = 0; i < board_size_ + 1; i+= 3) {
     DrawLine(game_grid_[0][0].x + i * tile_size - 1,
-                 game_grid_[0][0].y,
-                 game_grid_[0][0].x + i * tile_size - 1,
-                 game_grid_[board_size_ * board_size_ - 1][1].y,
-                 color);
+             game_grid_[0][0].y,
+             game_grid_[0][0].x + i * tile_size - 1,
+             game_grid_[board_size_ * board_size_ - 1][1].y,
+             color);
     DrawLine(game_grid_[0][0].x + i * tile_size + 1,
-                 game_grid_[0][0].y,
-                 game_grid_[0][0].x + i * tile_size + 1,
-                 game_grid_[board_size_ * board_size_ - 1][1].y,
-                 color);
+             game_grid_[0][0].y,
+             game_grid_[0][0].x + i * tile_size + 1,
+             game_grid_[board_size_ * board_size_ - 1][1].y,
+             color);
 
     DrawLine(game_grid_[0][0].x,
-        game_grid_[0][0].y + i * tile_size - 1,
-        game_grid_[board_size_ - 1][1].x,
-        game_grid_[0][0].y + i * tile_size - 1,
-        color);
+         game_grid_[0][0].y + i * tile_size - 1,
+         game_grid_[board_size_ - 1][1].x,
+         game_grid_[0][0].y + i * tile_size - 1,
+         color);
     DrawLine(game_grid_[0][0].x,
-        game_grid_[0][0].y + i * tile_size + 1,
-        game_grid_[board_size_ - 1][1].x,
-        game_grid_[0][0].y + i * tile_size + 1,
-        color);
+         game_grid_[0][0].y + i * tile_size + 1,
+         game_grid_[board_size_ - 1][1].x,
+         game_grid_[0][0].y + i * tile_size + 1,
+         color);
   }
+}
+
+bool HasValue(std::vector<std::string> values, int value) {
+  return std::find(values.begin(), values.end(), std::to_string(value)) != values.end();
 }
 
 void MyApp::DrawGameScreen() const {
@@ -273,14 +277,21 @@ void MyApp::DrawGameScreen() const {
   DrawGrid();
 
   // Print pencil marks and board entries
+  float tile_size = std::floor(600 / board_size_);
+
   for (size_t i = 0; i < board_entries_.size(); i++) {
     if (board_entries_[i] == "0") {
       // Print pencil marks
+      for (size_t j = 1; j < board_size_ + 1; j++) {
+        if (HasValue(board_pencil_marks_[i], j)) {
+          ci::vec2 mark_loc(game_grid_[i][0].x + tile_size / 6 + ((j- 1) % 3) * tile_size / 3, game_grid_[i][0].y + tile_size / 6 + ((j - 1) / 3) * tile_size / 3);
 
+          PrintText(std::to_string(j), ci::Color::black(), ci::vec2(tile_size / 3, tile_size / 3), mark_loc, tile_size / 3);
+        }
+      }
     } else {
+      // Print board entries
       ci::vec2 text_size(35, 35);
-
-      float tile_size = std::floor(600 / board_size_);
       ci::vec2 text_loc(game_grid_[i][0].x + tile_size / 2,
                         game_grid_[i][0].y + tile_size / 2);
 
@@ -293,10 +304,6 @@ void MyApp::DrawGameScreen() const {
   }
 }
 
-bool HasValue(std::vector<std::string> values, std::string value) {
-  return std::find(values.begin(), values.end(), value) != values.end();
-}
-
 void MyApp::keyDown(KeyEvent event) {
   if (event.KEY_g) {
     state_ = GameState::kPlaying;
@@ -306,47 +313,47 @@ void MyApp::keyDown(KeyEvent event) {
     if (is_penciling_) {
       switch (event.getCode()) {
         case event.KEY_1:
-          if (!HasValue(board_pencil_marks_[selected_box_], "1")) {
+          if (!HasValue(board_pencil_marks_[selected_box_], 1)) {
             board_pencil_marks_[selected_box_].emplace_back("1");
           }
           break;
         case event.KEY_2:
-          if (!HasValue(board_pencil_marks_[selected_box_], "2")) {
+          if (!HasValue(board_pencil_marks_[selected_box_], 2)) {
             board_pencil_marks_[selected_box_].emplace_back("2");
           }
           break;
         case event.KEY_3:
-          if (!HasValue(board_pencil_marks_[selected_box_], "3")) {
+          if (!HasValue(board_pencil_marks_[selected_box_], 3)) {
             board_pencil_marks_[selected_box_].emplace_back("3");
           }
           break;
         case event.KEY_4:
-          if (!HasValue(board_pencil_marks_[selected_box_], "4")) {
+          if (!HasValue(board_pencil_marks_[selected_box_], 4)) {
             board_pencil_marks_[selected_box_].emplace_back("4");
           }
           break;
         case event.KEY_5:
-          if (!HasValue(board_pencil_marks_[selected_box_], "5")) {
+          if (!HasValue(board_pencil_marks_[selected_box_], 5)) {
             board_pencil_marks_[selected_box_].emplace_back("5");
           }
           break;
         case event.KEY_6:
-          if (!HasValue(board_pencil_marks_[selected_box_], "6")) {
+          if (!HasValue(board_pencil_marks_[selected_box_], 6)) {
             board_pencil_marks_[selected_box_].emplace_back("6");
           }
           break;
         case event.KEY_7:
-          if (!HasValue(board_pencil_marks_[selected_box_], "7")) {
+          if (!HasValue(board_pencil_marks_[selected_box_], 7)) {
             board_pencil_marks_[selected_box_].emplace_back("7");
           }
           break;
         case event.KEY_8:
-          if (!HasValue(board_pencil_marks_[selected_box_], "8")) {
+          if (!HasValue(board_pencil_marks_[selected_box_], 8)) {
             board_pencil_marks_[selected_box_].emplace_back("8");
           }
           break;
         case event.KEY_9:
-          if (!HasValue(board_pencil_marks_[selected_box_], "9")) {
+          if (!HasValue(board_pencil_marks_[selected_box_], 9)) {
             board_pencil_marks_[selected_box_].emplace_back("9");
           }
           break;
