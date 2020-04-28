@@ -31,6 +31,7 @@ class MyApp : public cinder::app::App {
   void PrintBoardEntries() const;
   void DrawMenu() const;
   void PrintGameModes() const;
+  void ResetGameBoard();
   GameState state_;
   ci::vec2 mouse_pos_;
   ci::vec2 window_center_;

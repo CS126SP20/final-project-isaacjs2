@@ -376,6 +376,8 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
     } else if (state_ == GameState::kPlaying) {
       if (IsMouseInBox(mouse_pos_, game_buttons_[0])) {
         state_ = GameState::kMenu;
+
+        ResetGameBoard();
       }
 
       for (size_t i = 0; i < game_grid_.size(); i++) {
@@ -388,6 +390,14 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
 
   if (event.isRight() && state_ == GameState::kPlaying) {
     is_penciling_ = !is_penciling_;
+  }
+}
+void MyApp::ResetGameBoard() {
+  selected_box_ = -1;
+
+  for (size_t i = 0; i < board_size_ * board_size_; i++) {
+    board_entries_[i] = "0";
+    board_pencil_marks_[i].clear();
   }
 }
 }  // namespace myapp
