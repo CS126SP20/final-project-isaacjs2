@@ -23,6 +23,19 @@ Engine::Engine(std::string path) {
   }
 }
 
+void Engine::CreateGame(std::string path) {
+  board_path_ = path;
+
+  ImportGameBoard();
+
+  // Start with no numbers penciled in
+  for (auto row : pencil_marks_) {
+    for (auto col : row) {
+      col.fill(false);
+    }
+  }
+}
+
 void Engine::ImportGameBoard() {
   std::ifstream infile;
   infile.open(board_path_);

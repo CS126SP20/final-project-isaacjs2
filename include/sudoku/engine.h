@@ -15,6 +15,7 @@ class Engine {
  public:
   Engine();
   Engine(std::string path);
+  void CreateGame(std::string path);
   int GetEntry(int row, int col) const;
   void SetEntry(int row, int col, int num);
   bool IsPenciled(int row, int col, int num) const;
