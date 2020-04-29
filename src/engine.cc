@@ -8,37 +8,38 @@
 using nlohmann::json;
 
 namespace sudoku {
-  Engine::Engine(std::string path) {
-    board_path_ = path;
+Engine::Engine() {}
 
-    ImportGameBoard();
+Engine::Engine(std::string path) {
+  board_path_ = path;
 
-    // Start with no numbers penciled in
-    for (auto row : pencil_marks_) {
-      for (auto col : row) {
-        col.fill(false);
-      }
+  ImportGameBoard();
+
+  // Start with no numbers penciled in
+  for (auto row : pencil_marks_) {
+    for (auto col : row) {
+      col.fill(false);
     }
   }
+}
 
-  void Engine::ImportGameBoard() {
-    std::ifstream infile;
-    infile.open(board_path_);
+void Engine::ImportGameBoard() {
+  std::ifstream infile;
+  infile.open(board_path_);
 
-    // Load the file data into a JSON object
-    nlohmann::json board_data;
-    infile >> board_data;
+  // Load the file data into a JSON object
+  nlohmann::json board_data;
+  infile >> board_data;
 
-    board_data.at("board").get_to(current_entries_);
-    board_data.at("solution").get_to(solution_);
-  }
+  board_data.at("board").get_to(current_entries_);
+  board_data.at("solution").get_to(solution_);
+}
 
-  int Engine::GetEntry(int row, int col) {
-    return current_entries_[row][col];
-  }
+int Engine::GetEntry(int row, int col) const {
+  return current_entries_[row][col];
+}
 
-  bool Engine::IsPenciled(int row, int col, int num) {
-    return pencil_marks_[row][col][num - 1];
-  }
-
-  }  // namespace sudoku
+bool Engine::IsPenciled(int row, int col, int num) const {
+  return pencil_marks_[row][col][num - 1];
+}
+}  // namespace sudoku
