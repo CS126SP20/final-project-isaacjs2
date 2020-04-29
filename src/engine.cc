@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include <utility>
 
 using nlohmann::json;
 
@@ -11,7 +12,7 @@ namespace sudoku {
 Engine::Engine() {}
 
 Engine::Engine(std::string path) {
-  board_path_ = path;
+  board_path_ = std::move(path);
 
   ImportGameBoard();
 
@@ -24,14 +25,16 @@ Engine::Engine(std::string path) {
 }
 
 void Engine::CreateGame(std::string path) {
-  board_path_ = path;
+  board_path_ = R"(C:\Users\isaac\CLionProjects\Cinder\my-projects\final-project-isaacjs2\resources\easy_1.json)";
 
   ImportGameBoard();
 
   // Start with no numbers penciled in
-  for (auto row : pencil_marks_) {
-    for (auto col : row) {
-      col.fill(false);
+  for (size_t row = 0; row < kBoardSize; row++) {
+    for (size_t col = 0; col < kBoardSize; col++) {
+      for (size_t num = 0; num < kBoardSize; num++) {
+        pencil_marks_[row][col][num] = false;
+      }
     }
   }
 }
@@ -61,7 +64,7 @@ bool Engine::IsPenciled(int row, int col, int num) const {
 }
 
 void Engine::Pencil(int row, int col, int num) {
-  pencil_marks_[row][col][num] = true;
+  pencil_marks_[row][col][num - 1] = true;
 }
 
 void Engine::ClearPencilMarks(int row, int col) {
