@@ -12,7 +12,7 @@ ci_make_app(
     APP_NAME    cinder-myapp
     CINDER_PATH ${CINDER_PATH}
     SOURCES     ${SOURCE_LIST}
-    LIBRARIES   minesweeper sqlite-modern-cpp sqlite3
+    LIBRARIES   sudoku sqlite-modern-cpp sqlite3
     BLOCKS
 )
 

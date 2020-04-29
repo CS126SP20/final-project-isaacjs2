@@ -32,7 +32,7 @@ set_property(TARGET sudoku PROPERTY
 # Cross-platform compiler lints
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
         OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    target_compile_options(minesweeper PRIVATE
+    target_compile_options(sudoku PRIVATE
             -Wall
             -Wextra
             -Wswitch
