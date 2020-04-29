@@ -42,4 +42,10 @@ int Engine::GetEntry(int row, int col) const {
 bool Engine::IsPenciled(int row, int col, int num) const {
   return pencil_marks_[row][col][num - 1];
 }
+
+void Engine::ClearPencilMarks(int row, int col) {
+  for (bool mark : pencil_marks_[row][col]) {
+    mark = false;
+  }
+}
 }  // namespace sudoku
