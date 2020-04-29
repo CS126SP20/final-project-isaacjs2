@@ -25,6 +25,9 @@ MyApp::MyApp()
     selected_box_{-1, -1},
     default_text_size_{30},
     is_penciling_{false},
+    board_paths_{"easy_1.json", "easy_2.json", "easy_3.json",
+                 "medium_1.json", "medium_2.json", "medium_3.json",
+                 "hard_1.json", "hard_2.json", "hard_3.json"},
     game_modes_{{"Standard", "Time Attack", "Time Trial"}}
     {}
 
@@ -366,12 +369,15 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
     if (state_ == GameState::kMenu) { //combine into for loop
       if (IsMouseInBox(mouse_pos_, menu_buttons_[0])) {
         state_ = GameState::kPlaying;
+        engine_.CreateGame(board_paths_[0]);
         // engine.start("Standard);
       } else if (IsMouseInBox(mouse_pos_, menu_buttons_[1])) {
         state_ = GameState::kPlaying;
+        engine_.CreateGame(board_paths_[0]);
         // engine.start("Time Attack);
       } else if (IsMouseInBox(mouse_pos_, menu_buttons_[2])) {
         state_ = GameState::kPlaying;
+        engine_.CreateGame(board_paths_[0]);
         // engine.start("Time Trial);
       }
     } else if (state_ == GameState::kPlaying) {
