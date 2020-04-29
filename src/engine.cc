@@ -68,8 +68,8 @@ void Engine::Pencil(int row, int col, int num) {
 }
 
 void Engine::ClearPencilMarks(int row, int col) {
-  for (bool mark : pencil_marks_[row][col]) {
-    mark = false;
+  for (size_t num = 0; num < kBoardSize; num++) {
+    pencil_marks_[row][col][num] = false;
   }
 }
 }  // namespace sudoku
