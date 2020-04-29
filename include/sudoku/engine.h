@@ -2,9 +2,19 @@
 #ifndef FINALPROJECT_SUDOKU_ENGINE_H_
 #define FINALPROJECT_SUDOKU_ENGINE_H_
 
-
+#include <string>
 namespace sudoku {
 
+class Engine {
+ public:
+  Engine(std::string path);
+
+ private:
+  void ImportGameBoard();
+
+  std::string board_path_;
+
+};
 }  // namespace sudoku
 
 
