@@ -112,7 +112,23 @@ if (NOT sqlite3_POPULATED)
     target_include_directories(sqlite3 INTERFACE ${sqlite3_SOURCE_DIR}/src)
 endif ()
 
+# JSON Library. Header-only.
+FetchContent_Declare(
+        nlohmann_json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+)
+
+# Adds nlohmann_json library.
+FetchContent_GetProperties(nlohmann_json)
+if(NOT nlohmann_json_POPULATED)
+    FetchContent_Populate(nlohmann_json)
+    add_library(nlohmann_json INTERFACE)
+    target_include_directories(nlohmann_json INTERFACE ${nlohmann_json_SOURCE_DIR}/single_include)
+endif()
 #add_subdirectory(curlpp)
 #include_directories(curlpp/include)
 ##find_package(curlpp CONFIG REQUIRED)
 #target_link_libraries(cinder-myapp curlpp)
+
+#find_package(nlohmann_json CONFIG REQUIRED)
+#target_link_libraries(cinder-myapp PRIVATE nlohmann_json nlohmann_json::nlohmann_json)

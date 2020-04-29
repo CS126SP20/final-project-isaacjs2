@@ -6,6 +6,7 @@
     <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/cpr-src/opt/curl" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/cpr-src/opt/googletest" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/cpr-src/opt/mongoose" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/nlohmann_json-src" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/sqlite-modern-cpp-src" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/sqlite3-src" vcs="Git" />
   </component>
