@@ -236,12 +236,12 @@ void MyApp::DrawGrid() const {
     // Horizontal lines
     DrawLine(game_grid_[0][0].first.x,
          game_grid_[0][0].first.y + i * tile_size - 1,
-         game_grid_[board_size_ - 1][0].second.x,
+         game_grid_[0][board_size_ - 1].second.x,
          game_grid_[0][0].first.y + i * tile_size - 1,
          color);
     DrawLine(game_grid_[0][0].first.x,
          game_grid_[0][0].first.y + i * tile_size + 1,
-         game_grid_[board_size_ - 1][0].second.x,
+         game_grid_[0][board_size_ - 1].second.x,
          game_grid_[0][0].first.y + i * tile_size + 1,
          color);
   }
