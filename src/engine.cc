@@ -39,6 +39,10 @@ int Engine::GetEntry(int row, int col) const {
   return current_entries_[row][col];
 }
 
+void Engine::SetEntry(int row, int col, int num) {
+  current_entries_[row][col] = num;
+}
+
 bool Engine::IsPenciled(int row, int col, int num) const {
   return pencil_marks_[row][col][num - 1];
 }
