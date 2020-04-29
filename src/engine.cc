@@ -12,6 +12,13 @@ namespace sudoku {
     board_path_ = path;
 
     ImportGameBoard();
+
+    // Start with no numbers penciled in
+    for (auto row : pencil_marks_) {
+      for (auto col : row) {
+        col.fill(false);
+      }
+    }
   }
 
   void Engine::ImportGameBoard() {
@@ -21,5 +28,8 @@ namespace sudoku {
     // Load the file data into a JSON object
     nlohmann::json board_data;
     infile >> board_data;
+
+    board_data.at("board").get_to(current_entries_);
+    board_data.at("solution").get_to(solution_);
   }
 }  // namespace sudoku
