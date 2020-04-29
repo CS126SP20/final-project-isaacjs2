@@ -18,6 +18,7 @@ class Engine {
   int GetEntry(int row, int col) const;
   void SetEntry(int row, int col, int num);
   bool IsPenciled(int row, int col, int num) const;
+  void Pencil(int row, int col, int num);
   void ClearPencilMarks(int row, int col);
 
  private:
