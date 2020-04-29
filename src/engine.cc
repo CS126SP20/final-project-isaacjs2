@@ -32,4 +32,13 @@ namespace sudoku {
     board_data.at("board").get_to(current_entries_);
     board_data.at("solution").get_to(solution_);
   }
-}  // namespace sudoku
+
+  int Engine::GetEntry(int row, int col) {
+    return current_entries_[row][col];
+  }
+
+  bool Engine::IsPenciled(int row, int col, int num) {
+    return pencil_marks_[row][col][num - 1];
+  }
+
+  }  // namespace sudoku

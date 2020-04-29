@@ -14,6 +14,8 @@ constexpr size_t kBoardSize = 9;
 class Engine {
  public:
   Engine(std::string path);
+  int GetEntry(int row, int col);
+  bool IsPenciled(int row, int col, int num);
 
  private:
   void ImportGameBoard();
