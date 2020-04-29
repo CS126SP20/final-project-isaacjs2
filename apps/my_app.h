@@ -8,6 +8,8 @@
 
 #include <array>
 
+#include "../include/sudoku/engine.h"
+
 namespace myapp {
 
 enum class GameState {
@@ -36,12 +38,13 @@ class MyApp : public cinder::app::App {
   ci::vec2 mouse_pos_;
   ci::vec2 window_center_;
   float board_size_;
-  int selected_box_;
+  std::pair<int, int> selected_box_;
   int default_text_size_;
   bool is_penciling_;
+  sudoku::Engine engine_;
   std::vector<std::vector<ci::vec2>> menu_buttons_;
   std::vector<std::vector<ci::vec2>> game_buttons_;
-  std::vector<std::vector<ci::vec2>> game_grid_;
+  std::vector<std::vector<std::pair<ci::vec2, ci::vec2>>> game_grid_;
   std::vector<std::string> game_modes_;
   std::vector<std::string> board_entries_;
   std::vector<std::vector<std::string>> board_pencil_marks_;

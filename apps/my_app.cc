@@ -3,15 +3,15 @@
 #include "my_app.h"
 
 #include <cinder/Font.h>
+#include <cinder/ImageIo.h>
+#include <cinder/Path2d.h>
 #include <cinder/Text.h>
 #include <cinder/Vector.h>
+#include <cinder/app/App.h>
+#include <cinder/gl/Texture.h>
 #include <cinder/gl/draw.h>
 #include <cinder/gl/gl.h>
-#include <cinder/app/App.h>
-#include <cinder/Path2d.h>
-#include <cinder/Shape2d.h>
-#include <cinder/ImageIo.h>
-#include <cinder/gl/Texture.h>
+#include <fstream>
 
 namespace myapp {
 
@@ -22,7 +22,7 @@ MyApp::MyApp()
     mouse_pos_{ci::vec2(-1, -1)},
     window_center_{getWindowCenter()},
     board_size_{9},
-    selected_box_{-1},
+    selected_box_{-1, -1},
     default_text_size_{30},
     is_penciling_{false},
     game_modes_{{"Standard", "Time Attack", "Time Trial"}}
@@ -39,14 +39,6 @@ void MyApp::setup() {
   ci::gl::Texture2dRef pencil_image = ci::gl::Texture2d::create(
       ci::loadImage(loadAsset("pencil2.png")));
   entry_type_images_.push_back(pencil_image);
-
-  // Fill vectors with empty values so I can access by index later
-  for (size_t i = 0; i < board_size_ * board_size_; i++) {
-    board_entries_.emplace_back("0");
-
-    std::vector<std::string> marks;
-    board_pencil_marks_.push_back(marks);
-  }
 
   // Record the positions of the menu buttons
   for (size_t i = 0; i < game_modes_.size(); i++) {
@@ -67,21 +59,25 @@ void MyApp::setup() {
   float left_bound = window_center_.x - (board_size_ / 2) * tile_size;
   float top_bound = window_center_.y - (board_size_ / 2) * tile_size;
 
-  for (size_t row = 0; row < board_size_; row++) {
-    for (size_t col = 0; col < board_size_; col++) {
-      ci::vec2 top_left(left_bound + col * tile_size,
-                        top_bound + row * tile_size);
-      ci::vec2 bottom_right(left_bound + (col + 1) * tile_size,
-                            top_bound + (row + 1) * tile_size);
+  for (size_t i = 0; i < board_size_; i++) {
+    std::vector<std::pair<ci::vec2, ci::vec2>> row;
 
-      std::vector<ci::vec2> box_bounds;
-      box_bounds.push_back(top_left);
-      box_bounds.push_back(bottom_right);
-      game_grid_.push_back(box_bounds);
+    for (size_t j = 0; j < board_size_; j++) {
+      ci::vec2 top_left(left_bound + j * tile_size,
+                        top_bound + i * tile_size);
+      ci::vec2 bottom_right(left_bound + (j + 1) * tile_size,
+                            top_bound + (i + 1) * tile_size);
+
+      std::pair<ci::vec2, ci::vec2> box_bounds;
+      box_bounds.first = top_left;
+      box_bounds.second = bottom_right;
+      row.push_back(box_bounds);
     }
+
+    game_grid_.push_back(row);
   }
 
-  // Record the positions of extra boxes on game screen
+  // Record the positions of other boxes on game screen
   std::vector<ci::vec2> menu_button;
   menu_button.emplace_back(5, 5);
   menu_button.emplace_back(105, 55);
@@ -150,20 +146,20 @@ void MyApp::draw() {
     DrawMenu();
   } else if (state_ == GameState::kPlaying) {
     // Highlight the box that the player has selected
-    if (selected_box_ != -1) {
+    if (selected_box_.first != -1) {
       ci::Color color(1, 0, 0);
-      DrawBox(game_grid_[selected_box_][0],
-          game_grid_[selected_box_][1],
+      DrawBox(game_grid_[selected_box_.first][selected_box_.second].first,
+              game_grid_[selected_box_.first][selected_box_.second].second,
+              color);
+      DrawBox(ci::vec2(game_grid_[selected_box_.first][selected_box_.second].first.x - 1,
+                               game_grid_[selected_box_.first][selected_box_.second].first.y - 1),
+          ci::vec2(game_grid_[selected_box_.first][selected_box_.second].second.x + 1,
+                               game_grid_[selected_box_.first][selected_box_.second].second.y + 1),
                       color);
-      DrawBox(ci::vec2(game_grid_[selected_box_][0].x - 1,
-                               game_grid_[selected_box_][0].y - 1),
-          ci::vec2(game_grid_[selected_box_][1].x + 1,
-                               game_grid_[selected_box_][1].y + 1),
-                      color);
-      DrawBox(ci::vec2(game_grid_[selected_box_][0].x + 1,
-                               game_grid_[selected_box_][0].y + 1),
-          ci::vec2(game_grid_[selected_box_][1].x - 1,
-                               game_grid_[selected_box_][1].y - 1),
+      DrawBox(ci::vec2(game_grid_[selected_box_.first][selected_box_.second].first.x + 1,
+                               game_grid_[selected_box_.first][selected_box_.second].first.y + 1),
+          ci::vec2(game_grid_[selected_box_.first][selected_box_.second].second.x - 1,
+                               game_grid_[selected_box_.first][selected_box_.second].second.y - 1),
                       color);
     }
 
@@ -217,32 +213,36 @@ void MyApp::DrawGrid() const {
   float tile_size = std::floor(600 / board_size_);
   ci::Color color = ci::Color::black();
 
-  for (std::vector<ci::vec2> box : game_grid_) {
-    DrawBox(box[0], box[1], color);
+  for (auto row : game_grid_) {
+    for (auto col : row) {
+      DrawBox(col.first, col.second, color);
+    }
   }
 
   // Make the lines around each 3x3 box thicker
   for (size_t i = 0; i < board_size_ + 1; i+= 3) {
-    DrawLine(game_grid_[0][0].x + i * tile_size - 1,
-             game_grid_[0][0].y,
-             game_grid_[0][0].x + i * tile_size - 1,
-             game_grid_[board_size_ * board_size_ - 1][1].y,
+    // Vertical lines
+    DrawLine(game_grid_[0][0].first.x + i * tile_size - 1,
+                 game_grid_[0][0].first.y,
+             game_grid_[0][0].first.x + i * tile_size - 1,
+             game_grid_[board_size_ - 1][0].second.y,
              color);
-    DrawLine(game_grid_[0][0].x + i * tile_size + 1,
-             game_grid_[0][0].y,
-             game_grid_[0][0].x + i * tile_size + 1,
-             game_grid_[board_size_ * board_size_ - 1][1].y,
+    DrawLine(game_grid_[0][0].first.x + i * tile_size + 1,
+                 game_grid_[0][0].first.y,
+             game_grid_[0][0].first.x + i * tile_size + 1,
+             game_grid_[board_size_ - 1][0].second.y,
              color);
 
-    DrawLine(game_grid_[0][0].x,
-         game_grid_[0][0].y + i * tile_size - 1,
-         game_grid_[board_size_ - 1][1].x,
-         game_grid_[0][0].y + i * tile_size - 1,
+    // Horizontal lines
+    DrawLine(game_grid_[0][0].first.x,
+         game_grid_[0][0].first.y + i * tile_size - 1,
+         game_grid_[board_size_ - 1][0].second.x,
+         game_grid_[0][0].first.y + i * tile_size - 1,
          color);
-    DrawLine(game_grid_[0][0].x,
-         game_grid_[0][0].y + i * tile_size + 1,
-         game_grid_[board_size_ - 1][1].x,
-         game_grid_[0][0].y + i * tile_size + 1,
+    DrawLine(game_grid_[0][0].first.x,
+         game_grid_[0][0].first.y + i * tile_size + 1,
+         game_grid_[board_size_ - 1][0].second.x,
+         game_grid_[0][0].first.y + i * tile_size + 1,
          color);
   }
 }
@@ -283,58 +283,59 @@ void MyApp::PrintBoardEntries() const {
   // Print pencil marks and board entries
   float tile_size = std::floor(600 / board_size_);
 
-  for (size_t i = 0; i < board_entries_.size(); i++) {
-    if (board_entries_[i] == "0") {
-      // Print pencil marks
-      for (size_t j = 1; j < board_size_ + 1; j++) {
-        if (HasValue(board_pencil_marks_[i], j)) {
-          ci::vec2 mark_loc(game_grid_[i][0].x
-                            + tile_size / 6
-                            + ((j- 1) % 3) * tile_size / 3,
-                            game_grid_[i][0].y
-                            + tile_size / 6
-                            + ((j - 1) / 3) * tile_size / 3);
+  for (size_t row = 0; row < board_size_; row++) {
+    for (size_t col = 0; col < board_size_; col++) {
+      if (engine_.GetEntry(row, col) == 0) {
+        // Print pencil marks
+        for (size_t num = 1; num < board_size_ + 1; num++) {
+          if (engine_.IsPenciled(row, col, num)) {
+            ci::vec2 mark_loc(game_grid_[row][col].first.x
+                              + tile_size / 6
+                              + ((num - 1) % 3) * tile_size / 3,
+                              game_grid_[row][col].first.y
+                              + tile_size / 6
+                              + ((num - 1) / 3) * tile_size / 3);
 
-          PrintText(std::to_string(j),
-                    ci::Color::black(),
-                    ci::vec2(tile_size / 3, tile_size / 3),
-                    mark_loc,
-                    tile_size / 3);
+            PrintText(std::to_string(num),
+                      ci::Color::black(),
+                      ci::vec2(tile_size / 3, tile_size / 3),
+                      mark_loc,
+                      tile_size / 3);
+          }
         }
-      }
-    } else {
-      // Print board entries
-      ci::vec2 text_size(35, 35);
-      ci::vec2 text_loc(game_grid_[i][0].x + tile_size / 2,
-                        game_grid_[i][0].y + tile_size / 2);
+      } else {
+        // Print board entries
+        ci::vec2 text_size(35, 35);
+        ci::vec2 text_loc(game_grid_[row][col].first.x + tile_size / 2,
+                          game_grid_[row][col].first.y + tile_size / 2);
 
-      PrintText(board_entries_[i],
-                ci::Color::black(),
-                text_size,
-                text_loc,
-                50);
+        PrintText(std::to_string(engine_.GetEntry(row, col)),
+                  ci::Color::black(),
+                  text_size,
+                  text_loc,
+                  50);
+      }
     }
   }
 }
 
 void MyApp::keyDown(KeyEvent event) {
   // Erase the current contents of a box
-  if (event.getCode() == KeyEvent::KEY_BACKSPACE && selected_box_ != -1) {
-    if (board_entries_[selected_box_] == "0") {
-      board_pencil_marks_[selected_box_].clear();
+  if (event.getCode() == KeyEvent::KEY_BACKSPACE && selected_box_.first != -1) {
+    if (engine_.GetEntry(selected_box_.first, selected_box_.second) == 0) {
+      engine_.ClearPencilMarks(selected_box_.first, selected_box_.second);
     } else {
-      board_entries_[selected_box_] = "0";
+      engine_.SetEntry(selected_box_.first, selected_box_.second, 0);
     }
   }
 
-  if (selected_box_ != -1) {
+  if (selected_box_.first != -1) {
     // Update current pencil marks
-    if (is_penciling_ && board_entries_[selected_box_] == "0") {
+    if (is_penciling_
+        && engine_.GetEntry(selected_box_.first, selected_box_.second) == 0) {
       for (size_t i = 1; i < board_size_ + 1; i++) {
         if (event.getCode() == i + 48) {
-          if (!HasValue(board_pencil_marks_[selected_box_], i)) {
-            board_pencil_marks_[selected_box_].emplace_back(std::to_string(i));
-          }
+          engine_.Pencil(selected_box_.first, selected_box_.second, i);
 
           break;
         }
@@ -343,7 +344,7 @@ void MyApp::keyDown(KeyEvent event) {
     } else if (!is_penciling_) {
       for (size_t i = 1; i < board_size_ + 1; i++) {
         if (event.getCode() == i + 48) {
-          board_entries_[selected_box_] = std::to_string(i);
+          engine_.SetEntry(selected_box_.first, selected_box_.second, i);
 
           break;
         }
@@ -380,9 +381,13 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
         ResetGameBoard();
       }
 
-      for (size_t i = 0; i < game_grid_.size(); i++) {
-        if (IsMouseInBox(mouse_pos_, game_grid_[i])) {
-          selected_box_ = i;
+      for (size_t row = 0; row < board_size_; row++) {
+        for (size_t col = 0; col < board_size_; col++) {
+          std::vector<ci::vec2> bounds{game_grid_[row][col].first, game_grid_[row][col].second};
+
+          if (IsMouseInBox(mouse_pos_, bounds)) {
+            selected_box_ = {row, col}; // this feels wrong
+          }
         }
       }
     }
@@ -393,7 +398,7 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
   }
 }
 void MyApp::ResetGameBoard() {
-  selected_box_ = -1;
+  selected_box_ = {-1, -1};
 
   for (size_t i = 0; i < board_size_ * board_size_; i++) {
     board_entries_[i] = "0";
