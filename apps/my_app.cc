@@ -12,10 +12,12 @@
 #include <cinder/gl/draw.h>
 #include <cinder/gl/gl.h>
 #include <fstream>
+#include <sudoku/engine.h>
 
 namespace myapp {
 
 using cinder::app::KeyEvent;
+using Difficulty = sudoku::Engine::Difficulty;
 
 MyApp::MyApp()
     : state_{GameState::kMenu},
@@ -366,15 +368,15 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
     if (state_ == GameState::kMenu) { //combine into for loop
       if (IsMouseInBox(mouse_pos_, menu_buttons_[0])) {
         state_ = GameState::kPlaying;
-        engine_.CreateGame(board_paths_[0]);
+        engine_.CreateGame(Difficulty::kEasy);
         // engine.start("Standard);
       } else if (IsMouseInBox(mouse_pos_, menu_buttons_[1])) {
         state_ = GameState::kPlaying;
-        engine_.CreateGame(board_paths_[0]);
+        engine_.CreateGame(Difficulty::kEasy);
         // engine.start("Time Attack);
       } else if (IsMouseInBox(mouse_pos_, menu_buttons_[2])) {
         state_ = GameState::kPlaying;
-        engine_.CreateGame(board_paths_[0]);
+        engine_.CreateGame(Difficulty::kEasy);
         // engine.start("Time Trial);
       }
     } else if (state_ == GameState::kPlaying) {

@@ -4,6 +4,7 @@
 
 #include <array>
 #include <string>
+#include <vector>
 
 using std::array;
 
@@ -12,9 +13,16 @@ namespace sudoku {
 constexpr size_t kBoardSize = 9;
 
 class Engine {
+
  public:
+  enum class Difficulty {
+    kEasy,
+    kMedium,
+    kHard,
+  };
+
   Engine();
-  void CreateGame(std::string path);
+  void CreateGame(Difficulty difficulty);
   int GetEntry(int row, int col) const;
   void SetEntry(int row, int col, int num);
   bool IsPenciled(int row, int col, int num) const;

@@ -14,9 +14,22 @@ Engine::Engine() : easy_boards_{"easy_1.json", "easy_2.json", "easy_3.json"},
               hard_boards_{"hard_1.json", "hard_2.json", "hard_3.json"}
               {}
 
-void Engine::CreateGame(std::string path) {
-  board_path_ = R"(C:\Users\isaac\CLionProjects\Cinder\my-projects
-                   \final-project-isaacjs2\resources\easy_1.json)";
+void Engine::CreateGame(Difficulty difficulty) {
+  // Get a board of the right difficulty
+  switch (difficulty) {
+    case Difficulty::kEasy :
+      board_path_ = "C:\\Users\\isaac\\CLionProjects\\Cinder\\my-projects"
+                    "\\final-project-isaacjs2\\resources\\easy_1.json";
+      break;
+    case Difficulty::kMedium :
+      board_path_ = "C:\\Users\\isaac\\CLionProjects\\Cinder\\my-projects"
+                    "\\final-project-isaacjs2\\resources\\medium_1.json";
+      break;
+    case Difficulty::kHard :
+      board_path_ = "C:\\Users\\isaac\\CLionProjects\\Cinder\\my-projects"
+                    "\\final-project-isaacjs2\\resources\\hard_1.json";
+      break;
+  }
 
   ImportGameBoard();
 
