@@ -57,8 +57,8 @@ void MyApp::setup() {
 
   // Record the positions of the squares of the game board
   float tile_size = std::floor(600 / kBoardSize);
-  float left_bound = window_center_.x - (kBoardSize / 2) * tile_size;
-  float top_bound = window_center_.y - (kBoardSize / 2) * tile_size;
+  float left_bound = window_center_.x - ((float) kBoardSize / 2) * tile_size;
+  float top_bound = window_center_.y - ((float) kBoardSize / 2) * tile_size;
 
   for (size_t i = 0; i < kBoardSize; i++) {
     std::vector<std::pair<ci::vec2, ci::vec2>> row;
@@ -310,8 +310,13 @@ void MyApp::PrintBoardEntries() const {
         ci::vec2 text_loc(game_grid_[row][col].first.x + tile_size / 2,
                           game_grid_[row][col].first.y + tile_size / 2);
 
+        ci::Color color(ci::Color::black());
+        if (engine_.IsStartingNumber(row, col)) {
+          color = ci::Color(0, 0, 1);
+        }
+
         PrintText(std::to_string(engine_.GetEntry(row, col)),
-                  ci::Color::black(),
+                  color,
                   text_size,
                   text_loc,
                   50);
@@ -322,7 +327,9 @@ void MyApp::PrintBoardEntries() const {
 
 void MyApp::keyDown(KeyEvent event) {
   // Erase the current contents of a box
-  if (event.getCode() == KeyEvent::KEY_BACKSPACE && selected_box_.first != -1) {
+  if (event.getCode() == KeyEvent::KEY_BACKSPACE
+      && selected_box_.first != -1
+      && !engine_.IsStartingNumber(selected_box_.first, selected_box_.second)) {
     if (engine_.GetEntry(selected_box_.first, selected_box_.second) == 0) {
       engine_.ClearPencilMarks(selected_box_.first, selected_box_.second);
     } else {
@@ -342,7 +349,9 @@ void MyApp::keyDown(KeyEvent event) {
         }
       }
     // Update board entries
-    } else if (!engine_.IsPenciling()) {
+    } else if (!engine_.IsPenciling()
+               && !engine_.IsStartingNumber(selected_box_.first,
+                                            selected_box_.second)) {
       for (size_t i = 1; i < kBoardSize + 1; i++) {
         if (event.getCode() == i + 48) {
           engine_.SetEntry(selected_box_.first, selected_box_.second, i);

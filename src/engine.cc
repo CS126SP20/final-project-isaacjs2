@@ -34,9 +34,12 @@ void Engine::CreateGame(Difficulty difficulty) {
 
   ImportGameBoard();
 
-  // Start with no numbers penciled in
   for (size_t row = 0; row < kBoardSize; row++) {
     for (size_t col = 0; col < kBoardSize; col++) {
+      // Record starting positions
+      is_starting_number_[row][col] = (current_entries_[row][col] != 0);
+
+      // Start with no numbers penciled in
       for (size_t num = 0; num < kBoardSize; num++) {
         pencil_marks_[row][col][num] = false;
       }
@@ -84,6 +87,9 @@ bool Engine::IsPenciling() const {
 }
 void Engine::SwitchEntryMode() {
   is_penciling_ = !is_penciling_;
+}
+bool Engine::IsStartingNumber(int row, int col) const {
+  return is_starting_number_[row][col];
 }
 
 }  // namespace sudoku

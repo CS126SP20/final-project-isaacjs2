@@ -30,6 +30,7 @@ class Engine {
   void ClearPencilMarks(int row, int col);
   bool IsPenciling() const;
   void SwitchEntryMode();
+  bool IsStartingNumber(int row, int col) const;
 
  private:
   void ImportGameBoard();
@@ -39,6 +40,7 @@ class Engine {
   array<array<int, kBoardSize>, kBoardSize> current_entries_;
   array<array<int, kBoardSize>, kBoardSize> solution_;
   array<array<array<bool, kBoardSize>,kBoardSize>, kBoardSize> pencil_marks_;
+  array<array<bool, kBoardSize>, kBoardSize> is_starting_number_;
 
   std::vector<std::string> easy_boards_;
   std::vector<std::string> medium_boards_;
