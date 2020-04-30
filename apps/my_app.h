@@ -28,6 +28,9 @@ class MyApp : public cinder::app::App {
   void mouseDown(cinder::app::MouseEvent) override;
 
  private:
+  void SetupMenu();
+  void SetupGameScreen();
+  void SetupGameBoard();
   void DrawGrid() const;
   void DrawGameScreen() const;
   void PrintBoardEntries() const;

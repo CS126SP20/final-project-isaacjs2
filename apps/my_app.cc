@@ -33,14 +33,11 @@ void MyApp::setup() {
   ci::gl::enableDepthWrite();
   ci::gl::enableDepthRead();
 
-  // Load entry mode images
-  ci::gl::Texture2dRef marker_image = ci::gl::Texture2d::create(
-      ci::loadImage(loadAsset("marker.png")));
-  entry_type_images_.push_back(marker_image);
-  ci::gl::Texture2dRef pencil_image = ci::gl::Texture2d::create(
-      ci::loadImage(loadAsset("pencil2.png")));
-  entry_type_images_.push_back(pencil_image);
+  SetupMenu();
+  SetupGameScreen();
+}
 
+void MyApp::SetupMenu() {
   // Record the positions of the menu buttons
   for (size_t i = 0; i < game_modes_.size(); i++) {
     ci::vec2 top_left(window_center_.x - 120,
@@ -54,8 +51,34 @@ void MyApp::setup() {
 
     menu_buttons_.push_back(button_bounds);
   }
+}
 
-  // Record the positions of the squares of the game board
+void MyApp::SetupGameScreen() {
+  // Load entry mode images
+  ci::gl::Texture2dRef marker_image = ci::gl::Texture2d::create(
+      ci::loadImage(loadAsset("marker.png")));
+  entry_type_images_.push_back(marker_image);
+  ci::gl::Texture2dRef pencil_image = ci::gl::Texture2d::create(
+      ci::loadImage(loadAsset("pencil2.png")));
+  entry_type_images_.push_back(pencil_image);
+
+  SetupGameBoard();
+
+  // Record the positions of other boxes on game screen
+  std::vector<ci::vec2> menu_button;
+  menu_button.emplace_back(5, 5);
+  menu_button.emplace_back(105, 55);
+  game_buttons_.push_back(menu_button);
+
+  std::vector<ci::vec2> entry_mode_indicator;
+  entry_mode_indicator.emplace_back(window_center_.x - 50,
+                                    getWindowSize().y - 100);
+  entry_mode_indicator.emplace_back(window_center_.x + 50,
+                                    getWindowSize().y);
+  game_buttons_.push_back(entry_mode_indicator);
+}
+
+void MyApp::SetupGameBoard() {
   float tile_size = std::floor(600 / kBoardSize);
   float left_bound = window_center_.x - ((float) kBoardSize / 2) * tile_size;
   float top_bound = window_center_.y - ((float) kBoardSize / 2) * tile_size;
@@ -77,19 +100,6 @@ void MyApp::setup() {
 
     game_grid_.push_back(row);
   }
-
-  // Record the positions of other boxes on game screen
-  std::vector<ci::vec2> menu_button;
-  menu_button.emplace_back(5, 5);
-  menu_button.emplace_back(105, 55);
-  game_buttons_.push_back(menu_button);
-
-  std::vector<ci::vec2> entry_mode_indicator;
-  entry_mode_indicator.emplace_back(window_center_.x - 50,
-                                    getWindowSize().y - 100);
-  entry_mode_indicator.emplace_back(window_center_.x + 50,
-                                        getWindowSize().y);
-  game_buttons_.push_back(entry_mode_indicator);
 }
 
 void MyApp::update() {
