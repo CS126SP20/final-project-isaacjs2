@@ -7,8 +7,16 @@
 #include <cinder/gl/Texture.h>
 
 #include <array>
+#include <string>
+#include <vector>
 
 #include "../include/sudoku/engine.h"
+
+using sudoku::kBoardSize;
+using std::array;
+using std::string;
+using std::vector;
+using std::pair;
 
 namespace myapp {
 
@@ -39,14 +47,15 @@ class MyApp : public cinder::app::App {
   GameState state_;
   ci::vec2 mouse_pos_;
   ci::vec2 window_center_;
-  std::pair<int, int> selected_box_;
+  pair<int, int> selected_box_;
   int default_text_size_;
   sudoku::Engine engine_;
-  std::vector<std::vector<ci::vec2>> menu_buttons_;
-  std::vector<std::vector<ci::vec2>> game_buttons_;
-  std::vector<std::vector<std::pair<ci::vec2, ci::vec2>>> game_grid_;
-  std::vector<std::string> game_modes_;
-  std::vector<ci::gl::Texture2dRef> entry_type_images_;
+  vector<pair<ci::vec2, ci::vec2>> game_start_buttons_;
+  pair<ci::vec2, ci::vec2> menu_return_button_;
+  pair<ci::vec2, ci::vec2> entry_mode_indicator_;
+  array<array<pair<ci::vec2, ci::vec2>, kBoardSize>, kBoardSize> game_grid_;
+  vector<string> game_modes_;
+  array<ci::gl::Texture2dRef, 2> entry_type_images_;
 };
 
 }  // namespace myapp

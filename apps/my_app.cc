@@ -45,11 +45,8 @@ void MyApp::SetupMenu() {
     ci::vec2 bottom_right(window_center_.x + 120,
                           window_center_.y - 60 + i * 90);
 
-    std::vector<ci::vec2> button_bounds;
-    button_bounds.push_back(top_left);
-    button_bounds.push_back(bottom_right);
-
-    menu_buttons_.push_back(button_bounds);
+    std::pair<ci::vec2, ci::vec2> button_bounds(top_left, bottom_right);
+    game_start_buttons_.push_back(button_bounds);
   }
 }
 
@@ -57,25 +54,21 @@ void MyApp::SetupGameScreen() {
   // Load entry mode images
   ci::gl::Texture2dRef marker_image = ci::gl::Texture2d::create(
       ci::loadImage(loadAsset("marker.png")));
-  entry_type_images_.push_back(marker_image);
+  entry_type_images_[0] = marker_image;
+
   ci::gl::Texture2dRef pencil_image = ci::gl::Texture2d::create(
       ci::loadImage(loadAsset("pencil2.png")));
-  entry_type_images_.push_back(pencil_image);
+  entry_type_images_[1] = pencil_image;
 
   SetupGameBoard();
 
   // Record the positions of other boxes on game screen
-  std::vector<ci::vec2> menu_button;
-  menu_button.emplace_back(5, 5);
-  menu_button.emplace_back(105, 55);
-  game_buttons_.push_back(menu_button);
+  menu_return_button_.first = {5, 5};
+  menu_return_button_.second = {105, 55};
 
-  std::vector<ci::vec2> entry_mode_indicator;
-  entry_mode_indicator.emplace_back(window_center_.x - 50,
-                                    getWindowSize().y - 100);
-  entry_mode_indicator.emplace_back(window_center_.x + 50,
-                                    getWindowSize().y);
-  game_buttons_.push_back(entry_mode_indicator);
+  entry_mode_indicator_.first = {window_center_.x - 50,
+                                 getWindowSize().y - 100};
+  entry_mode_indicator_.second = {window_center_.x + 50, getWindowSize().y};
 }
 
 void MyApp::SetupGameBoard() {
@@ -83,22 +76,17 @@ void MyApp::SetupGameBoard() {
   float left_bound = window_center_.x - ((float) kBoardSize / 2) * tile_size;
   float top_bound = window_center_.y - ((float) kBoardSize / 2) * tile_size;
 
-  for (size_t i = 0; i < kBoardSize; i++) {
-    std::vector<std::pair<ci::vec2, ci::vec2>> row;
+  for (size_t row = 0; row < kBoardSize; row++) {
+    for (size_t col = 0; col < kBoardSize; col++) {
+      ci::vec2 top_left(left_bound + col * tile_size,
+                        top_bound + row * tile_size);
+      ci::vec2 bottom_right(left_bound + (col + 1) * tile_size,
+                            top_bound + (row + 1) * tile_size);
 
-    for (size_t j = 0; j < kBoardSize; j++) {
-      ci::vec2 top_left(left_bound + j * tile_size,
-                        top_bound + i * tile_size);
-      ci::vec2 bottom_right(left_bound + (j + 1) * tile_size,
-                            top_bound + (i + 1) * tile_size);
-
-      std::pair<ci::vec2, ci::vec2> box_bounds;
-      box_bounds.first = top_left;
-      box_bounds.second = bottom_right;
-      row.push_back(box_bounds);
+      std::pair<ci::vec2, ci::vec2> box_bounds(top_left, bottom_right);
+      game_grid_[row][col] = box_bounds;
     }
 
-    game_grid_.push_back(row);
   }
 }
 
@@ -255,9 +243,9 @@ bool HasValue(std::vector<std::string> values, int value) {
 
 void MyApp::DrawGameScreen() const {
   // Draw back to menu button
-  DrawBox(game_buttons_[0][0],
-      game_buttons_[0][1],
-      ci::Color(0, 0, 1));
+  DrawBox(menu_return_button_.first,
+          menu_return_button_.second,
+          ci::Color(0, 0, 1));
   PrintText("Menu",
       ci::Color(1, 0, 0),
        ci::vec2(95, 50),
@@ -265,7 +253,8 @@ void MyApp::DrawGameScreen() const {
        default_text_size_);
 
   // Draw entry mode indicator
-  ci::Area box(game_buttons_[1][0], game_buttons_[1][1]);
+  ci::Area box(entry_mode_indicator_.first,
+               entry_mode_indicator_.second);
   if (engine_.IsPenciling()) {
     ci::gl::draw(entry_type_images_[1], box);
   } else {
@@ -360,32 +349,32 @@ void MyApp::keyDown(KeyEvent event) {
   }
 }
 
-bool IsMouseInBox(const ci::vec2& mouse_pos, std::vector<ci::vec2> box_bounds) {
-  return mouse_pos.x > box_bounds[0].x
-         && mouse_pos.x < box_bounds[1].x
-         && mouse_pos.y > box_bounds[0].y
-         && mouse_pos.y < box_bounds[1].y;
+bool IsMouseInBox(const ci::vec2& mouse_pos, std::pair<ci::vec2, ci::vec2> box_bounds) {
+  return mouse_pos.x > box_bounds.first.x
+         && mouse_pos.x < box_bounds.second.x
+         && mouse_pos.y > box_bounds.first.y
+         && mouse_pos.y < box_bounds.second.y;
 }
 
 void MyApp::mouseDown(ci::app::MouseEvent event) {
 
   if (event.isLeft()) {
     if (state_ == GameState::kMenu) { //combine into for loop
-      if (IsMouseInBox(mouse_pos_, menu_buttons_[0])) {
+      if (IsMouseInBox(mouse_pos_, game_start_buttons_[0])) {
         state_ = GameState::kPlaying;
         engine_.CreateGame(Difficulty::kEasy);
         // engine.start("Standard);
-      } else if (IsMouseInBox(mouse_pos_, menu_buttons_[1])) {
+      } else if (IsMouseInBox(mouse_pos_, game_start_buttons_[1])) {
         state_ = GameState::kPlaying;
         engine_.CreateGame(Difficulty::kEasy);
         // engine.start("Time Attack);
-      } else if (IsMouseInBox(mouse_pos_, menu_buttons_[2])) {
+      } else if (IsMouseInBox(mouse_pos_, game_start_buttons_[2])) {
         state_ = GameState::kPlaying;
         engine_.CreateGame(Difficulty::kEasy);
         // engine.start("Time Trial);
       }
     } else if (state_ == GameState::kPlaying) {
-      if (IsMouseInBox(mouse_pos_, game_buttons_[0])) {
+      if (IsMouseInBox(mouse_pos_, menu_return_button_)) {
         state_ = GameState::kMenu;
 
         selected_box_ = {-1, -1};
@@ -393,10 +382,8 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
 
       for (size_t row = 0; row < kBoardSize; row++) {
         for (size_t col = 0; col < kBoardSize; col++) {
-          std::vector<ci::vec2> bounds{game_grid_[row][col].first, game_grid_[row][col].second};
-
-          if (IsMouseInBox(mouse_pos_, bounds)) {
-            selected_box_ = {row, col}; // this feels wrong
+          if (IsMouseInBox(mouse_pos_, game_grid_[row][col])) {
+            selected_box_ = {row, col};
           }
         }
       }
