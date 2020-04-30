@@ -105,16 +105,14 @@ void MyApp::update() {
   mouse_pos_ = getMousePos() - getWindowPos();
 }
 
-void DrawBox(const ci::vec2& top_left,
-             const ci::vec2& bottom_right,
-             const ci::Color& color) {
+void DrawBox(std::pair<ci::vec2, ci::vec2> bounds, const ci::Color& color) {
   ci::gl::color(color);
 
   ci::Path2d box;
-  box.moveTo(top_left);
-  box.lineTo(ci::vec2(bottom_right.x, top_left.y));
-  box.lineTo(bottom_right);
-  box.lineTo(ci::vec2(top_left.x, bottom_right.y));
+  box.moveTo(bounds.first);
+  box.lineTo(ci::vec2(bounds.second.x, bounds.first.y));
+  box.lineTo(bounds.second);
+  box.lineTo(ci::vec2(bounds.first.x, bounds.second.y));
 
   box.close();
   ci::gl::draw(box);
@@ -158,18 +156,17 @@ void MyApp::draw() {
     // Highlight the box that the player has selected
     if (selected_box_.first != -1) {
       ci::Color color(1, 0, 0);
-      DrawBox(game_grid_[selected_box_.first][selected_box_.second].first,
-              game_grid_[selected_box_.first][selected_box_.second].second,
+      DrawBox(game_grid_[selected_box_.first][selected_box_.second],
               color);
-      DrawBox(ci::vec2(game_grid_[selected_box_.first][selected_box_.second].first.x - 1,
+      DrawBox({ci::vec2(game_grid_[selected_box_.first][selected_box_.second].first.x - 1,
                                game_grid_[selected_box_.first][selected_box_.second].first.y - 1),
           ci::vec2(game_grid_[selected_box_.first][selected_box_.second].second.x + 1,
-                               game_grid_[selected_box_.first][selected_box_.second].second.y + 1),
+                               game_grid_[selected_box_.first][selected_box_.second].second.y + 1)},
                       color);
-      DrawBox(ci::vec2(game_grid_[selected_box_.first][selected_box_.second].first.x + 1,
+      DrawBox({ci::vec2(game_grid_[selected_box_.first][selected_box_.second].first.x + 1,
                                game_grid_[selected_box_.first][selected_box_.second].first.y + 1),
           ci::vec2(game_grid_[selected_box_.first][selected_box_.second].second.x - 1,
-                               game_grid_[selected_box_.first][selected_box_.second].second.y - 1),
+                               game_grid_[selected_box_.first][selected_box_.second].second.y - 1)},
                       color);
     }
 
@@ -192,10 +189,10 @@ void MyApp::DrawMenu() const {
 
   // Draw game start buttons
   for (size_t i = 0; i < game_modes_.size(); i++) {
-    DrawBox(ci::vec2(window_center_.x - 120,
+    DrawBox({ci::vec2(window_center_.x - 120,
                              window_center_.y - 120 + i * 90),
         ci::vec2(window_center_.x + 120,
-                             window_center_.y - 60 + i * 90),
+                             window_center_.y - 60 + i * 90)},
         ci::Color(0, 0, 1));
   }
 
@@ -239,7 +236,7 @@ void MyApp::DrawSettings() const {
             ci::vec2(difficulty_button_.first.x + 60,
                      difficulty_button_.first.y + 25),
             40);
-  DrawBox(difficulty_button_.first, difficulty_button_.second, ci::Color::black());
+  DrawBox(difficulty_button_, ci::Color::black());
 
   // Draw instructions toggle
   ci::Color instr_color;
@@ -264,7 +261,7 @@ void MyApp::DrawSettings() const {
             ci::vec2(instructions_button_.second.x - 75,
                          instructions_button_.first.y - 20),
             40);
-  DrawBox(instructions_button_.first, instructions_button_.second, ci::Color::black());
+  DrawBox(instructions_button_, ci::Color::black());
 }
 
 void MyApp::DrawGrid() const {
@@ -273,7 +270,7 @@ void MyApp::DrawGrid() const {
 
   for (auto row : game_grid_) {
     for (auto col : row) {
-      DrawBox(col.first, col.second, color);
+      DrawBox(col, color);
     }
   }
 
@@ -307,9 +304,7 @@ void MyApp::DrawGrid() const {
 
 void MyApp::DrawGameScreen() const {
   // Draw back to menu button
-  DrawBox(menu_return_button_.first,
-          menu_return_button_.second,
-          ci::Color(0, 0, 1));
+  DrawBox(menu_return_button_, ci::Color(0, 0, 1));
   PrintText("Menu",
       ci::Color(1, 0, 0),
        ci::vec2(95, 50),
