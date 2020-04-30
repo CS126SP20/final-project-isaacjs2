@@ -9,7 +9,8 @@
 using nlohmann::json;
 
 namespace sudoku {
-Engine::Engine() : is_penciling_{false},
+Engine::Engine() : difficulty_{Difficulty::kEasy},
+              is_penciling_{false},
               easy_boards_{"easy_1.json", "easy_2.json", "easy_3.json"},
               medium_boards_{"medium_1.json", "medium_2.json", "medium_3.json"},
               hard_boards_{"hard_1.json", "hard_2.json", "hard_3.json"}
@@ -90,6 +91,18 @@ void Engine::SwitchEntryMode() {
 }
 bool Engine::IsStartingNumber(int row, int col) const {
   return is_starting_number_[row][col];
+}
+
+Engine::Difficulty Engine::GetDifficulty() const { return difficulty_; }
+
+void Engine::IncreaseDifficulty() {
+  if (difficulty_ == Difficulty::kEasy) {
+    difficulty_ = Difficulty::kMedium;
+  } else if (difficulty_ == Difficulty::kMedium) {
+    difficulty_ = Difficulty::kHard;
+  } else {
+    difficulty_ = Difficulty::kEasy;
+  }
 }
 
 }  // namespace sudoku
