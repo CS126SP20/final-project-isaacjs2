@@ -26,6 +26,7 @@ MyApp::MyApp()
     window_center_{getWindowCenter()},
     selected_box_{-1, -1},
     default_text_size_{30},
+    want_instructions_{true},
     game_modes_{{"Standard", "Time Attack", "Time Trial"}}
     {}
 
@@ -53,6 +54,10 @@ void MyApp::SetupMenu() {
   ci::vec2 diff_button_tl(getWindowBounds().x1 + 10, getWindowBounds().y2 - 60);
   ci::vec2 diff_button_br(getWindowBounds().x1 + 130, getWindowBounds().y2 - 10);
   difficulty_button_ = {diff_button_tl, diff_button_br};
+
+  ci::vec2 instr_button_tl(getWindowBounds().x2 - 110, getWindowBounds().y2 - 60);
+  ci::vec2 instr_button_br(getWindowBounds().x2 - 10, getWindowBounds().y2 - 10);
+  instructions_button_ = {instr_button_tl, instr_button_br};
 
 }
 
@@ -194,32 +199,7 @@ void MyApp::DrawMenu() const {
         ci::Color(0, 0, 1));
   }
 
-  // Draw difficulty picker
-  ci::Color color;
-  std::string difficulty;
-  if (engine_.GetDifficulty() == Difficulty::kEasy) {
-    color = ci::Color(0, 1, 0);
-    difficulty = "Easy";
-  } else if (engine_.GetDifficulty() == Difficulty::kMedium) {
-    color = ci::Color(1, 1, 0);
-    difficulty = "Medium";
-  } else if (engine_.GetDifficulty() == Difficulty::kHard) {
-    color = ci::Color(1, 0, 0);
-    difficulty = "Hard";
-  }
-  PrintText("Difficulty",
-            ci::Color::black(),
-            ci::vec2(200, 35),
-            ci::vec2(difficulty_button_.first.x + 55,
-                         difficulty_button_.first.y - 20),
-            40);
-  PrintText(difficulty,
-            color,
-            ci::vec2(120, 40),
-            ci::vec2(difficulty_button_.first.x + 60,
-                         difficulty_button_.first.y + 25),
-            40);
-  DrawBox(difficulty_button_.first, difficulty_button_.second, ci::Color::black());
+  DrawSettings();
 }
 
 void MyApp::PrintGameModes() const {
@@ -231,6 +211,60 @@ void MyApp::PrintGameModes() const {
                         window_center_.y - 90 + (float) 90 * i),
               default_text_size_);
   }
+}
+
+void MyApp::DrawSettings() const {
+  // Draw difficulty picker
+  ci::Color diff_color;
+  std::string difficulty;
+  if (engine_.GetDifficulty() == Difficulty::kEasy) {
+    diff_color = ci::Color(0, 1, 0);
+    difficulty = "Easy";
+  } else if (engine_.GetDifficulty() == Difficulty::kMedium) {
+    diff_color = ci::Color(1, 1, 0);
+    difficulty = "Medium";
+  } else if (engine_.GetDifficulty() == Difficulty::kHard) {
+    diff_color = ci::Color(1, 0, 0);
+    difficulty = "Hard";
+  }
+  PrintText("Difficulty",
+            ci::Color::black(),
+            ci::vec2(200, 35),
+            ci::vec2(difficulty_button_.first.x + 55,
+                     difficulty_button_.first.y - 20),
+            40);
+  PrintText(difficulty,
+            diff_color,
+            ci::vec2(120, 40),
+            ci::vec2(difficulty_button_.first.x + 60,
+                     difficulty_button_.first.y + 25),
+            40);
+  DrawBox(difficulty_button_.first, difficulty_button_.second, ci::Color::black());
+
+  // Draw instructions toggle
+  ci::Color instr_color;
+  string text;
+  if (want_instructions_) {
+    instr_color = ci::Color(0, 1, 0);
+    text = "ON";
+  } else {
+    instr_color = ci::Color(1, 0, 0);
+    text = "OFF";
+  }
+  PrintText(text,
+            instr_color,
+            ci::vec2(80, 40),
+            ci::vec2(instructions_button_.first.x + 50,
+                         instructions_button_.first.y + 25),
+            40);
+
+  PrintText("Instructions",
+            ci::Color::black(),
+            ci::vec2(200, 35),
+            ci::vec2(instructions_button_.second.x - 75,
+                         instructions_button_.first.y - 20),
+            40);
+  DrawBox(instructions_button_.first, instructions_button_.second, ci::Color::black());
 }
 
 void MyApp::DrawGrid() const {
@@ -407,6 +441,11 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
       // Change difficulty
       if (IsMouseInBox(mouse_pos_, difficulty_button_)) {
         engine_.IncreaseDifficulty();
+      }
+
+      // Toggle instructions
+      if (IsMouseInBox(mouse_pos_, instructions_button_)) {
+        want_instructions_ = !want_instructions_;
       }
     } else if (state_ == GameState::kPlaying) {
       if (IsMouseInBox(mouse_pos_, menu_return_button_)) {

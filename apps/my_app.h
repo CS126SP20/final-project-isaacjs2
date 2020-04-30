@@ -44,14 +44,17 @@ class MyApp : public cinder::app::App {
   void PrintBoardEntries() const;
   void DrawMenu() const;
   void PrintGameModes() const;
+  void DrawSettings() const;
   GameState state_;
   ci::vec2 mouse_pos_;
   ci::vec2 window_center_;
   pair<int, int> selected_box_;
   int default_text_size_;
   sudoku::Engine engine_;
+  bool want_instructions_;
   vector<pair<ci::vec2, ci::vec2>> game_start_buttons_;
   pair<ci::vec2, ci::vec2> difficulty_button_;
+  pair<ci::vec2, ci::vec2> instructions_button_;
   pair<ci::vec2, ci::vec2> menu_return_button_;
   pair<ci::vec2, ci::vec2> entry_mode_indicator_;
   array<array<pair<ci::vec2, ci::vec2>, kBoardSize>, kBoardSize> game_grid_;
