@@ -237,10 +237,6 @@ void MyApp::DrawGrid() const {
   }
 }
 
-bool HasValue(std::vector<std::string> values, int value) {
-  return std::find(values.begin(), values.end(), std::to_string(value)) != values.end();
-}
-
 void MyApp::DrawGameScreen() const {
   // Draw back to menu button
   DrawBox(menu_return_button_.first,
