@@ -26,7 +26,6 @@ MyApp::MyApp()
     board_size_{9},
     selected_box_{-1, -1},
     default_text_size_{30},
-    is_penciling_{false},
     game_modes_{{"Standard", "Time Attack", "Time Trial"}}
     {}
 
@@ -270,7 +269,7 @@ void MyApp::DrawGameScreen() const {
 
   // Draw entry mode indicator
   ci::Area box(game_buttons_[1][0], game_buttons_[1][1]);
-  if (is_penciling_) {
+  if (engine_.IsPenciling()) {
     ci::gl::draw(entry_type_images_[1], box);
   } else {
     ci::gl::draw(entry_type_images_[0], box);
@@ -333,7 +332,7 @@ void MyApp::keyDown(KeyEvent event) {
 
   if (selected_box_.first != -1) {
     // Update current pencil marks
-    if (is_penciling_
+    if (engine_.IsPenciling()
         && engine_.GetEntry(selected_box_.first, selected_box_.second) == 0) {
       for (size_t i = 1; i < board_size_ + 1; i++) {
         if (event.getCode() == i + 48) {
@@ -343,7 +342,7 @@ void MyApp::keyDown(KeyEvent event) {
         }
       }
     // Update board entries
-    } else if (!is_penciling_) {
+    } else if (!engine_.IsPenciling()) {
       for (size_t i = 1; i < board_size_ + 1; i++) {
         if (event.getCode() == i + 48) {
           engine_.SetEntry(selected_box_.first, selected_box_.second, i);
@@ -399,7 +398,7 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
   }
 
   if (event.isRight() && state_ == GameState::kPlaying) {
-    is_penciling_ = !is_penciling_;
+    engine_.SwitchEntryMode();
   }
 }
 void MyApp::ResetGameBoard() {

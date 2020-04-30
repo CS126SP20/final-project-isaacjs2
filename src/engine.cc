@@ -9,7 +9,8 @@
 using nlohmann::json;
 
 namespace sudoku {
-Engine::Engine() : easy_boards_{"easy_1.json", "easy_2.json", "easy_3.json"},
+Engine::Engine() : is_penciling_{false},
+              easy_boards_{"easy_1.json", "easy_2.json", "easy_3.json"},
               medium_boards_{"medium_1.json", "medium_2.json", "medium_3.json"},
               hard_boards_{"hard_1.json", "hard_2.json", "hard_3.json"}
               {}
@@ -76,4 +77,11 @@ void Engine::ClearPencilMarks(int row, int col) {
     pencil_marks_[row][col][num] = false;
   }
 }
+bool Engine::IsPenciling() const {
+  return is_penciling_;
+}
+void Engine::SwitchEntryMode() {
+  is_penciling_ = !is_penciling_;
+}
+
 }  // namespace sudoku

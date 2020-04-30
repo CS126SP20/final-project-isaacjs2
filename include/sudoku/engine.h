@@ -28,11 +28,14 @@ class Engine {
   bool IsPenciled(int row, int col, int num) const;
   void Pencil(int row, int col, int num);
   void ClearPencilMarks(int row, int col);
+  bool IsPenciling() const;
+  void SwitchEntryMode();
 
  private:
   void ImportGameBoard();
 
   std::string board_path_;
+  bool is_penciling_;
   array<array<int, kBoardSize>, kBoardSize> current_entries_;
   array<array<int, kBoardSize>, kBoardSize> solution_;
   array<array<array<bool, kBoardSize>,kBoardSize>, kBoardSize> pencil_marks_;
