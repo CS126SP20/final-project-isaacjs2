@@ -191,29 +191,20 @@ void DrawLine(float x1, float y1, float x2, float y2, const ci::Color& color) {
 void MyApp::DrawMenu() const {
   PrintGameModes();
 
-  ci::Color color((float) 17 / 256,
-                (float) 157 / 256,
-                 (float) 164 / 256);
-
   for (size_t i = 0; i < game_modes_.size(); i++) {
     DrawBox(ci::vec2(window_center_.x - 120,
                              window_center_.y - 120 + i * 90),
         ci::vec2(window_center_.x + 120,
                              window_center_.y - 60 + i * 90),
-                    color);
+        ci::Color(0, 0, 1));
   }
 }
 
 void MyApp::PrintGameModes() const {
-  ci::Color color = ci::Color((float) 255/256,
-                            (float) 94/256,
-                             (float) 91/256);
-  ci::vec2 button_size(200, 25);
-
   for (size_t i = 0; i < game_modes_.size(); i++) {
     PrintText(game_modes_[i],
-              color,
-              button_size,
+              ci::Color(1, 0, 0),
+              ci::vec2(200, 25),
               ci::vec2(window_center_.x,
                         window_center_.y - 90 + (float) 90 * i),
               default_text_size_);
@@ -266,13 +257,9 @@ void MyApp::DrawGameScreen() const {
   // Draw back to menu button
   DrawBox(game_buttons_[0][0],
       game_buttons_[0][1],
-      ci::Color((float) 17 / 256,
-                    (float) 157 / 256,
-                     (float) 164 / 256));
+      ci::Color(0, 0, 1));
   PrintText("Menu",
-      ci::Color((float) 255/256,
-                    (float) 94/256,
-                     (float) 91/256),
+      ci::Color(1, 0, 0),
        ci::vec2(95, 50),
        ci::vec2(55, 30),
        default_text_size_);
