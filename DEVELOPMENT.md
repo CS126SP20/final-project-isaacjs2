@@ -25,3 +25,15 @@
 - Added button to go back to the menu
 - Updated draw() to use more instance variables and helpers
 - Cleaned up long lines
+
+**4/28/20**
+- Added printing for pencil marks
+- Added functionality for deleting numbers
+- Added sample game boards
+- Set up engine class and started moving game logic to it
+
+**4/29/20**
+- Fixed bugs relating to moving code from app to engine
+- Finished moving game-related variables and functions to engine class
+- Made given numbers unmodifiable on the game board
+- Added difficulty selector in menu
