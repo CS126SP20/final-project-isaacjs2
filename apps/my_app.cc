@@ -26,6 +26,7 @@ MyApp::MyApp()
     window_center_{getWindowCenter()},
     selected_box_{-1, -1},
     default_text_size_{30},
+    current_difficulty_{1},
     game_modes_{{"Standard", "Time Attack", "Time Trial"}}
     {}
 
@@ -48,6 +49,12 @@ void MyApp::SetupMenu() {
     std::pair<ci::vec2, ci::vec2> button_bounds(top_left, bottom_right);
     game_start_buttons_.push_back(button_bounds);
   }
+
+  // Record the position of other menu buttons
+  ci::vec2 diff_button_tl(getWindowBounds().x1 + 10, getWindowBounds().y2 - 60);
+  ci::vec2 diff_button_br(getWindowBounds().x1 + 60, getWindowBounds().y2 - 10);
+  difficulty_picker_button_ = {diff_button_tl, diff_button_br};
+
 }
 
 void MyApp::SetupGameScreen() {
@@ -179,6 +186,7 @@ void DrawLine(float x1, float y1, float x2, float y2, const ci::Color& color) {
 void MyApp::DrawMenu() const {
   PrintGameModes();
 
+  // Draw game start buttons
   for (size_t i = 0; i < game_modes_.size(); i++) {
     DrawBox(ci::vec2(window_center_.x - 120,
                              window_center_.y - 120 + i * 90),
@@ -186,6 +194,29 @@ void MyApp::DrawMenu() const {
                              window_center_.y - 60 + i * 90),
         ci::Color(0, 0, 1));
   }
+
+  // Draw difficulty picker
+  ci::Color color;
+  if (current_difficulty_ == 1) {
+    color = ci::Color(0, 1, 0);
+  } else if (current_difficulty_ == 2) {
+    color = ci::Color(1, 1, 0);
+  } else if (current_difficulty_ == 3) {
+    color = ci::Color(1, 0, 0);
+  }
+  PrintText("Difficulty",
+            ci::Color::black(),
+            ci::vec2(200, 35),
+            ci::vec2(difficulty_picker_button_.first.x + 55,
+                         difficulty_picker_button_.first.y - 20),
+            40);
+  PrintText(std::to_string(current_difficulty_),
+            color,
+            ci::vec2(40, 40),
+            ci::vec2(difficulty_picker_button_.first.x + 25,
+                         difficulty_picker_button_.first.y + 25),
+            50);
+  DrawBox(difficulty_picker_button_.first, difficulty_picker_button_.second, ci::Color::black());
 }
 
 void MyApp::PrintGameModes() const {
@@ -368,6 +399,14 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
         state_ = GameState::kPlaying;
         engine_.CreateGame(Difficulty::kEasy);
         // engine.start("Time Trial);
+      }
+
+      // Change difficulty
+      if (IsMouseInBox(mouse_pos_, difficulty_picker_button_)) {
+        current_difficulty_++;
+        if (current_difficulty_ > 3) {
+          current_difficulty_ = 1;
+        }
       }
     } else if (state_ == GameState::kPlaying) {
       if (IsMouseInBox(mouse_pos_, menu_return_button_)) {

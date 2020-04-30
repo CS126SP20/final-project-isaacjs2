@@ -50,7 +50,9 @@ class MyApp : public cinder::app::App {
   pair<int, int> selected_box_;
   int default_text_size_;
   sudoku::Engine engine_;
+  int current_difficulty_;
   vector<pair<ci::vec2, ci::vec2>> game_start_buttons_;
+  pair<ci::vec2, ci::vec2> difficulty_picker_button_;
   pair<ci::vec2, ci::vec2> menu_return_button_;
   pair<ci::vec2, ci::vec2> entry_mode_indicator_;
   array<array<pair<ci::vec2, ci::vec2>, kBoardSize>, kBoardSize> game_grid_;
