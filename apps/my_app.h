@@ -36,7 +36,6 @@ class MyApp : public cinder::app::App {
   GameState state_;
   ci::vec2 mouse_pos_;
   ci::vec2 window_center_;
-  float board_size_;
   std::pair<int, int> selected_box_;
   int default_text_size_;
   sudoku::Engine engine_;
