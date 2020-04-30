@@ -185,6 +185,8 @@ void DrawLine(float x1, float y1, float x2, float y2, const ci::Color& color) {
 }
 
 void MyApp::DrawMenu() const {
+  PrintText("Sudoku!", ci::Color::black(), ci::vec2(500, 100), ci::vec2(window_center_.x, window_center_.y - 250), 100);
+
   PrintGameModes();
 
   // Draw game start buttons
