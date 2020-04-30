@@ -25,9 +25,6 @@ MyApp::MyApp()
     selected_box_{-1, -1},
     default_text_size_{30},
     is_penciling_{false},
-    board_paths_{"easy_1.json", "easy_2.json", "easy_3.json",
-                 "medium_1.json", "medium_2.json", "medium_3.json",
-                 "hard_1.json", "hard_2.json", "hard_3.json"},
     game_modes_{{"Standard", "Time Attack", "Time Trial"}}
     {}
 

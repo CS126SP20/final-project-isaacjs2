@@ -9,23 +9,14 @@
 using nlohmann::json;
 
 namespace sudoku {
-Engine::Engine() {}
-
-Engine::Engine(std::string path) {
-  board_path_ = std::move(path);
-
-  ImportGameBoard();
-
-  // Start with no numbers penciled in
-  for (auto row : pencil_marks_) {
-    for (auto col : row) {
-      col.fill(false);
-    }
-  }
-}
+Engine::Engine() : easy_boards_{"easy_1.json", "easy_2.json", "easy_3.json"},
+              medium_boards_{"medium_1.json", "medium_2.json", "medium_3.json"},
+              hard_boards_{"hard_1.json", "hard_2.json", "hard_3.json"}
+              {}
 
 void Engine::CreateGame(std::string path) {
-  board_path_ = R"(C:\Users\isaac\CLionProjects\Cinder\my-projects\final-project-isaacjs2\resources\easy_1.json)";
+  board_path_ = R"(C:\Users\isaac\CLionProjects\Cinder\my-projects
+                   \final-project-isaacjs2\resources\easy_1.json)";
 
   ImportGameBoard();
 

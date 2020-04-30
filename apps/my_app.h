@@ -42,7 +42,6 @@ class MyApp : public cinder::app::App {
   int default_text_size_;
   bool is_penciling_;
   sudoku::Engine engine_;
-  std::vector<std::string> board_paths_;
   std::vector<std::vector<ci::vec2>> menu_buttons_;
   std::vector<std::vector<ci::vec2>> game_buttons_;
   std::vector<std::vector<std::pair<ci::vec2, ci::vec2>>> game_grid_;
