@@ -42,6 +42,8 @@ void Engine::CreateGame(Difficulty difficulty) {
       }
     }
   }
+
+  is_penciling_ = false;
 }
 
 void Engine::ImportGameBoard() {

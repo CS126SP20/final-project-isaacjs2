@@ -382,7 +382,7 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
       if (IsMouseInBox(mouse_pos_, game_buttons_[0])) {
         state_ = GameState::kMenu;
 
-        ResetGameBoard();
+        selected_box_ = {-1, -1};
       }
 
       for (size_t row = 0; row < board_size_; row++) {
@@ -399,14 +399,6 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
 
   if (event.isRight() && state_ == GameState::kPlaying) {
     engine_.SwitchEntryMode();
-  }
-}
-void MyApp::ResetGameBoard() {
-  selected_box_ = {-1, -1};
-
-  for (size_t i = 0; i < board_size_ * board_size_; i++) {
-    board_entries_[i] = "0";
-    board_pencil_marks_[i].clear();
   }
 }
 }  // namespace myapp
