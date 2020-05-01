@@ -40,6 +40,12 @@ void Engine::CreateGame(Difficulty difficulty) {
       // Record starting positions
       is_starting_number_[row][col] = (current_entries_[row][col] != 0);
 
+      if (current_entries_[row][col] != 0) {
+        entry_states_[row][col] = EntryState::kCorrect;
+      } else {
+        entry_states_[row][col] = EntryState::kUnknown;
+      }
+
       // Start with no numbers penciled in
       for (size_t num = 0; num < kBoardSize; num++) {
         pencil_marks_[row][col][num] = false;
@@ -105,4 +111,21 @@ void Engine::IncreaseDifficulty() {
   }
 }
 
+Engine::EntryState Engine::GetEntryState(int row, int col) const {
+  return entry_states_[row][col];
+}
+
+void Engine::CheckBoard() {
+  for (size_t row = 0; row < kBoardSize; row++) {
+    for (size_t col = 0; col < kBoardSize; col++) {
+      if (current_entries_[row][col] == 0) {
+        entry_states_[row][col] = EntryState::kUnknown;
+      } else if (current_entries_[row][col] == solution_[row][col]) {
+        entry_states_[row][col] = EntryState::kCorrect;
+      } else {
+        entry_states_[row][col] = EntryState::kWrong;
+      }
+    }
+  }
+}
 }  // namespace sudoku

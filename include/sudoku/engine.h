@@ -16,9 +16,15 @@ class Engine {
 
  public:
   enum class Difficulty {
-    kEasy = 1,
-    kMedium = 2,
-    kHard = 3,
+    kEasy,
+    kMedium,
+    kHard,
+  };
+
+  enum class EntryState {
+    kUnknown,
+    kCorrect,
+    kWrong,
   };
 
   Engine();
@@ -33,6 +39,8 @@ class Engine {
   bool IsStartingNumber(int row, int col) const;
   Difficulty GetDifficulty() const;
   void IncreaseDifficulty();
+  EntryState GetEntryState(int row, int col) const;
+  void CheckBoard();
 
  private:
   void ImportGameBoard();
@@ -41,6 +49,7 @@ class Engine {
   std::string board_path_;
   bool is_penciling_;
   array<array<int, kBoardSize>, kBoardSize> current_entries_;
+  array<array<EntryState, kBoardSize>, kBoardSize> entry_states_;
   array<array<int, kBoardSize>, kBoardSize> solution_;
   array<array<array<bool, kBoardSize>,kBoardSize>, kBoardSize> pencil_marks_;
   array<array<bool, kBoardSize>, kBoardSize> is_starting_number_;
