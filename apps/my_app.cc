@@ -325,6 +325,10 @@ void MyApp::DrawGameScreen() const {
   DrawGrid();
 
   PrintBoardEntries();
+
+  if (want_instructions_) {
+    DrawGameInstructions();
+  }
 }
 
 void MyApp::PrintBoardEntries() const {
@@ -370,6 +374,45 @@ void MyApp::PrintBoardEntries() const {
       }
     }
   }
+}
+
+void MyApp::DrawGameInstructions() const {
+  PrintText("Welcome to Sudoku! To solve the puzzle,",
+            ci::Color::black(),
+            ci::vec2(600, 30),
+            ci::vec2(window_center_.x, getWindowBounds().y1 + 20),
+            default_text_size_);
+  PrintText("fill every row, column, and box with the numbers 1 to 9.",
+            ci::Color::black(),
+            ci::vec2(600, 30),
+            ci::vec2(window_center_.x, getWindowBounds().y1 + 50),
+            default_text_size_);
+  PrintText("Use your mouse and number pad to fill in the board.",
+            ci::Color::black(),
+            ci::vec2(600, 30),
+            ci::vec2(window_center_.x, getWindowBounds().y1 + 80),
+            default_text_size_);
+
+  PrintText("This symbol shows what entry mode you're in.",
+            ci::Color::black(),
+            ci::vec2(350, 20),
+            ci::vec2(620, getWindowBounds().y2 - 90),
+            20);
+  PrintText("Pen mode is for filling in the board, and",
+            ci::Color::black(),
+            ci::vec2(350, 20),
+            ci::vec2(620, getWindowBounds().y2 - 70),
+            20);
+  PrintText("pencil mode is for making notes when you're",
+            ci::Color::black(),
+            ci::vec2(350, 20),
+            ci::vec2(620, getWindowBounds().y2 - 50),
+            20);
+  PrintText("not sure what number goes in a box yet.",
+            ci::Color::black(),
+            ci::vec2(350, 20),
+            ci::vec2(620, getWindowBounds().y2 - 30),
+            20);
 }
 
 void MyApp::keyDown(KeyEvent event) {

@@ -41,6 +41,7 @@ class MyApp : public cinder::app::App {
   void SetupGameBoard();
   void DrawGrid() const;
   void DrawGameScreen() const;
+  void DrawGameInstructions() const;
   void PrintBoardEntries() const;
   void DrawMenu() const;
   void PrintGameModes() const;
