@@ -37,3 +37,7 @@
 - Finished moving game-related variables and functions to engine class
 - Made given numbers unmodifiable on the game board
 - Added difficulty selector in menu
+
+**4/30/20**
+- Made buttons to toggle difficulty and instructions
+- Wrote game instructions for game screen
