@@ -23,10 +23,10 @@ using sudoku::kBoardSize;
 MyApp::MyApp()
     : state_{GameState::kMenu},
     mouse_pos_{ci::vec2(-1, -1)},
-    window_center_{getWindowCenter()},
-    selected_box_{-1, -1},
-    default_text_size_{30},
-    want_instructions_{true},
+      win_center_{getWindowCenter()},
+      sel_box_{-1, -1},
+      def_text_size_{30},
+      want_instructions_{true},
     game_modes_{{"Standard", "Time Attack", "Time Trial"}}
     {}
 
@@ -41,23 +41,27 @@ void MyApp::setup() {
 void MyApp::SetupMenu() {
   // Record the positions of the menu buttons
   for (size_t i = 0; i < game_modes_.size(); i++) {
-    ci::vec2 top_left(window_center_.x - 120,
-                      window_center_.y - 120 + i * 90);
-    ci::vec2 bottom_right(window_center_.x + 120,
-                          window_center_.y - 60 + i * 90);
+    ci::vec2 top_left(win_center_.x - 120,
+                      win_center_.y - 120 + i * 90);
+    ci::vec2 bottom_right(win_center_.x + 120,
+                          win_center_.y - 60 + i * 90);
 
     std::pair<ci::vec2, ci::vec2> button_bounds(top_left, bottom_right);
-    game_start_buttons_.push_back(button_bounds);
+    game_start_btns_.push_back(button_bounds);
   }
 
   // Record the position of other menu buttons
-  ci::vec2 diff_button_tl(getWindowBounds().x1 + 10, getWindowBounds().y2 - 60);
-  ci::vec2 diff_button_br(getWindowBounds().x1 + 130, getWindowBounds().y2 - 10);
-  difficulty_button_ = {diff_button_tl, diff_button_br};
+  ci::vec2 diff_button_tl(getWindowBounds().x1 + 10,
+                          getWindowBounds().y2 - 60);
+  ci::vec2 diff_button_br(getWindowBounds().x1 + 130,
+                          getWindowBounds().y2 - 10);
+  difficulty_btn_ = {diff_button_tl, diff_button_br};
 
-  ci::vec2 instr_button_tl(getWindowBounds().x2 - 110, getWindowBounds().y2 - 60);
-  ci::vec2 instr_button_br(getWindowBounds().x2 - 10, getWindowBounds().y2 - 10);
-  instructions_button_ = {instr_button_tl, instr_button_br};
+  ci::vec2 instr_button_tl(getWindowBounds().x2 - 110,
+                           getWindowBounds().y2 - 60);
+  ci::vec2 instr_button_br(getWindowBounds().x2 - 10,
+                           getWindowBounds().y2 - 10);
+  instructions_btn = {instr_button_tl, instr_button_br};
 
 }
 
@@ -74,18 +78,19 @@ void MyApp::SetupGameScreen() {
   SetupGameBoard();
 
   // Record the positions of other boxes on game screen
-  menu_return_button_.first = {5, 5};
-  menu_return_button_.second = {105, 55};
+  menu_return_btn_.first = {5, 5};
+  menu_return_btn_.second = {105, 55};
 
-  entry_mode_indicator_.first = {window_center_.x - 50,
+  entry_mode_indicator_.first = {win_center_.x - 50,
                                  getWindowSize().y - 100};
-  entry_mode_indicator_.second = {window_center_.x + 50, getWindowSize().y};
+  entry_mode_indicator_.second = {win_center_.x + 50,
+                                      getWindowSize().y};
 }
 
 void MyApp::SetupGameBoard() {
   float tile_size = std::floor(600 / kBoardSize);
-  float left_bound = window_center_.x - ((float) kBoardSize / 2) * tile_size;
-  float top_bound = window_center_.y - ((float) kBoardSize / 2) * tile_size;
+  float left_bound = win_center_.x - ((float) kBoardSize / 2) * tile_size;
+  float top_bound = win_center_.y - ((float) kBoardSize / 2) * tile_size;
 
   for (size_t row = 0; row < kBoardSize; row++) {
     for (size_t col = 0; col < kBoardSize; col++) {
@@ -94,8 +99,7 @@ void MyApp::SetupGameBoard() {
       ci::vec2 bottom_right(left_bound + (col + 1) * tile_size,
                             top_bound + (row + 1) * tile_size);
 
-      std::pair<ci::vec2, ci::vec2> box_bounds(top_left, bottom_right);
-      game_grid_[row][col] = box_bounds;
+      game_grid_[row][col] = {top_left, bottom_right};
     }
 
   }
@@ -154,20 +158,25 @@ void MyApp::draw() {
     DrawMenu();
   } else if (state_ == GameState::kPlaying) {
     // Highlight the box that the player has selected
-    if (selected_box_.first != -1) {
+    if (sel_box_.first != -1) {
       ci::Color color(1, 0, 0);
-      DrawBox(game_grid_[selected_box_.first][selected_box_.second],
+      DrawBox(game_grid_[sel_box_.first][sel_box_.second], color);
+      DrawBox({
+        ci::vec2(
+            game_grid_[sel_box_.first][sel_box_.second].first.x - 1,
+            game_grid_[sel_box_.first][sel_box_.second].first.y - 1),
+        ci::vec2(
+            game_grid_[sel_box_.first][sel_box_.second].second.x + 1,
+            game_grid_[sel_box_.first][sel_box_.second].second.y + 1)},
               color);
-      DrawBox({ci::vec2(game_grid_[selected_box_.first][selected_box_.second].first.x - 1,
-                               game_grid_[selected_box_.first][selected_box_.second].first.y - 1),
-          ci::vec2(game_grid_[selected_box_.first][selected_box_.second].second.x + 1,
-                               game_grid_[selected_box_.first][selected_box_.second].second.y + 1)},
-                      color);
-      DrawBox({ci::vec2(game_grid_[selected_box_.first][selected_box_.second].first.x + 1,
-                               game_grid_[selected_box_.first][selected_box_.second].first.y + 1),
-          ci::vec2(game_grid_[selected_box_.first][selected_box_.second].second.x - 1,
-                               game_grid_[selected_box_.first][selected_box_.second].second.y - 1)},
-                      color);
+      DrawBox({
+        ci::vec2(
+            game_grid_[sel_box_.first][sel_box_.second].first.x + 1,
+            game_grid_[sel_box_.first][sel_box_.second].first.y + 1),
+        ci::vec2(
+            game_grid_[sel_box_.first][sel_box_.second].second.x - 1,
+            game_grid_[sel_box_.first][sel_box_.second].second.y - 1)},
+              color);
     }
 
     DrawGameScreen();
@@ -185,17 +194,17 @@ void DrawLine(float x1, float y1, float x2, float y2, const ci::Color& color) {
 }
 
 void MyApp::DrawMenu() const {
-  PrintText("Sudoku!", ci::Color::black(), ci::vec2(500, 100), ci::vec2(window_center_.x, window_center_.y - 250), 100);
+  PrintText("Sudoku!",
+            ci::Color::black(),
+            ci::vec2(500, 100),
+            ci::vec2(win_center_.x, win_center_.y - 250),
+            100);
 
   PrintGameModes();
 
   // Draw game start buttons
-  for (size_t i = 0; i < game_modes_.size(); i++) {
-    DrawBox({ci::vec2(window_center_.x - 120,
-                             window_center_.y - 120 + i * 90),
-        ci::vec2(window_center_.x + 120,
-                             window_center_.y - 60 + i * 90)},
-        ci::Color(0, 0, 1));
+  for (const auto& button : game_start_btns_) {
+    DrawBox(button, ci::Color(0, 0, 1));
   }
 
   DrawSettings();
@@ -206,9 +215,9 @@ void MyApp::PrintGameModes() const {
     PrintText(game_modes_[i],
               ci::Color(1, 0, 0),
               ci::vec2(200, 25),
-              ci::vec2(window_center_.x,
-                        window_center_.y - 90 + (float) 90 * i),
-              default_text_size_);
+              ci::vec2(win_center_.x,
+                        win_center_.y - 90 + (float) 90 * i),
+              def_text_size_);
   }
 }
 
@@ -229,16 +238,16 @@ void MyApp::DrawSettings() const {
   PrintText("Difficulty",
             ci::Color::black(),
             ci::vec2(200, 35),
-            ci::vec2(difficulty_button_.first.x + 55,
-                     difficulty_button_.first.y - 20),
+            ci::vec2(difficulty_btn_.first.x + 55,
+                         difficulty_btn_.first.y - 20),
             40);
   PrintText(difficulty,
             diff_color,
             ci::vec2(120, 40),
-            ci::vec2(difficulty_button_.first.x + 60,
-                     difficulty_button_.first.y + 25),
+            ci::vec2(difficulty_btn_.first.x + 60,
+                         difficulty_btn_.first.y + 25),
             40);
-  DrawBox(difficulty_button_, ci::Color::black());
+  DrawBox(difficulty_btn_, ci::Color::black());
 
   // Draw instructions toggle
   ci::Color instr_color;
@@ -253,25 +262,25 @@ void MyApp::DrawSettings() const {
   PrintText(text,
             instr_color,
             ci::vec2(80, 40),
-            ci::vec2(instructions_button_.first.x + 50,
-                         instructions_button_.first.y + 25),
+            ci::vec2(instructions_btn.first.x + 50,
+                         instructions_btn.first.y + 25),
             40);
 
   PrintText("Instructions",
             ci::Color::black(),
             ci::vec2(200, 35),
-            ci::vec2(instructions_button_.second.x - 75,
-                         instructions_button_.first.y - 20),
+            ci::vec2(instructions_btn.second.x - 75,
+                         instructions_btn.first.y - 20),
             40);
-  DrawBox(instructions_button_, ci::Color::black());
+  DrawBox(instructions_btn, ci::Color::black());
 }
 
 void MyApp::DrawGrid() const {
   float tile_size = std::floor(600 / kBoardSize);
   ci::Color color = ci::Color::black();
 
-  for (auto row : game_grid_) {
-    for (auto col : row) {
+  for (const auto& row : game_grid_) {
+    for (const auto& col : row) {
       DrawBox(col, color);
     }
   }
@@ -306,12 +315,12 @@ void MyApp::DrawGrid() const {
 
 void MyApp::DrawGameScreen() const {
   // Draw back to menu button
-  DrawBox(menu_return_button_, ci::Color(0, 0, 1));
+  DrawBox(menu_return_btn_, ci::Color(0, 0, 1));
   PrintText("Menu",
       ci::Color(1, 0, 0),
        ci::vec2(95, 50),
        ci::vec2(55, 30),
-       default_text_size_);
+            def_text_size_);
 
   // Draw entry mode indicator
   ci::Area box(entry_mode_indicator_.first,
@@ -342,11 +351,11 @@ void MyApp::PrintBoardEntries() const {
         for (size_t num = 1; num < kBoardSize + 1; num++) {
           if (engine_.IsPenciled(row, col, num)) {
             ci::vec2 mark_loc(game_grid_[row][col].first.x
-                              + tile_size / 6
-                              + ((num - 1) % 3) * tile_size / 3,
+                                  + tile_size / 6
+                                  + ((num - 1) % 3) * tile_size / 3,
                               game_grid_[row][col].first.y
-                              + tile_size / 6
-                              + ((num - 1) / 3) * tile_size / 3);
+                                  + tile_size / 6
+                                  + ((num - 1) / 3) * tile_size / 3);
 
             PrintText(std::to_string(num),
                       ci::Color::black(),
@@ -380,18 +389,18 @@ void MyApp::DrawGameInstructions() const {
   PrintText("Welcome to Sudoku! To solve the puzzle,",
             ci::Color::black(),
             ci::vec2(600, 30),
-            ci::vec2(window_center_.x, getWindowBounds().y1 + 20),
-            default_text_size_);
+            ci::vec2(win_center_.x, getWindowBounds().y1 + 20),
+            def_text_size_);
   PrintText("fill every row, column, and box with the numbers 1 to 9.",
             ci::Color::black(),
             ci::vec2(600, 30),
-            ci::vec2(window_center_.x, getWindowBounds().y1 + 50),
-            default_text_size_);
+            ci::vec2(win_center_.x, getWindowBounds().y1 + 50),
+            def_text_size_);
   PrintText("Use your mouse and number pad to fill in the board.",
             ci::Color::black(),
             ci::vec2(600, 30),
-            ci::vec2(window_center_.x, getWindowBounds().y1 + 80),
-            default_text_size_);
+            ci::vec2(win_center_.x, getWindowBounds().y1 + 80),
+            def_text_size_);
 
   PrintText("This symbol shows what entry mode you're in.",
             ci::Color::black(),
@@ -418,33 +427,33 @@ void MyApp::DrawGameInstructions() const {
 void MyApp::keyDown(KeyEvent event) {
   // Erase the current contents of a box
   if (event.getCode() == KeyEvent::KEY_BACKSPACE
-      && selected_box_.first != -1
-      && !engine_.IsStartingNumber(selected_box_.first, selected_box_.second)) {
-    if (engine_.GetEntry(selected_box_.first, selected_box_.second) == 0) {
-      engine_.ClearPencilMarks(selected_box_.first, selected_box_.second);
+      && sel_box_.first != -1
+      && !engine_.IsStartingNumber(sel_box_.first, sel_box_.second)) {
+    if (engine_.GetEntry(sel_box_.first, sel_box_.second) == 0) {
+      engine_.ClearPencilMarks(sel_box_.first, sel_box_.second);
     } else {
-      engine_.SetEntry(selected_box_.first, selected_box_.second, 0);
+      engine_.SetEntry(sel_box_.first, sel_box_.second, 0);
     }
   }
 
-  if (selected_box_.first != -1) {
+  if (sel_box_.first != -1) {
     // Update current pencil marks
     if (engine_.IsPenciling()
-        && engine_.GetEntry(selected_box_.first, selected_box_.second) == 0) {
+        && engine_.GetEntry(sel_box_.first, sel_box_.second) == 0) {
       for (size_t i = 1; i < kBoardSize + 1; i++) {
         if (event.getCode() == i + 48) {
-          engine_.Pencil(selected_box_.first, selected_box_.second, i);
+          engine_.Pencil(sel_box_.first, sel_box_.second, i);
 
           break;
         }
       }
     // Update board entries
     } else if (!engine_.IsPenciling()
-               && !engine_.IsStartingNumber(selected_box_.first,
-                                            selected_box_.second)) {
+               && !engine_.IsStartingNumber(sel_box_.first,
+                                            sel_box_.second)) {
       for (size_t i = 1; i < kBoardSize + 1; i++) {
         if (event.getCode() == i + 48) {
-          engine_.SetEntry(selected_box_.first, selected_box_.second, i);
+          engine_.SetEntry(sel_box_.first, sel_box_.second, i);
 
           break;
         }
@@ -461,43 +470,39 @@ bool IsMouseInBox(const ci::vec2& mouse_pos, std::pair<ci::vec2, ci::vec2> box_b
 }
 
 void MyApp::mouseDown(ci::app::MouseEvent event) {
-
   if (event.isLeft()) {
     if (state_ == GameState::kMenu) { //combine into for loop
-      if (IsMouseInBox(mouse_pos_, game_start_buttons_[0])) {
+      if (IsMouseInBox(mouse_pos_, game_start_btns_[0])) {
         state_ = GameState::kPlaying;
         engine_.CreateGame(Difficulty::kEasy);
-        // engine.start("Standard);
-      } else if (IsMouseInBox(mouse_pos_, game_start_buttons_[1])) {
+      } else if (IsMouseInBox(mouse_pos_, game_start_btns_[1])) {
         state_ = GameState::kPlaying;
         engine_.CreateGame(Difficulty::kEasy);
-        // engine.start("Time Attack);
-      } else if (IsMouseInBox(mouse_pos_, game_start_buttons_[2])) {
+      } else if (IsMouseInBox(mouse_pos_, game_start_btns_[2])) {
         state_ = GameState::kPlaying;
         engine_.CreateGame(Difficulty::kEasy);
-        // engine.start("Time Trial);
       }
 
       // Change difficulty
-      if (IsMouseInBox(mouse_pos_, difficulty_button_)) {
+      if (IsMouseInBox(mouse_pos_, difficulty_btn_)) {
         engine_.IncreaseDifficulty();
       }
 
       // Toggle instructions
-      if (IsMouseInBox(mouse_pos_, instructions_button_)) {
+      if (IsMouseInBox(mouse_pos_, instructions_btn)) {
         want_instructions_ = !want_instructions_;
       }
     } else if (state_ == GameState::kPlaying) {
-      if (IsMouseInBox(mouse_pos_, menu_return_button_)) {
+      if (IsMouseInBox(mouse_pos_, menu_return_btn_)) {
         state_ = GameState::kMenu;
 
-        selected_box_ = {-1, -1};
+        sel_box_ = {-1, -1};
       }
 
       for (size_t row = 0; row < kBoardSize; row++) {
         for (size_t col = 0; col < kBoardSize; col++) {
           if (IsMouseInBox(mouse_pos_, game_grid_[row][col])) {
-            selected_box_ = {row, col};
+            sel_box_ = {row, col};
           }
         }
       }

@@ -48,21 +48,20 @@ class MyApp : public cinder::app::App {
   void DrawSettings() const;
   GameState state_;
   ci::vec2 mouse_pos_;
-  ci::vec2 window_center_;
-  pair<int, int> selected_box_;
-  int default_text_size_;
+  ci::vec2 win_center_;
+  pair<int, int> sel_box_;
+  int def_text_size_;
   sudoku::Engine engine_;
   bool want_instructions_;
-  vector<pair<ci::vec2, ci::vec2>> game_start_buttons_;
-  pair<ci::vec2, ci::vec2> difficulty_button_;
-  pair<ci::vec2, ci::vec2> instructions_button_;
-  pair<ci::vec2, ci::vec2> menu_return_button_;
+  vector<pair<ci::vec2, ci::vec2>> game_start_btns_;
+  pair<ci::vec2, ci::vec2> difficulty_btn_;
+  pair<ci::vec2, ci::vec2> instructions_btn;
+  pair<ci::vec2, ci::vec2> menu_return_btn_;
   pair<ci::vec2, ci::vec2> entry_mode_indicator_;
   array<array<pair<ci::vec2, ci::vec2>, kBoardSize>, kBoardSize> game_grid_;
   vector<string> game_modes_;
   array<ci::gl::Texture2dRef, 2> entry_type_images_;
 };
-
 }  // namespace myapp
 
 #endif  // FINALPROJECT_APPS_MYAPP_H_
