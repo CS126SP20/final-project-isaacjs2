@@ -451,7 +451,7 @@ void MyApp::keyDown(KeyEvent event) {
   // Erase the current contents of a box
   if (event.getCode() == KeyEvent::KEY_BACKSPACE
       && sel_box_.first != -1
-      && !engine_.IsStartingNumber(sel_box_.first, sel_box_.second)) {
+      && engine_.GetEntryState(sel_box_.first, sel_box_.second) != sudoku::Engine::EntryState::kCorrect) {
     if (engine_.GetEntry(sel_box_.first, sel_box_.second) == 0) {
       engine_.ClearPencilMarks(sel_box_.first, sel_box_.second);
     } else {
@@ -472,8 +472,7 @@ void MyApp::keyDown(KeyEvent event) {
       }
     // Update board entries
     } else if (!engine_.IsPenciling()
-               && !engine_.IsStartingNumber(sel_box_.first,
-                                            sel_box_.second)) {
+               && engine_.GetEntryState(sel_box_.first, sel_box_.second) != sudoku::Engine::EntryState::kCorrect) {
       for (size_t i = 1; i < kBoardSize + 1; i++) {
         if (event.getCode() == i + 48) {
           engine_.SetEntry(sel_box_.first, sel_box_.second, i);

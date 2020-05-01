@@ -37,9 +37,6 @@ void Engine::CreateGame(Difficulty difficulty) {
 
   for (size_t row = 0; row < kBoardSize; row++) {
     for (size_t col = 0; col < kBoardSize; col++) {
-      // Record starting positions
-      is_starting_number_[row][col] = (current_entries_[row][col] != 0);
-
       if (current_entries_[row][col] != 0) {
         entry_states_[row][col] = EntryState::kCorrect;
       } else {
@@ -94,9 +91,6 @@ bool Engine::IsPenciling() const {
 }
 void Engine::SwitchEntryMode() {
   is_penciling_ = !is_penciling_;
-}
-bool Engine::IsStartingNumber(int row, int col) const {
-  return is_starting_number_[row][col];
 }
 
 Engine::Difficulty Engine::GetDifficulty() const { return difficulty_; }

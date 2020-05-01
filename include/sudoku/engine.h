@@ -36,7 +36,6 @@ class Engine {
   void ClearPencilMarks(int row, int col);
   bool IsPenciling() const;
   void SwitchEntryMode();
-  bool IsStartingNumber(int row, int col) const;
   Difficulty GetDifficulty() const;
   void IncreaseDifficulty();
   EntryState GetEntryState(int row, int col) const;
@@ -53,7 +52,6 @@ class Engine {
   array<array<EntryState, kBoardSize>, kBoardSize> entry_states_;
   array<array<int, kBoardSize>, kBoardSize> solution_;
   array<array<array<bool, kBoardSize>,kBoardSize>, kBoardSize> pencil_marks_;
-  array<array<bool, kBoardSize>, kBoardSize> is_starting_number_;
 
   std::vector<std::string> easy_boards_;
   std::vector<std::string> medium_boards_;
