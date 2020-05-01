@@ -82,10 +82,10 @@ void MyApp::SetupGameScreen() {
   menu_return_btn_.first = {5, 5};
   menu_return_btn_.second = {105, 55};
 
-  check_board_btn.first = {game_grid_[0][0].first.x,
-                            game_grid_[kBoardSize -1][0].second.y + 5};
-  check_board_btn.second = {game_grid_[0][0].first.x + 100,
-                            game_grid_[kBoardSize -1][0].second.y + 55};
+  check_board_btn.first = {game_grid_[0][0].first.x - 100,
+                            game_grid_[kBoardSize - 1][0].second.y - 50};
+  check_board_btn.second = {game_grid_[0][0].first.x - 5,
+                            game_grid_[kBoardSize - 1][0].second.y};
 
   entry_mode_indicator_.first = {win_center_.x - 50,
                                  getWindowSize().y - 100};
@@ -461,6 +461,32 @@ void MyApp::DrawGameInstructions() const {
             ci::Color::black(),
             ci::vec2(350, 20),
             ci::vec2(620, getWindowBounds().y2 - 30),
+            20);
+
+  PrintText("Click this button to check your solution so far.",
+            ci::Color::black(),
+            ci::vec2(350, 20),
+            ci::vec2(175, getWindowBounds().y2 - 90),
+            20);
+  PrintText("Correct entries will lock in and turn blue.",
+            ci::Color::black(),
+            ci::vec2(350, 20),
+            ci::vec2(175, getWindowBounds().y2 - 70),
+            20);
+  PrintText("Wrong ones will turn red. When you think you've",
+            ci::Color::black(),
+            ci::vec2(350, 20),
+            ci::vec2(175, getWindowBounds().y2 - 50),
+            20);
+  PrintText("solved the puzzle, click the button one last time",
+            ci::Color::black(),
+            ci::vec2(350, 20),
+            ci::vec2(175, getWindowBounds().y2 - 30),
+            20);
+  PrintText("to get your time and score.",
+            ci::Color::black(),
+            ci::vec2(350, 20),
+            ci::vec2(175, getWindowBounds().y2 - 10),
             20);
 }
 
