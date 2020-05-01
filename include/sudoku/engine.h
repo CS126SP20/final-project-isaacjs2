@@ -40,6 +40,7 @@ class Engine {
   Difficulty GetDifficulty() const;
   void IncreaseDifficulty();
   EntryState GetEntryState(int row, int col) const;
+  void ResetEntryState(int row, int col);
   void CheckBoard();
 
  private:

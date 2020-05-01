@@ -115,6 +115,10 @@ Engine::EntryState Engine::GetEntryState(int row, int col) const {
   return entry_states_[row][col];
 }
 
+void Engine::ResetEntryState(int row, int col) {
+  entry_states_[row][col] = EntryState::kUnknown;
+}
+
 void Engine::CheckBoard() {
   for (size_t row = 0; row < kBoardSize; row++) {
     for (size_t col = 0; col < kBoardSize; col++) {

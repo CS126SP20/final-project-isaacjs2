@@ -18,6 +18,7 @@ namespace myapp {
 
 using cinder::app::KeyEvent;
 using Difficulty = sudoku::Engine::Difficulty;
+using EntryState = sudoku::Engine::EntryState;
 using sudoku::kBoardSize;
 
 MyApp::MyApp()
@@ -80,6 +81,11 @@ void MyApp::SetupGameScreen() {
   // Record the positions of other boxes on game screen
   menu_return_btn_.first = {5, 5};
   menu_return_btn_.second = {105, 55};
+
+  check_board_btn.first = {game_grid_[0][0].first.x,
+                            game_grid_[kBoardSize -1][0].second.y + 5};
+  check_board_btn.second = {game_grid_[0][0].first.x + 100,
+                            game_grid_[kBoardSize -1][0].second.y + 55};
 
   entry_mode_indicator_.first = {win_center_.x - 50,
                                  getWindowSize().y - 100};
@@ -322,6 +328,15 @@ void MyApp::DrawGameScreen() const {
        ci::vec2(55, 30),
             def_text_size_);
 
+  // Draw check board button
+  DrawBox(check_board_btn, ci::Color::black());
+  PrintText("Check Board",
+            ci::Color::black(),
+            ci::vec2(95, 45),
+            ci::vec2(check_board_btn.first.x + 50,
+                         check_board_btn.first.y + 25),
+            def_text_size_);
+
   // Draw entry mode indicator
   ci::Area box(entry_mode_indicator_.first,
                entry_mode_indicator_.second);
@@ -371,8 +386,16 @@ void MyApp::PrintBoardEntries() const {
                           game_grid_[row][col].first.y + tile_size / 2);
 
         ci::Color color(ci::Color::black());
-        if (engine_.IsStartingNumber(row, col)) {
-          color = ci::Color(0, 0, 1);
+        switch (engine_.GetEntryState(row, col)) {
+          case sudoku::Engine::EntryState::kCorrect :
+            color = ci::Color(0, 0, 1);
+            break;
+          case sudoku::Engine::EntryState::kWrong :
+            color = ci::Color(1, 0, 0);
+            break;
+          case sudoku::Engine::EntryState::kUnknown :
+            color = ci::Color::black();
+            break;
         }
 
         PrintText(std::to_string(engine_.GetEntry(row, col)),
@@ -454,6 +477,7 @@ void MyApp::keyDown(KeyEvent event) {
       for (size_t i = 1; i < kBoardSize + 1; i++) {
         if (event.getCode() == i + 48) {
           engine_.SetEntry(sel_box_.first, sel_box_.second, i);
+          engine_.ResetEntryState(sel_box_.first, sel_box_.second);
 
           break;
         }
@@ -497,6 +521,10 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
         state_ = GameState::kMenu;
 
         sel_box_ = {-1, -1};
+      }
+
+      if (IsMouseInBox(mouse_pos_, check_board_btn)) {
+        engine_.CheckBoard();
       }
 
       for (size_t row = 0; row < kBoardSize; row++) {
