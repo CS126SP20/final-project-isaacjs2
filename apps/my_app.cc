@@ -113,6 +113,23 @@ void MyApp::SetupGameBoard() {
 
 void MyApp::update() {
   mouse_pos_ = getMousePos() - getWindowPos();
+
+  if (IsGameOver()) {
+    state_ = GameState::kGameOver;
+  }
+}
+
+bool MyApp::IsGameOver() {
+  for (size_t row = 0; row < kBoardSize; row++) {
+    for (size_t col = 0; col < kBoardSize; col++) {
+      if (engine_.GetEntryState(row, col)
+          != sudoku::Engine::EntryState::kCorrect) {
+        return false;
+      }
+    }
+  }
+
+  return true;
 }
 
 void DrawBox(std::pair<ci::vec2, ci::vec2> bounds, const ci::Color& color) {
@@ -451,7 +468,8 @@ void MyApp::keyDown(KeyEvent event) {
   // Erase the current contents of a box
   if (event.getCode() == KeyEvent::KEY_BACKSPACE
       && sel_box_.first != -1
-      && engine_.GetEntryState(sel_box_.first, sel_box_.second) != sudoku::Engine::EntryState::kCorrect) {
+      && engine_.GetEntryState(sel_box_.first, sel_box_.second)
+          != sudoku::Engine::EntryState::kCorrect) {
     if (engine_.GetEntry(sel_box_.first, sel_box_.second) == 0) {
       engine_.ClearPencilMarks(sel_box_.first, sel_box_.second);
     } else {
@@ -472,7 +490,8 @@ void MyApp::keyDown(KeyEvent event) {
       }
     // Update board entries
     } else if (!engine_.IsPenciling()
-               && engine_.GetEntryState(sel_box_.first, sel_box_.second) != sudoku::Engine::EntryState::kCorrect) {
+               && engine_.GetEntryState(sel_box_.first, sel_box_.second)
+                   != sudoku::Engine::EntryState::kCorrect) {
       for (size_t i = 1; i < kBoardSize + 1; i++) {
         if (event.getCode() == i + 48) {
           engine_.SetEntry(sel_box_.first, sel_box_.second, i);
