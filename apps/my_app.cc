@@ -483,7 +483,7 @@ void MyApp::keyDown(KeyEvent event) {
         && engine_.GetEntry(sel_box_.first, sel_box_.second) == 0) {
       for (size_t i = 1; i < kBoardSize + 1; i++) {
         if (event.getCode() == i + 48) {
-          engine_.Pencil(sel_box_.first, sel_box_.second, i);
+          engine_.ChangePencilMark(sel_box_.first, sel_box_.second, i);
 
           break;
         }

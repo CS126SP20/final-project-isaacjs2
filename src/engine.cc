@@ -77,8 +77,8 @@ bool Engine::IsPenciled(int row, int col, int num) const {
   return pencil_marks_[row][col][num - 1];
 }
 
-void Engine::Pencil(int row, int col, int num) {
-  pencil_marks_[row][col][num - 1] = true;
+void Engine::ChangePencilMark(int row, int col, int num) {
+  pencil_marks_[row][col][num - 1] = !pencil_marks_[row][col][num - 1];
 }
 
 void Engine::ClearPencilMarks(int row, int col) {
