@@ -5,6 +5,7 @@
 
 #include <cinder/app/App.h>
 #include <cinder/gl/Texture.h>
+#include <sudoku/leaderboard.h>
 
 #include <array>
 #include <string>
@@ -55,6 +56,7 @@ class MyApp : public cinder::app::App {
   pair<int, int> sel_box_;
   int def_text_size_;
   sudoku::Engine engine_;
+  sudoku::LeaderBoard leaderboard_;
   bool want_instructions_;
   vector<pair<ci::vec2, ci::vec2>> game_start_btns_;
   pair<ci::vec2, ci::vec2> difficulty_btn_;

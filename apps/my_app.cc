@@ -27,6 +27,7 @@ MyApp::MyApp()
     win_center_{getWindowCenter()},
     sel_box_{-1, -1},
     def_text_size_{30},
+    leaderboard_{"leaderboard.db"},
     want_instructions_{true},
     game_modes_{{"Standard", "Time Attack", "Time Trial"}}
     {}
