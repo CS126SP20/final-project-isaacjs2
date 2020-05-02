@@ -41,3 +41,7 @@
 **4/30/20**
 - Made buttons to toggle difficulty and instructions
 - Wrote game instructions for game screen
+
+**5/1/20**
+- Added a check board button that locks in correct entries and highlights wrong ones
+- Started working on Game Over/Win screen
