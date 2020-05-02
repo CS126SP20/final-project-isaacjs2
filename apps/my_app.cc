@@ -22,12 +22,12 @@ using EntryState = sudoku::Engine::EntryState;
 using sudoku::kBoardSize;
 
 MyApp::MyApp()
-    : state_{GameState::kMenu},
+    : state_{GameState::kGameOver},
     mouse_pos_{ci::vec2(-1, -1)},
-      win_center_{getWindowCenter()},
-      sel_box_{-1, -1},
-      def_text_size_{30},
-      want_instructions_{true},
+    win_center_{getWindowCenter()},
+    sel_box_{-1, -1},
+    def_text_size_{30},
+    want_instructions_{true},
     game_modes_{{"Standard", "Time Attack", "Time Trial"}}
     {}
 
@@ -37,6 +37,7 @@ void MyApp::setup() {
 
   SetupMenu();
   SetupGameScreen();
+  SetupGameOver();
 }
 
 void MyApp::SetupMenu() {
@@ -109,6 +110,12 @@ void MyApp::SetupGameBoard() {
     }
 
   }
+}
+
+void MyApp::SetupGameOver() {
+  // Record position of play again button
+  play_again_btn.first = {win_center_.x - 50, getWindowBounds().y2 - 55};
+  play_again_btn.second = {win_center_.x + 50, getWindowBounds().y2 - 5};
 }
 
 void MyApp::update() {
@@ -203,6 +210,8 @@ void MyApp::draw() {
     }
 
     DrawGameScreen();
+  } else if (state_ == GameState::kGameOver) {
+    DrawGameOver();
   }
 }
 
@@ -490,6 +499,18 @@ void MyApp::DrawGameInstructions() const {
             20);
 }
 
+void MyApp::DrawGameOver() const {
+  PrintText("You Win! \n Time: 00:00 \n Leaderboard Position: 000",
+            ci::Color::black(),
+            ci::vec2(700, 225),
+            ci::vec2(win_center_.x, getWindowBounds().y1 + 120),
+            70);
+
+  // Draw play again button
+  DrawBox(play_again_btn, ci::Color(1, 0, 0));
+  PrintText("Play Again", ci::Color(0, 0, 1), ci::vec2(95, 45), ci::vec2(play_again_btn.first.x + 50, play_again_btn.first.y + 25), def_text_size_);
+}
+
 void MyApp::keyDown(KeyEvent event) {
   // Erase the current contents of a box
   if (event.getCode() == KeyEvent::KEY_BACKSPACE
@@ -577,6 +598,10 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
             sel_box_ = {row, col};
           }
         }
+      }
+    } else if (state_ == GameState::kGameOver) {
+      if (IsMouseInBox(mouse_pos_, play_again_btn)) {
+        state_ = GameState::kMenu;
       }
     }
   }

@@ -39,6 +39,7 @@ class MyApp : public cinder::app::App {
   void SetupMenu();
   void SetupGameScreen();
   void SetupGameBoard();
+  void SetupGameOver();
   bool IsGameOver();
   void DrawGrid() const;
   void DrawGameScreen() const;
@@ -47,6 +48,7 @@ class MyApp : public cinder::app::App {
   void DrawMenu() const;
   void PrintGameModes() const;
   void DrawSettings() const;
+  void DrawGameOver() const;
   GameState state_;
   ci::vec2 mouse_pos_;
   ci::vec2 win_center_;
@@ -63,6 +65,7 @@ class MyApp : public cinder::app::App {
   array<array<pair<ci::vec2, ci::vec2>, kBoardSize>, kBoardSize> game_grid_;
   vector<string> game_modes_;
   array<ci::gl::Texture2dRef, 2> entry_type_images_;
+  pair<ci::vec2, ci::vec2> play_again_btn;
 };
 }  // namespace myapp
 
