@@ -59,6 +59,7 @@ class MyApp : public cinder::app::App {
   sudoku::LeaderBoard leaderboard_;
   vector<sudoku::Player> top_players_;
   bool want_instructions_;
+  std::chrono::time_point<std::chrono::system_clock> start_time_;
   bool is_entering_name_;
   string player_name_;
   vector<pair<ci::vec2, ci::vec2>> game_start_btns_;

@@ -24,7 +24,7 @@ using EntryState = sudoku::Engine::EntryState;
 using sudoku::kBoardSize;
 
 MyApp::MyApp()
-    : state_{GameState::kGameOver},
+    : state_{GameState::kMenu},
     mouse_pos_{ci::vec2(-1, -1)},
     win_center_{getWindowCenter()},
     sel_box_{-1, -1},
@@ -347,10 +347,16 @@ void MyApp::DrawGameScreen() const {
   // Draw back to menu button
   DrawBox(menu_return_btn_, ci::Color(0, 0, 1));
   PrintText("Menu",
-      ci::Color(1, 0, 0),
-       ci::vec2(95, 50),
-       ci::vec2(55, 30),
+           ci::Color(1, 0, 0),
+            ci::vec2(95, 50),
+            ci::vec2(55, 30),
             def_text_size_);
+
+  // Draw timer
+  PrintText("Time", ci::Color::black(), ci::vec2(100, 40), ci::vec2(game_grid_[0][kBoardSize - 1].second.x + 55, game_grid_[0][kBoardSize - 1].first.y + 20), 40);
+  auto time = std::chrono::system_clock::now() - start_time_;
+  std::string time2 = std::to_string((int) time.count() / 10000000);
+  PrintText(time2, ci::Color::black(), ci::vec2(100, 30), ci::vec2(game_grid_[0][kBoardSize - 1].second.x + 55, game_grid_[0][kBoardSize - 1].first.y + 60), 30);
 
   // Draw check board button
   DrawBox(check_board_btn, ci::Color::black());
@@ -505,8 +511,16 @@ void MyApp::DrawGameOver() const {
             60);
 
   if (is_entering_name_) {
-    PrintText("Enter name:", ci::Color::black(), ci::vec2(250, 50), ci::vec2(win_center_.x, win_center_.y - 50), 50);
-    PrintText(player_name_, ci::Color::black(), ci::vec2(600, 50), win_center_, 50);
+    PrintText("Enter name:",
+              ci::Color::black(),
+              ci::vec2(250, 50),
+              ci::vec2(win_center_.x, win_center_.y - 50),
+              50);
+    PrintText(player_name_,
+              ci::Color::black(),
+              ci::vec2(600, 50),
+              win_center_,
+              50);
   } else {
     DrawLeaderboard();
 
@@ -516,7 +530,7 @@ void MyApp::DrawGameOver() const {
               ci::Color(0, 0, 1),
               ci::vec2(95, 45),
               ci::vec2(play_again_btn.first.x + 50,
-                       play_again_btn.first.y + 25),
+                           play_again_btn.first.y + 25),
               def_text_size_);
   }
 }
@@ -532,15 +546,26 @@ void MyApp::DrawLeaderboard() const {
       color = ci::Color::black();
     }
 
-    PrintText(std::to_string(i + 1), color, ci::vec2(100, 50), ci::vec2(getWindowBounds().x1 + 125, win_center_.y - 140 + i * 50), 50);
+    PrintText(std::to_string(i + 1),
+              color,
+              ci::vec2(100, 50),
+              ci::vec2(getWindowBounds().x1 + 125,
+                           win_center_.y - 140 + i * 50),
+              50);
 
     PrintText(top_players_[i].name,
               color,
               ci::vec2(300, 50),
-              ci::vec2(win_center_.x - 50, win_center_.y - 140 + i * 50),
+              ci::vec2(win_center_.x - 50,
+                           win_center_.y - 140 + i * 50),
               50);
 
-    PrintText(std::to_string(top_players_[i].time), color, ci::vec2(300, 50), ci::vec2(win_center_.x + 250, win_center_.y - 140 + i * 50), 50);
+    PrintText(std::to_string(top_players_[i].time),
+              color,
+              ci::vec2(300, 50),
+              ci::vec2(win_center_.x + 250,
+                           win_center_.y - 140 + i * 50),
+              50);
   }
 }
 
@@ -623,7 +648,8 @@ void MyApp::keyDown(KeyEvent event) {
   }
 }
 
-bool IsMouseInBox(const ci::vec2& mouse_pos, std::pair<ci::vec2, ci::vec2> box_bounds) {
+bool IsMouseInBox(const ci::vec2& mouse_pos,
+                  const std::pair<ci::vec2, ci::vec2>& box_bounds) {
   return mouse_pos.x > box_bounds.first.x
          && mouse_pos.x < box_bounds.second.x
          && mouse_pos.y > box_bounds.first.y
@@ -636,12 +662,15 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
       if (IsMouseInBox(mouse_pos_, game_start_btns_[0])) {
         state_ = GameState::kPlaying;
         engine_.CreateGame(Difficulty::kEasy);
+        start_time_ = std::chrono::system_clock::now();
       } else if (IsMouseInBox(mouse_pos_, game_start_btns_[1])) {
         state_ = GameState::kPlaying;
         engine_.CreateGame(Difficulty::kEasy);
+        start_time_ = std::chrono::system_clock::now();
       } else if (IsMouseInBox(mouse_pos_, game_start_btns_[2])) {
         state_ = GameState::kPlaying;
         engine_.CreateGame(Difficulty::kEasy);
+        start_time_ = std::chrono::system_clock::now();
       }
 
       // Change difficulty
