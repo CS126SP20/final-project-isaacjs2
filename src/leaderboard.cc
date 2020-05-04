@@ -26,9 +26,9 @@ LeaderBoard::LeaderBoard(const string& db_path) : db_{db_path} {
   }
 }
 
-void LeaderBoard::AddScoreToLeaderBoard(const Player& player) {
+void LeaderBoard::AddTimeToLeaderBoard(const Player& player) {
   try {
-    db_ << "insert into leaderboard (name, score) values (?,?);"
+    db_ << "insert into leaderboard (name, time) values (?,?);"
         << player.name
         << player.time;
   } catch (const sqlite::sqlite_exception& e) {
@@ -51,39 +51,19 @@ vector<Player> GetPlayers(sqlite::database_binder* rows) {
   return players;
 }
 
-vector<Player> LeaderBoard::RetrieveHighScores(const size_t limit) {
+vector<Player> LeaderBoard::RetrieveBestTimes(const size_t limit) {
   try {
     auto rows = db_ << "select name,time from leaderboard "
-                       "order by time desc "
+                       "order by time asc "
                        "limit ?;"
                     << limit;
     return GetPlayers(&rows);
   } catch (const sqlite::sqlite_exception& e) {
-    std::cerr  << e.get_code() << ": " << e.what() << " during "
-               << e.get_sql() << std::endl;
+    std::cerr << e.get_code() << ": " << e.what() << " during " << e.get_sql()
+              << std::endl;
   }
 
   vector<Player> rows;
   return rows;
 }
-
-vector<Player> LeaderBoard::RetrieveHighScores(const Player& player,
-                                               const size_t limit) {
-  try {
-    auto rows = db_ << "select name,score from leaderboard "
-                       "where name = ? "
-                       "order by time desc "
-                       "limit ?;"
-                    << player.name
-                    << limit;
-    return GetPlayers(&rows);
-  } catch (const sqlite::sqlite_exception& e) {
-    std::cerr  << e.get_code() << ": " << e.what() << " during "
-               << e.get_sql() << std::endl;
-  }
-
-  vector<Player> rows;
-  return rows;
-}
-
 }  // namespace sudoku

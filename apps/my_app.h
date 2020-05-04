@@ -49,6 +49,7 @@ class MyApp : public cinder::app::App {
   void PrintGameModes() const;
   void DrawSettings() const;
   void DrawGameOver() const;
+  void DrawLeaderboard() const;
   GameState state_;
   ci::vec2 mouse_pos_;
   ci::vec2 win_center_;
@@ -56,6 +57,7 @@ class MyApp : public cinder::app::App {
   int def_text_size_;
   sudoku::Engine engine_;
   sudoku::LeaderBoard leaderboard_;
+  vector<sudoku::Player> top_players_;
   bool want_instructions_;
   bool is_entering_name_;
   string player_name_;

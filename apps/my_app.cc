@@ -14,6 +14,8 @@
 #include <fstream>
 #include <sudoku/engine.h>
 
+const char kDbPath[] = "leaderboard.db";
+
 namespace myapp {
 
 using cinder::app::KeyEvent;
@@ -27,7 +29,7 @@ MyApp::MyApp()
     win_center_{getWindowCenter()},
     sel_box_{-1, -1},
     def_text_size_{30},
-    leaderboard_{"leaderboard.db"},
+    leaderboard_{cinder::app::getAssetPath(kDbPath).string()},
     want_instructions_{true},
     is_entering_name_{true},
     player_name_{"_"},
@@ -126,6 +128,12 @@ void MyApp::update() {
 
   if (engine_.IsGameOver()) {
     state_ = GameState::kGameOver;
+  }
+
+  if (state_ == GameState::kGameOver) {
+    if (top_players_.empty() && !is_entering_name_) {
+      top_players_ = leaderboard_.RetrieveBestTimes(10);
+    }
   }
 }
 
@@ -492,22 +500,47 @@ void MyApp::DrawGameInstructions() const {
 void MyApp::DrawGameOver() const {
   PrintText("You Win! \n Time: 00:00 \n Leaderboard Position: 000",
             ci::Color::black(),
-            ci::vec2(700, 225),
+            ci::vec2(700, 180),
             ci::vec2(win_center_.x, getWindowBounds().y1 + 120),
-            70);
+            60);
 
   if (is_entering_name_) {
     PrintText("Enter name:", ci::Color::black(), ci::vec2(250, 50), ci::vec2(win_center_.x, win_center_.y - 50), 50);
     PrintText(player_name_, ci::Color::black(), ci::vec2(600, 50), win_center_, 50);
   } else {
+    DrawLeaderboard();
+
     // Draw play again button
     DrawBox(play_again_btn,ci::Color(1, 0, 0));
     PrintText("Play Again",
-             ci::Color(0, 0, 1),
-             ci::vec2(95, 45),
-             ci::vec2(play_again_btn.first.x + 50,
-                          play_again_btn.first.y + 25),
-             def_text_size_);
+              ci::Color(0, 0, 1),
+              ci::vec2(95, 45),
+              ci::vec2(play_again_btn.first.x + 50,
+                       play_again_btn.first.y + 25),
+              def_text_size_);
+  }
+}
+
+void MyApp::DrawLeaderboard() const {
+  //Print top 10 scores
+  ci::Color color;
+  for (size_t i = 0; i < top_players_.size(); i++) {
+    // Highlight player's scores if on the leaderboard
+    if (top_players_[i].name == player_name_) {
+      color = ci::Color(1, 1, 0);
+    } else {
+      color = ci::Color::black();
+    }
+
+    PrintText(std::to_string(i + 1), color, ci::vec2(100, 50), ci::vec2(getWindowBounds().x1 + 125, win_center_.y - 140 + i * 50), 50);
+
+    PrintText(top_players_[i].name,
+              color,
+              ci::vec2(300, 50),
+              ci::vec2(win_center_.x - 50, win_center_.y - 140 + i * 50),
+              50);
+
+    PrintText(std::to_string(top_players_[i].time), color, ci::vec2(300, 50), ci::vec2(win_center_.x + 250, win_center_.y - 140 + i * 50), 50);
   }
 }
 
@@ -564,6 +597,8 @@ void MyApp::keyDown(KeyEvent event) {
     if (player_name_.length() >= 11) {
       player_name_ = player_name_.substr(0,
                                        player_name_.length() - 1);
+
+      leaderboard_.AddTimeToLeaderBoard({player_name_, 10});
       is_entering_name_ = false;
     }
 
@@ -575,6 +610,7 @@ void MyApp::keyDown(KeyEvent event) {
         player_name_ = "Anonymous";
       }
 
+      leaderboard_.AddTimeToLeaderBoard({player_name_, 10});
       is_entering_name_ = false;
     }
 
