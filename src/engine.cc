@@ -134,7 +134,7 @@ bool Engine::IsGameOver() const {
         return false;
       }
     }
-  }  
+  }
 }
 
 }  // namespace sudoku

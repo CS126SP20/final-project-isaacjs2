@@ -29,6 +29,8 @@ MyApp::MyApp()
     def_text_size_{30},
     leaderboard_{"leaderboard.db"},
     want_instructions_{true},
+    is_entering_name_{true},
+    player_name_{"_"},
     game_modes_{{"Standard", "Time Attack", "Time Trial"}}
     {}
 
@@ -494,9 +496,19 @@ void MyApp::DrawGameOver() const {
             ci::vec2(win_center_.x, getWindowBounds().y1 + 120),
             70);
 
-  // Draw play again button
-  DrawBox(play_again_btn, ci::Color(1, 0, 0));
-  PrintText("Play Again", ci::Color(0, 0, 1), ci::vec2(95, 45), ci::vec2(play_again_btn.first.x + 50, play_again_btn.first.y + 25), def_text_size_);
+  if (is_entering_name_) {
+    PrintText("Enter name:", ci::Color::black(), ci::vec2(250, 50), ci::vec2(win_center_.x, win_center_.y - 50), 50);
+    PrintText(player_name_, ci::Color::black(), ci::vec2(600, 50), win_center_, 50);
+  } else {
+    // Draw play again button
+    DrawBox(play_again_btn,ci::Color(1, 0, 0));
+    PrintText("Play Again",
+             ci::Color(0, 0, 1),
+             ci::vec2(95, 45),
+             ci::vec2(play_again_btn.first.x + 50,
+                          play_again_btn.first.y + 25),
+             def_text_size_);
+  }
 }
 
 void MyApp::keyDown(KeyEvent event) {
@@ -535,6 +547,42 @@ void MyApp::keyDown(KeyEvent event) {
           break;
         }
       }
+    }
+  }
+
+  if (state_ == GameState::kGameOver && is_entering_name_) {
+    // The bounds on the event code make sure the key pressed has a char on it
+    // For example, letters and symbols are valid but F1 is not
+    if (player_name_.length() < 11
+        && event.getCode() > 32
+        && event.getCode() < 123) {
+      player_name_ = player_name_.substr(0,
+                                       player_name_.length() - 1)
+                     + event.getChar() + "_";
+    }
+
+    if (player_name_.length() >= 11) {
+      player_name_ = player_name_.substr(0,
+                                       player_name_.length() - 1);
+      is_entering_name_ = false;
+    }
+
+    if (event.getCode() == 13) {
+      player_name_ = player_name_.substr(0,
+                                       player_name_.length() - 1);
+
+      if (player_name_.length() == 0) {
+        player_name_ = "Anonymous";
+      }
+
+      is_entering_name_ = false;
+    }
+
+    if (event.getCode() == KeyEvent::KEY_BACKSPACE
+        && player_name_.length() > 1) {
+      player_name_ = player_name_.substr(0,
+                                       player_name_.length() - 2)
+                     + "_";
     }
   }
 }

@@ -57,6 +57,8 @@ class MyApp : public cinder::app::App {
   sudoku::Engine engine_;
   sudoku::LeaderBoard leaderboard_;
   bool want_instructions_;
+  bool is_entering_name_;
+  string player_name_;
   vector<pair<ci::vec2, ci::vec2>> game_start_btns_;
   pair<ci::vec2, ci::vec2> difficulty_btn_;
   pair<ci::vec2, ci::vec2> instructions_btn;
