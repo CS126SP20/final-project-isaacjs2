@@ -126,6 +126,11 @@ void MyApp::SetupGameOver() {
 void MyApp::update() {
   mouse_pos_ = getMousePos() - getWindowPos();
 
+  if (state_ == GameState::kPlaying) {
+    auto time = std::chrono::system_clock::now() - start_time_;
+    engine_.SetGameTime(time);
+  }
+
   if (engine_.IsGameOver()) {
     state_ = GameState::kGameOver;
   }
@@ -343,7 +348,7 @@ void MyApp::DrawGrid() const {
   }
 }
 
-void MyApp::DrawGameScreen() const {
+void MyApp::DrawGameScreen() {
   // Draw back to menu button
   DrawBox(menu_return_btn_, ci::Color(0, 0, 1));
   PrintText("Menu",
@@ -353,10 +358,17 @@ void MyApp::DrawGameScreen() const {
             def_text_size_);
 
   // Draw timer
-  PrintText("Time", ci::Color::black(), ci::vec2(100, 40), ci::vec2(game_grid_[0][kBoardSize - 1].second.x + 55, game_grid_[0][kBoardSize - 1].first.y + 20), 40);
-  auto time = std::chrono::system_clock::now() - start_time_;
-  std::string time2 = std::to_string((int) time.count() / 10000000);
-  PrintText(time2, ci::Color::black(), ci::vec2(100, 30), ci::vec2(game_grid_[0][kBoardSize - 1].second.x + 55, game_grid_[0][kBoardSize - 1].first.y + 60), 30);
+  PrintText("Time", ci::Color::black(),
+            ci::vec2(100, 40),
+            ci::vec2(game_grid_[0][kBoardSize - 1].second.x + 55,
+                         game_grid_[0][kBoardSize - 1].first.y + 20),
+            40);
+  PrintText(std::to_string(engine_.GetGameTime()),
+            ci::Color::black(),
+            ci::vec2(100, 30),
+            ci::vec2(game_grid_[0][kBoardSize - 1].second.x + 55,
+                         game_grid_[0][kBoardSize - 1].first.y + 60),
+            30);
 
   // Draw check board button
   DrawBox(check_board_btn, ci::Color::black());

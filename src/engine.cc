@@ -2,8 +2,10 @@
 
 #include <sudoku/engine.h>
 
+#include <chrono>
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include <ratio>
 #include <utility>
 
 using nlohmann::json;
@@ -11,6 +13,7 @@ using nlohmann::json;
 namespace sudoku {
 Engine::Engine() : difficulty_{Difficulty::kEasy},
               is_penciling_{false},
+              game_time_{0},
               easy_boards_{"easy_1.json", "easy_2.json", "easy_3.json"},
               medium_boards_{"medium_1.json", "medium_2.json", "medium_3.json"},
               hard_boards_{"hard_1.json", "hard_2.json", "hard_3.json"}
@@ -135,6 +138,16 @@ bool Engine::IsGameOver() const {
       }
     }
   }
+
+  return true;
+}
+
+int Engine::GetGameTime() const {
+  return game_time_;
+}
+
+void Engine::SetGameTime(std::chrono::duration<long long, std::ratio<1, 10000000>> time) {
+  game_time_ = (int) time.count() / 10000000;
 }
 
 }  // namespace sudoku

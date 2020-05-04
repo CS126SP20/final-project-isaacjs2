@@ -5,6 +5,8 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <ratio>
+#include <chrono>
 
 using std::array;
 
@@ -42,6 +44,8 @@ class Engine {
   void ResetEntryState(int row, int col);
   void CheckBoard();
   bool IsGameOver() const;
+  int GetGameTime() const;
+  void SetGameTime(std::chrono::duration<long long, std::ratio<1, 10000000>> time);
 
  private:
   void ImportGameBoard();
@@ -49,6 +53,7 @@ class Engine {
   Difficulty difficulty_;
   std::string board_path_;
   bool is_penciling_;
+  int game_time_;
   array<array<int, kBoardSize>, kBoardSize> current_entries_;
   array<array<EntryState, kBoardSize>, kBoardSize> entry_states_;
   array<array<int, kBoardSize>, kBoardSize> solution_;
