@@ -122,22 +122,9 @@ void MyApp::SetupGameOver() {
 void MyApp::update() {
   mouse_pos_ = getMousePos() - getWindowPos();
 
-  if (IsGameOver()) {
+  if (engine_.IsGameOver()) {
     state_ = GameState::kGameOver;
   }
-}
-
-bool MyApp::IsGameOver() {
-  for (size_t row = 0; row < kBoardSize; row++) {
-    for (size_t col = 0; col < kBoardSize; col++) {
-      if (engine_.GetEntryState(row, col)
-          != sudoku::Engine::EntryState::kCorrect) {
-        return false;
-      }
-    }
-  }
-
-  return true;
 }
 
 void DrawBox(std::pair<ci::vec2, ci::vec2> bounds, const ci::Color& color) {

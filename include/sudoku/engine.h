@@ -41,6 +41,7 @@ class Engine {
   EntryState GetEntryState(int row, int col) const;
   void ResetEntryState(int row, int col);
   void CheckBoard();
+  bool IsGameOver() const;
 
  private:
   void ImportGameBoard();

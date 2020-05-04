@@ -41,7 +41,6 @@ class MyApp : public cinder::app::App {
   void SetupGameScreen();
   void SetupGameBoard();
   void SetupGameOver();
-  bool IsGameOver();
   void DrawGrid() const;
   void DrawGameScreen() const;
   void DrawGameInstructions() const;

@@ -126,4 +126,15 @@ void Engine::CheckBoard() {
     }
   }
 }
+
+bool Engine::IsGameOver() const {
+  for (size_t row = 0; row < kBoardSize; row++) {
+    for (size_t col = 0; col < kBoardSize; col++) {
+      if (GetEntryState(row, col) != sudoku::Engine::EntryState::kCorrect) {
+        return false;
+      }
+    }
+  }  
+}
+
 }  // namespace sudoku
