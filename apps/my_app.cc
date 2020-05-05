@@ -24,7 +24,7 @@ using EntryState = sudoku::Engine::EntryState;
 using sudoku::kBoardSize;
 
 MyApp::MyApp()
-    : state_{GameState::kGameOver},
+    : state_{GameState::kMenu},
     mouse_pos_{ci::vec2(-1, -1)},
     win_center_{getWindowCenter()},
     sel_box_{-1, -1},
@@ -523,10 +523,12 @@ void MyApp::DrawGameInstructions() const {
 }
 
 void MyApp::DrawGameOver() const {
-  PrintText("You Win! \n Time: 00:00 \n Leaderboard Position: 000",
-            ci::Color::black(),
-            ci::vec2(700, 180),
-            ci::vec2(win_center_.x, getWindowBounds().y1 + 120),
+  PrintText("You Win! \n Time: "
+                  + std::to_string(engine_.GetGameTime())
+                  + " seconds",
+            ci::Color(0, 0, 1),
+            ci::vec2(700, 120),
+            ci::vec2(win_center_.x, getWindowBounds().y1 + 60),
             60);
 
   if (is_entering_name_) {
@@ -554,6 +556,9 @@ void MyApp::DrawGameOver() const {
 }
 
 void MyApp::DrawLeaderboard() const {
+  PrintText("Player", ci::Color::black(), ci::vec2(300, 50), ci::vec2(win_center_.x - 50, win_center_.y - 190), 50);
+  PrintText("Time", ci::Color::black(), ci::vec2(300, 50), ci::vec2(win_center_.x + 250, win_center_.y - 190), 50);
+
   //Print top 10 scores
   ci::Color color;
   for (size_t i = 0; i < top_players_.size(); i++) {
