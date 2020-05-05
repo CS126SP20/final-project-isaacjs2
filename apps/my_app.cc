@@ -733,15 +733,15 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
     if (state_ == GameState::kMenu) { //combine into for loop
       if (IsMouseInBox(mouse_pos_, game_start_btns_[0])) {
         state_ = GameState::kPlaying;
-        engine_.CreateGame(Difficulty::kEasy);
+        engine_.CreateGame();
         start_time_ = std::chrono::system_clock::now();
       } else if (IsMouseInBox(mouse_pos_, game_start_btns_[1])) {
         state_ = GameState::kPlaying;
-        engine_.CreateGame(Difficulty::kEasy);
+        engine_.CreateGame();
         start_time_ = std::chrono::system_clock::now();
       } else if (IsMouseInBox(mouse_pos_, game_start_btns_[2])) {
         state_ = GameState::kPlaying;
-        engine_.CreateGame(Difficulty::kEasy);
+        engine_.CreateGame();
         start_time_ = std::chrono::system_clock::now();
       }
 

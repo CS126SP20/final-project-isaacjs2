@@ -12,6 +12,9 @@ using nlohmann::json;
 using std::pair;
 
 namespace sudoku {
+
+std::string kResourcePath = R"(C:\Users\isaac\CLionProjects\Cinder\my-projects\final-project-isaacjs2\resources\)";
+
 Engine::Engine() : difficulty_{Difficulty::kEasy},
               is_penciling_{false},
               game_time_{0},
@@ -20,20 +23,20 @@ Engine::Engine() : difficulty_{Difficulty::kEasy},
               hard_boards_{"hard_1.json", "hard_2.json", "hard_3.json"}
               {}
 
-void Engine::CreateGame(Difficulty difficulty) {
+void Engine::CreateGame() {
   // Get a board of the right difficulty
-  switch (difficulty) {
+  unsigned seed = time(nullptr);
+  std::srand(seed);
+
+  switch (difficulty_) {
     case Difficulty::kEasy :
-      board_path_ = "C:\\Users\\isaac\\CLionProjects\\Cinder\\my-projects"
-                    "\\final-project-isaacjs2\\resources\\easy_1.json";
+      board_path_ = kResourcePath + easy_boards_[std::rand() % 3];
       break;
     case Difficulty::kMedium :
-      board_path_ = "C:\\Users\\isaac\\CLionProjects\\Cinder\\my-projects"
-                    "\\final-project-isaacjs2\\resources\\medium_1.json";
+      board_path_ = kResourcePath + medium_boards_[std::rand() % 3];
       break;
     case Difficulty::kHard :
-      board_path_ = "C:\\Users\\isaac\\CLionProjects\\Cinder\\my-projects"
-                    "\\final-project-isaacjs2\\resources\\hard_1.json";
+      board_path_ = kResourcePath + hard_boards_[std::rand() % 3];
       break;
   }
 

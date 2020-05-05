@@ -31,7 +31,7 @@ class Engine {
   };
 
   Engine();
-  void CreateGame(Difficulty difficulty);
+  void CreateGame();
   int GetEntry(pair<int, int> entry) const;
   void SetEntry(pair<int, int> entry, int num);
   bool IsPenciled(pair<int, int> entry, int num) const;
