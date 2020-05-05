@@ -27,14 +27,14 @@ const size_t kRegTextSize = 30;
 const size_t kBigTextSize = 50;
 
 MyApp::MyApp()
-    : state_{GameState::kGameOver},
+    : state_{GameState::kMenu},
     mouse_pos_{ci::vec2(-1, -1)},
     win_center_{getWindowCenter()},
     sel_box_{-1, -1},
     leaderboard_{cinder::app::getAssetPath(kDbPath).string()},
     want_instructions_{true},
     is_entering_name_{true},
-    player_name_{"_"},
+    player_name_{""},
     game_modes_{{"Standard", "Time Attack", "Time Trial"}}
     {}
 
@@ -656,25 +656,17 @@ void MyApp::keyDown(KeyEvent event) {
 
     // The bounds on the event code make sure the key pressed has a char on it
     // For example, letters and symbols are valid but F1 is not
-    if (player_name_.length() < max_name_len + 1
+    if (player_name_.length() < max_name_len
         && event.getCode() > 32
         && event.getCode() < 123) {
-      player_name_ = player_name_.substr(0,
-                                       player_name_.length() - 1)
-                     + event.getChar() + "_";
+      player_name_ = player_name_ + event.getChar();
     }
 
-    if (player_name_.length() >= max_name_len + 1) {
-      player_name_ = player_name_.substr(0,
-                                       player_name_.length() - 1);
-
+    if (player_name_.length() >= max_name_len) {
       is_entering_name_ = false;
     }
 
     if (event.getCode() == KeyEvent::KEY_RETURN) {
-      player_name_ = player_name_.substr(0,
-                                       player_name_.length() - 1);
-
       if (player_name_.length() == 0) {
         player_name_ = "Anonymous";
       }
@@ -683,10 +675,9 @@ void MyApp::keyDown(KeyEvent event) {
     }
 
     if (event.getCode() == KeyEvent::KEY_BACKSPACE
-        && player_name_.length() > 1) {
+          && player_name_.length() > 0) {
       player_name_ = player_name_.substr(0,
-                                       player_name_.length() - 2)
-                     + "_";
+                                       player_name_.length() - 1);
     }
   }
 }
