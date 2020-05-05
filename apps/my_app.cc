@@ -153,11 +153,29 @@ void MyApp::update() {
 
   if (state_ == GameState::kGameOver) {
     if (top_players_.empty() && !is_entering_name_) {
-      leaderboard_.AddTimeToLeaderBoard({player_name_,
-                                         static_cast<size_t>(
-                                               engine_.GetGameTime())});
 
-      top_players_ = leaderboard_.RetrieveBestTimes(10);
+      std::string difficulty;
+      if (engine_.GetDifficulty() == Difficulty::kEasy) {
+        difficulty = "easy";
+      } else if (engine_.GetDifficulty() == Difficulty::kMedium) {
+        difficulty = "medium";
+      } else if (engine_.GetDifficulty() == Difficulty::kHard) {
+        difficulty = "hard";
+      }
+
+      std::string mode;
+      if (engine_.GetGameType() == GameType::kStandard) {
+        mode = "standard";
+      } else if (engine_.GetGameType() == GameType::kTimeTrial) {
+        mode = "trial";
+      } else if (engine_.GetGameType() == GameType::kTimeAttack) {
+        mode = "attack";
+        difficulty = "easy";
+      }
+
+      leaderboard_.AddTimeToLeaderBoard({player_name_, static_cast<size_t>(engine_.GetGameTime())}, mode, difficulty);
+
+      top_players_ = leaderboard_.RetrieveBestTimes(10, mode, difficulty);
     }
   }
 }
