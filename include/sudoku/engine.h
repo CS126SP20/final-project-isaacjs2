@@ -30,7 +30,7 @@ class Engine {
     kWrong,
   };
 
-  enum class GameType {
+  enum class GameMode {
     kStandard,
     kTimeTrial,
     kTimeAttack
@@ -54,8 +54,8 @@ class Engine {
   bool IsGameOver() const;
   int GetGameTime() const;
   void UpdateGameTime();
-  GameType GetGameType() const;
-  void SetGameType(GameType type);
+  GameMode GetGameMode() const;
+  void SetGameMode(GameMode mode);
   int GetGamesCompleted() const;
   void IncreaseGamesCompleted();
   void SetStartTime(std::chrono::time_point<std::chrono::system_clock> time);
@@ -65,7 +65,7 @@ class Engine {
   void ImportGameBoard();
 
   Difficulty difficulty_;
-  GameType game_type_;
+  GameMode game_mode_;
   std::string board_path_;
   bool is_penciling_;
   int game_time_;

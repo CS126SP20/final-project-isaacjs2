@@ -16,7 +16,7 @@ namespace sudoku {
 std::string kResourcePath = R"(C:\Users\isaac\CLionProjects\Cinder\my-projects\final-project-isaacjs2\resources\)";
 
 Engine::Engine() : difficulty_{Difficulty::kEasy},
-              game_type_{GameType::kStandard},
+              game_mode_{GameMode::kStandard},
               is_penciling_{false},
               game_time_{0},
               games_completed_{0},
@@ -162,12 +162,12 @@ void Engine::UpdateGameTime() {
       (std::chrono::system_clock::now() - start_time_).count();
 }
 
-Engine::GameType Engine::GetGameType() const {
-  return game_type_;
+Engine::GameMode Engine::GetGameMode() const {
+  return game_mode_;
 }
 
-void Engine::SetGameType(GameType type) {
-  game_type_ = type;
+void Engine::SetGameMode(GameMode mode) {
+  game_mode_ = mode;
 }
 
 int Engine::GetGamesCompleted() const {
@@ -185,7 +185,7 @@ void Engine::SetStartTime(std::chrono::time_point<std::chrono::system_clock> tim
 void Engine::ResetGame() {
   is_penciling_ = false;
   game_time_ = 0;
-  game_type_ = GameType::kStandard;
+  game_mode_ = GameMode::kStandard;
   games_completed_ = 0;
 
   for (size_t row = 0; row < kBoardSize; row++) {

@@ -21,7 +21,7 @@ namespace myapp {
 using cinder::app::KeyEvent;
 using Difficulty = sudoku::Engine::Difficulty;
 using EntryState = sudoku::Engine::EntryState;
-using GameType = sudoku::Engine::GameType;
+using GameMode = sudoku::Engine::GameMode;
 using sudoku::kBoardSize;
 
 const size_t kRegTextSize = 30;
@@ -136,11 +136,11 @@ void MyApp::update() {
   if (engine_.IsGameOver()) {
     engine_.IncreaseGamesCompleted();
 
-    if (engine_.GetGameType() == GameType::kStandard) {
+    if (engine_.GetGameMode() == GameMode::kStandard) {
         state_ = GameState::kGameOver;
     } else {
       if (engine_.GetGamesCompleted() < 3) {
-        if (engine_.GetGameType() == GameType::kTimeAttack) {
+        if (engine_.GetGameMode() == GameMode::kTimeAttack) {
           engine_.IncreaseDifficulty();
         }
 
@@ -153,23 +153,11 @@ void MyApp::update() {
 
   if (state_ == GameState::kGameOver) {
     if (top_players_.empty() && !is_entering_name_) {
+      std::string mode = GetModeAsString();
+      std::string difficulty = GetDifficultyAsString();
 
-      std::string difficulty;
-      if (engine_.GetDifficulty() == Difficulty::kEasy) {
-        difficulty = "easy";
-      } else if (engine_.GetDifficulty() == Difficulty::kMedium) {
-        difficulty = "medium";
-      } else if (engine_.GetDifficulty() == Difficulty::kHard) {
-        difficulty = "hard";
-      }
-
-      std::string mode;
-      if (engine_.GetGameType() == GameType::kStandard) {
-        mode = "standard";
-      } else if (engine_.GetGameType() == GameType::kTimeTrial) {
-        mode = "trial";
-      } else if (engine_.GetGameType() == GameType::kTimeAttack) {
-        mode = "attack";
+      // This mode goes through all the difficulties, so I standardize it here
+      if (engine_.GetGameMode() == GameMode::kTimeAttack) {
         difficulty = "easy";
       }
 
@@ -178,6 +166,32 @@ void MyApp::update() {
       top_players_ = leaderboard_.RetrieveBestTimes(10, mode, difficulty);
     }
   }
+}
+
+std::string MyApp::GetModeAsString() const {
+  std::string mode;
+  if (engine_.GetGameMode() == GameMode::kStandard) {
+    mode = "standard";
+  } else if (engine_.GetGameMode() == GameMode::kTimeTrial) {
+    mode = "trial";
+  } else if (engine_.GetGameMode() == GameMode::kTimeAttack) {
+    mode = "attack";
+  }
+
+  return mode;
+}
+
+std::string MyApp::GetDifficultyAsString() const {
+  std::string difficulty;
+  if (engine_.GetDifficulty() == Difficulty::kEasy) {
+    difficulty = "easy";
+  } else if (engine_.GetDifficulty() == Difficulty::kMedium) {
+    difficulty = "medium";
+  } else if (engine_.GetDifficulty() == Difficulty::kHard) {
+    difficulty = "hard";
+  }
+
+  return difficulty;
 }
 
 ci::vec2 GetMiddleOfBox(std::pair<ci::vec2, ci::vec2> box) {
@@ -788,18 +802,18 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
     if (state_ == GameState::kMenu) { //combine into for loop
       if (IsMouseInBox(mouse_pos_, game_start_btns_[0])) {
         state_ = GameState::kPlaying;
-        engine_.SetGameType(GameType::kStandard);
+        engine_.SetGameMode(GameMode::kStandard);
         engine_.CreateGame();
         engine_.SetStartTime(std::chrono::system_clock::now());
       } else if (IsMouseInBox(mouse_pos_, game_start_btns_[1])) {
         state_ = GameState::kPlaying;
-        engine_.SetGameType(GameType::kTimeTrial);
+        engine_.SetGameMode(GameMode::kTimeTrial);
         engine_.CreateGame();
         engine_.SetStartTime(std::chrono::system_clock::now());
       } else if (IsMouseInBox(mouse_pos_, game_start_btns_[2])) {
         state_ = GameState::kPlaying;
         engine_.SetDifficulty(Difficulty::kEasy);
-        engine_.SetGameType(GameType::kTimeAttack);
+        engine_.SetGameMode(GameMode::kTimeAttack);
         engine_.CreateGame();
         engine_.SetStartTime(std::chrono::system_clock::now());
       }
