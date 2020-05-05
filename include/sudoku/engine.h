@@ -30,8 +30,14 @@ class Engine {
     kWrong,
   };
 
+  enum class GameType {
+    kStandard,
+    kTimeTrial,
+    kTimeAttack
+  };
+
   Engine();
-  void CreateGame();
+  void CreateGame(GameType type);
   int GetEntry(pair<int, int> entry) const;
   void SetEntry(pair<int, int> entry, int num);
   bool IsPenciled(pair<int, int> entry, int num) const;
@@ -47,15 +53,19 @@ class Engine {
   bool IsGameOver() const;
   int GetGameTime() const;
   void SetGameTime(std::chrono::duration<long long, std::ratio<1, 10000000>> time);
+  GameType GetGameType() const;
+  void SetGameType(GameType type);
   void ResetGame();
 
  private:
   void ImportGameBoard();
 
   Difficulty difficulty_;
+  GameType game_type_;
   std::string board_path_;
   bool is_penciling_;
   int game_time_;
+  int games_completed_;
   array<array<int, kBoardSize>, kBoardSize> current_entries_;
   array<array<EntryState, kBoardSize>, kBoardSize> entry_states_;
   array<array<int, kBoardSize>, kBoardSize> solution_;

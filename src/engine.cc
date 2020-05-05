@@ -16,14 +16,18 @@ namespace sudoku {
 std::string kResourcePath = R"(C:\Users\isaac\CLionProjects\Cinder\my-projects\final-project-isaacjs2\resources\)";
 
 Engine::Engine() : difficulty_{Difficulty::kEasy},
+              game_type_{GameType::kStandard},
               is_penciling_{false},
               game_time_{0},
+              games_completed_{0},
               easy_boards_{"easy_1.json", "easy_2.json", "easy_3.json"},
               medium_boards_{"medium_1.json", "medium_2.json", "medium_3.json"},
               hard_boards_{"hard_1.json", "hard_2.json", "hard_3.json"}
               {}
 
-void Engine::CreateGame() {
+void Engine::CreateGame(GameType type) {
+  game_type_ = type;
+
   // Get a board of the right difficulty
   unsigned seed = time(nullptr);
   std::srand(seed);
@@ -156,9 +160,19 @@ void Engine::SetGameTime(
   game_time_ = (int) time.count() / 10000000;
 }
 
+Engine::GameType Engine::GetGameType() const {
+  return game_type_;
+}
+
+void Engine::SetGameType(GameType type) {
+  game_type_ = type;
+}
+
 void Engine::ResetGame() {
   is_penciling_ = false;
   game_time_ = 0;
+  game_type_ = GameType::kStandard;
+  games_completed_ = 0;
 
   for (size_t row = 0; row < kBoardSize; row++) {
     for (size_t col = 0; col < kBoardSize; col++) {
