@@ -146,6 +146,13 @@ void MyApp::update() {
   }
 }
 
+ci::vec2 GetMiddleOfBox(std::pair<ci::vec2, ci::vec2> box) {
+  float x_diff = box.second.x - box.first.x;
+  float y_diff = box.second.y - box.first.y;
+
+  return ci::vec2(box.first.x + x_diff / 2, box.first.y + y_diff / 2);
+}
+
 void DrawBox(std::pair<ci::vec2, ci::vec2> bounds, const ci::Color& color) {
   ci::gl::color(color);
 
@@ -157,6 +164,16 @@ void DrawBox(std::pair<ci::vec2, ci::vec2> bounds, const ci::Color& color) {
 
   box.close();
   ci::gl::draw(box);
+}
+
+void DrawLine(float x1, float y1, float x2, float y2, const ci::Color& color) {
+  ci::gl::color(color);
+
+  ci::Path2d line;
+  line.moveTo(x1, y1);
+  line.lineTo(x2, y2);
+  line.close();
+  ci::gl::draw(line);
 }
 
 template <typename C>
@@ -222,16 +239,6 @@ void MyApp::draw() {
   }
 }
 
-void DrawLine(float x1, float y1, float x2, float y2, const ci::Color& color) {
-  ci::gl::color(color);
-
-  ci::Path2d line;
-  line.moveTo(x1, y1);
-  line.lineTo(x2, y2);
-  line.close();
-  ci::gl::draw(line);
-}
-
 void MyApp::DrawMenu() const {
   PrintText("Sudoku!",
             ci::Color::black(),
@@ -254,8 +261,7 @@ void MyApp::PrintGameModes() const {
     PrintText(game_modes_[i],
               ci::Color(1, 0, 0),
               ci::vec2(200, 25),
-              ci::vec2(win_center_.x,
-                        win_center_.y - 90 + (float) 90 * i),
+              ci::vec2(GetMiddleOfBox(game_start_btns_[i])),
               def_text_size_);
   }
 }
@@ -283,8 +289,7 @@ void MyApp::DrawSettings() const {
   PrintText(difficulty,
             diff_color,
             ci::vec2(120, 40),
-            ci::vec2(difficulty_btn_.first.x + 60,
-                         difficulty_btn_.first.y + 25),
+            ci::vec2(GetMiddleOfBox(difficulty_btn_)),
             40);
   DrawBox(difficulty_btn_, ci::Color::black());
 
@@ -301,8 +306,7 @@ void MyApp::DrawSettings() const {
   PrintText(text,
             instr_color,
             ci::vec2(80, 40),
-            ci::vec2(instructions_btn.first.x + 50,
-                         instructions_btn.first.y + 25),
+            ci::vec2(GetMiddleOfBox(instructions_btn)),
             40);
 
   PrintText("Instructions",
@@ -358,7 +362,7 @@ void MyApp::DrawGameScreen() {
   PrintText("Menu",
            ci::Color(1, 0, 0),
             ci::vec2(95, 50),
-            ci::vec2(55, 30),
+            ci::vec2(GetMiddleOfBox(menu_return_btn_)),
             def_text_size_);
 
   // Draw timer
@@ -379,8 +383,7 @@ void MyApp::DrawGameScreen() {
   PrintText("Check Board",
             ci::Color::black(),
             ci::vec2(95, 45),
-            ci::vec2(check_board_btn.first.x + 50,
-                         check_board_btn.first.y + 25),
+            ci::vec2(GetMiddleOfBox(check_board_btn)),
             def_text_size_);
 
   // Draw entry mode indicator
@@ -447,7 +450,7 @@ void MyApp::PrintBoardEntries() const {
         PrintText(std::to_string(engine_.GetEntry(row, col)),
                   color,
                   text_size,
-                  text_loc,
+                  GetMiddleOfBox(game_grid_[row][col]),
                   50);
       }
     }
@@ -545,8 +548,7 @@ void MyApp::DrawGameOver() const {
     PrintText("Play Again",
               ci::Color(0, 0, 1),
               ci::vec2(95, 45),
-              ci::vec2(play_again_btn.first.x + 50,
-                           play_again_btn.first.y + 25),
+              ci::vec2(GetMiddleOfBox(play_again_btn)),
               def_text_size_);
   }
 }
