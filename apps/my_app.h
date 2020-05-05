@@ -50,6 +50,7 @@ class MyApp : public cinder::app::App {
   void DrawSettings() const;
   void DrawGameOver() const;
   void DrawLeaderboard() const;
+  void ResetApp();
   GameState state_;
   ci::vec2 mouse_pos_;
   ci::vec2 win_center_;

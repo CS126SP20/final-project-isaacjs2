@@ -24,7 +24,7 @@ using EntryState = sudoku::Engine::EntryState;
 using sudoku::kBoardSize;
 
 MyApp::MyApp()
-    : state_{GameState::kMenu},
+    : state_{GameState::kGameOver},
     mouse_pos_{ci::vec2(-1, -1)},
     win_center_{getWindowCenter()},
     sel_box_{-1, -1},
@@ -137,6 +137,10 @@ void MyApp::update() {
 
   if (state_ == GameState::kGameOver) {
     if (top_players_.empty() && !is_entering_name_) {
+      leaderboard_.AddTimeToLeaderBoard({player_name_,
+                                         static_cast<size_t>(
+                                               engine_.GetGameTime())});
+
       top_players_ = leaderboard_.RetrieveBestTimes(10);
     }
   }
@@ -581,6 +585,14 @@ void MyApp::DrawLeaderboard() const {
   }
 }
 
+void MyApp::ResetApp() {
+  state_ = GameState::kMenu;
+  engine_.ResetGame();
+
+  is_entering_name_ = true;
+  player_name_ = "_";
+}
+
 void MyApp::keyDown(KeyEvent event) {
   // Erase the current contents of a box
   if (event.getCode() == KeyEvent::KEY_BACKSPACE
@@ -635,7 +647,6 @@ void MyApp::keyDown(KeyEvent event) {
       player_name_ = player_name_.substr(0,
                                        player_name_.length() - 1);
 
-      leaderboard_.AddTimeToLeaderBoard({player_name_, 10});
       is_entering_name_ = false;
     }
 
@@ -647,7 +658,6 @@ void MyApp::keyDown(KeyEvent event) {
         player_name_ = "Anonymous";
       }
 
-      leaderboard_.AddTimeToLeaderBoard({player_name_, 10});
       is_entering_name_ = false;
     }
 
@@ -712,9 +722,9 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
           }
         }
       }
-    } else if (state_ == GameState::kGameOver) {
+    } else if (state_ == GameState::kGameOver && !is_entering_name_) {
       if (IsMouseInBox(mouse_pos_, play_again_btn)) {
-        state_ = GameState::kMenu;
+        ResetApp();
       }
     }
   }

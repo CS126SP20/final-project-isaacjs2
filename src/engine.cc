@@ -150,4 +150,19 @@ void Engine::SetGameTime(std::chrono::duration<long long, std::ratio<1, 10000000
   game_time_ = (int) time.count() / 10000000;
 }
 
+void Engine::ResetGame() {
+  is_penciling_ = false;
+  game_time_ = 0;
+
+  for (size_t row = 0; row < kBoardSize; row++) {
+    for (size_t col = 0; col < kBoardSize; col++) {
+      current_entries_[row][col] = 0;
+      ResetEntryState(row, col);
+      ClearPencilMarks(row, col);
+    }
+  }
+
+
+}
+
 }  // namespace sudoku

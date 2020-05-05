@@ -46,6 +46,7 @@ class Engine {
   bool IsGameOver() const;
   int GetGameTime() const;
   void SetGameTime(std::chrono::duration<long long, std::ratio<1, 10000000>> time);
+  void ResetGame();
 
  private:
   void ImportGameBoard();
