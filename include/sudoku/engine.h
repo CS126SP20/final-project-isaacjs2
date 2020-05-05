@@ -53,11 +53,12 @@ class Engine {
   void CheckBoard();
   bool IsGameOver() const;
   int GetGameTime() const;
-  void SetGameTime(std::chrono::duration<long long, std::ratio<1, 10000000>> time);
+  void UpdateGameTime();
   GameType GetGameType() const;
   void SetGameType(GameType type);
   int GetGamesCompleted() const;
   void IncreaseGamesCompleted();
+  void SetStartTime(std::chrono::time_point<std::chrono::system_clock> time);
   void ResetGame();
 
  private:
@@ -69,6 +70,7 @@ class Engine {
   bool is_penciling_;
   int game_time_;
   int games_completed_;
+  std::chrono::time_point<std::chrono::system_clock> start_time_;
   array<array<int, kBoardSize>, kBoardSize> current_entries_;
   array<array<EntryState, kBoardSize>, kBoardSize> entry_states_;
   array<array<int, kBoardSize>, kBoardSize> solution_;

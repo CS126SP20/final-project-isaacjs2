@@ -157,9 +157,9 @@ int Engine::GetGameTime() const {
   return game_time_;
 }
 
-void Engine::SetGameTime(
-    std::chrono::duration<long long, std::ratio<1, 10000000>> time) {
-  game_time_ = (int) time.count() / 10000000;
+void Engine::UpdateGameTime() {
+  game_time_ = (int) std::chrono::duration_cast<std::chrono::seconds>
+      (std::chrono::system_clock::now() - start_time_).count();
 }
 
 Engine::GameType Engine::GetGameType() const {
@@ -176,6 +176,10 @@ int Engine::GetGamesCompleted() const {
 
 void Engine::IncreaseGamesCompleted() {
   games_completed_++;
+}
+
+void Engine::SetStartTime(std::chrono::time_point<std::chrono::system_clock> time) {
+  start_time_ = time;
 }
 
 void Engine::ResetGame() {

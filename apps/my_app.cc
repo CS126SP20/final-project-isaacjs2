@@ -130,8 +130,7 @@ void MyApp::update() {
   mouse_pos_ = getMousePos() - getWindowPos();
 
   if (state_ == GameState::kPlaying) {
-    auto time = std::chrono::system_clock::now() - start_time_;
-    engine_.SetGameTime(time);
+    engine_.UpdateGameTime();
   }
 
   if (engine_.IsGameOver()) {
@@ -658,9 +657,11 @@ void MyApp::DrawLeaderboard() const {
 void MyApp::ResetApp() {
   state_ = GameState::kMenu;
   engine_.ResetGame();
+  top_players_.clear();
+  sel_box_ = {-1, -1};
 
   is_entering_name_ = true;
-  player_name_ = "_";
+  player_name_ = "";
 }
 
 void MyApp::keyDown(KeyEvent event) {
@@ -771,18 +772,18 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
         state_ = GameState::kPlaying;
         engine_.SetGameType(GameType::kStandard);
         engine_.CreateGame();
-        start_time_ = std::chrono::system_clock::now();
+        engine_.SetStartTime(std::chrono::system_clock::now());
       } else if (IsMouseInBox(mouse_pos_, game_start_btns_[1])) {
         state_ = GameState::kPlaying;
         engine_.SetGameType(GameType::kTimeTrial);
         engine_.CreateGame();
-        start_time_ = std::chrono::system_clock::now();
+        engine_.SetStartTime(std::chrono::system_clock::now());
       } else if (IsMouseInBox(mouse_pos_, game_start_btns_[2])) {
         state_ = GameState::kPlaying;
         engine_.SetDifficulty(Difficulty::kEasy);
         engine_.SetGameType(GameType::kTimeAttack);
         engine_.CreateGame();
-        start_time_ = std::chrono::system_clock::now();
+        engine_.SetStartTime(std::chrono::system_clock::now());
       }
 
       // Change difficulty
