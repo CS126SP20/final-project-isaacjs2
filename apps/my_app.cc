@@ -27,7 +27,7 @@ const size_t kRegTextSize = 30;
 const size_t kBigTextSize = 50;
 
 MyApp::MyApp()
-    : state_{GameState::kMenu},
+    : state_{GameState::kGameOver},
     mouse_pos_{ci::vec2(-1, -1)},
     win_center_{getWindowCenter()},
     sel_box_{-1, -1},
@@ -378,7 +378,7 @@ void MyApp::DrawGameScreen() {
             ci::vec2(100, 30),
             ci::vec2(game_grid_[0][kBoardSize - 1].second.x + 55,
                          game_grid_[0][kBoardSize - 1].first.y + 60),
-            30);
+            kRegTextSize);
 
   // Draw check board button
   DrawBox(check_board_btn, ci::Color::black());
@@ -624,11 +624,13 @@ void MyApp::keyDown(KeyEvent event) {
   }
 
   if (sel_box_.first != -1) {
+    int key_code_offset = 48;
+
     // Update current pencil marks
     if (engine_.IsPenciling()
         && engine_.GetEntry(sel_box_.first, sel_box_.second) == 0) {
       for (size_t i = 1; i < kBoardSize + 1; i++) {
-        if (event.getCode() == i + 48) {
+        if (event.getCode() == i + key_code_offset) {
           engine_.ChangePencilMark(sel_box_.first, sel_box_.second, i);
 
           break;
@@ -639,7 +641,7 @@ void MyApp::keyDown(KeyEvent event) {
                && engine_.GetEntryState(sel_box_.first, sel_box_.second)
                    != sudoku::Engine::EntryState::kCorrect) {
       for (size_t i = 1; i < kBoardSize + 1; i++) {
-        if (event.getCode() == i + 48) {
+        if (event.getCode() == i + key_code_offset) {
           engine_.SetEntry(sel_box_.first, sel_box_.second, i);
           engine_.ResetEntryState(sel_box_.first, sel_box_.second);
 
@@ -650,9 +652,11 @@ void MyApp::keyDown(KeyEvent event) {
   }
 
   if (state_ == GameState::kGameOver && is_entering_name_) {
+    int max_name_len = 10;
+
     // The bounds on the event code make sure the key pressed has a char on it
     // For example, letters and symbols are valid but F1 is not
-    if (player_name_.length() < 11
+    if (player_name_.length() < max_name_len + 1
         && event.getCode() > 32
         && event.getCode() < 123) {
       player_name_ = player_name_.substr(0,
@@ -660,14 +664,14 @@ void MyApp::keyDown(KeyEvent event) {
                      + event.getChar() + "_";
     }
 
-    if (player_name_.length() >= 11) {
+    if (player_name_.length() >= max_name_len + 1) {
       player_name_ = player_name_.substr(0,
                                        player_name_.length() - 1);
 
       is_entering_name_ = false;
     }
 
-    if (event.getCode() == 13) {
+    if (event.getCode() == KeyEvent::KEY_RETURN) {
       player_name_ = player_name_.substr(0,
                                        player_name_.length() - 1);
 
