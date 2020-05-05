@@ -21,6 +21,7 @@ namespace myapp {
 using cinder::app::KeyEvent;
 using Difficulty = sudoku::Engine::Difficulty;
 using EntryState = sudoku::Engine::EntryState;
+using GameType = sudoku::Engine::GameType;
 using sudoku::kBoardSize;
 
 const size_t kRegTextSize = 30;
@@ -35,7 +36,7 @@ MyApp::MyApp()
     want_instructions_{true},
     is_entering_name_{true},
     player_name_{""},
-    game_modes_{{"Standard", "Time Attack", "Time Trial"}}
+    game_modes_{{"Standard", "Time Trial", "Time Attack"}}
     {}
 
 void MyApp::setup() {
@@ -134,7 +135,21 @@ void MyApp::update() {
   }
 
   if (engine_.IsGameOver()) {
-    state_ = GameState::kGameOver;
+    engine_.IncreaseGamesCompleted();
+
+    if (engine_.GetGameType() == GameType::kStandard) {
+        state_ = GameState::kGameOver;
+    } else {
+      if (engine_.GetGamesCompleted() < 3) {
+        if (engine_.GetGameType() == GameType::kTimeAttack) {
+          engine_.IncreaseDifficulty();
+        }
+
+        engine_.CreateGame();
+      } else {
+        state_ = GameState::kGameOver;
+      }
+    }
   }
 
   if (state_ == GameState::kGameOver) {
@@ -733,14 +748,18 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
     if (state_ == GameState::kMenu) { //combine into for loop
       if (IsMouseInBox(mouse_pos_, game_start_btns_[0])) {
         state_ = GameState::kPlaying;
+        engine_.SetGameType(GameType::kStandard);
         engine_.CreateGame();
         start_time_ = std::chrono::system_clock::now();
       } else if (IsMouseInBox(mouse_pos_, game_start_btns_[1])) {
         state_ = GameState::kPlaying;
+        engine_.SetGameType(GameType::kTimeTrial);
         engine_.CreateGame();
         start_time_ = std::chrono::system_clock::now();
       } else if (IsMouseInBox(mouse_pos_, game_start_btns_[2])) {
         state_ = GameState::kPlaying;
+        engine_.SetDifficulty(Difficulty::kEasy);
+        engine_.SetGameType(GameType::kTimeAttack);
         engine_.CreateGame();
         start_time_ = std::chrono::system_clock::now();
       }

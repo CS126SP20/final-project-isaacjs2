@@ -37,7 +37,7 @@ class Engine {
   };
 
   Engine();
-  void CreateGame(GameType type);
+  void CreateGame();
   int GetEntry(pair<int, int> entry) const;
   void SetEntry(pair<int, int> entry, int num);
   bool IsPenciled(pair<int, int> entry, int num) const;
@@ -47,6 +47,7 @@ class Engine {
   void SwitchEntryMode();
   Difficulty GetDifficulty() const;
   void IncreaseDifficulty();
+  void SetDifficulty(Difficulty difficulty);
   EntryState GetEntryState(pair<int, int> entry) const;
   void ResetEntryState(pair<int, int> entry);
   void CheckBoard();
@@ -55,6 +56,8 @@ class Engine {
   void SetGameTime(std::chrono::duration<long long, std::ratio<1, 10000000>> time);
   GameType GetGameType() const;
   void SetGameType(GameType type);
+  int GetGamesCompleted() const;
+  void IncreaseGamesCompleted();
   void ResetGame();
 
  private:

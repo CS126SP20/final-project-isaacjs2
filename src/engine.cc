@@ -25,9 +25,7 @@ Engine::Engine() : difficulty_{Difficulty::kEasy},
               hard_boards_{"hard_1.json", "hard_2.json", "hard_3.json"}
               {}
 
-void Engine::CreateGame(GameType type) {
-  game_type_ = type;
-
+void Engine::CreateGame() {
   // Get a board of the right difficulty
   unsigned seed = time(nullptr);
   std::srand(seed);
@@ -117,6 +115,10 @@ void Engine::IncreaseDifficulty() {
   }
 }
 
+void Engine::SetDifficulty(Difficulty difficulty) {
+  difficulty_ = difficulty;
+}
+
 Engine::EntryState Engine::GetEntryState(pair<int, int> entry) const {
   return entry_states_[entry.first][entry.second];
 }
@@ -166,6 +168,14 @@ Engine::GameType Engine::GetGameType() const {
 
 void Engine::SetGameType(GameType type) {
   game_type_ = type;
+}
+
+int Engine::GetGamesCompleted() const {
+  return games_completed_;
+}
+
+void Engine::IncreaseGamesCompleted() {
+  games_completed_++;
 }
 
 void Engine::ResetGame() {
