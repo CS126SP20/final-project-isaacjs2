@@ -45,3 +45,17 @@
 **5/1/20**
 - Added a check board button that locks in correct entries and highlights wrong ones
 - Started working on Game Over/Win screen
+
+**5/3/20**
+- Added functionality for the player entering their name at the end of the game
+- Started implementing leaderboard database
+
+**5/4/20**
+- Added leaderboard to game over screen
+- Added the ability to play again without closing the app
+- Added a timer for determining the leaderboard
+- Added instructions to the menu
+- Added board randomization when starting a game
+- Added the other two game modes
+- The times from all 3 modes are going to the same leaderboard, so I need to make a 3rd column in my database table and 
+adjust my database functions
