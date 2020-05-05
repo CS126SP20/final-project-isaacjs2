@@ -23,12 +23,14 @@ using Difficulty = sudoku::Engine::Difficulty;
 using EntryState = sudoku::Engine::EntryState;
 using sudoku::kBoardSize;
 
+const size_t kRegTextSize = 30;
+const size_t kBigTextSize = 50;
+
 MyApp::MyApp()
     : state_{GameState::kMenu},
     mouse_pos_{ci::vec2(-1, -1)},
     win_center_{getWindowCenter()},
     sel_box_{-1, -1},
-    def_text_size_{30},
     leaderboard_{cinder::app::getAssetPath(kDbPath).string()},
     want_instructions_{true},
     is_entering_name_{true},
@@ -262,7 +264,7 @@ void MyApp::PrintGameModes() const {
               ci::Color(1, 0, 0),
               ci::vec2(200, 25),
               ci::vec2(GetMiddleOfBox(game_start_btns_[i])),
-              def_text_size_);
+              kRegTextSize);
   }
 }
 
@@ -363,7 +365,7 @@ void MyApp::DrawGameScreen() {
            ci::Color(1, 0, 0),
             ci::vec2(95, 50),
             ci::vec2(GetMiddleOfBox(menu_return_btn_)),
-            def_text_size_);
+            kRegTextSize);
 
   // Draw timer
   PrintText("Time", ci::Color::black(),
@@ -384,7 +386,7 @@ void MyApp::DrawGameScreen() {
             ci::Color::black(),
             ci::vec2(95, 45),
             ci::vec2(GetMiddleOfBox(check_board_btn)),
-            def_text_size_);
+            kRegTextSize);
 
   // Draw entry mode indicator
   ci::Area box(entry_mode_indicator_.first,
@@ -451,7 +453,7 @@ void MyApp::PrintBoardEntries() const {
                   color,
                   text_size,
                   GetMiddleOfBox(game_grid_[row][col]),
-                  50);
+                  kBigTextSize);
       }
     }
   }
@@ -462,17 +464,17 @@ void MyApp::DrawGameInstructions() const {
             ci::Color::black(),
             ci::vec2(600, 30),
             ci::vec2(win_center_.x, getWindowBounds().y1 + 20),
-            def_text_size_);
+            kRegTextSize);
   PrintText("fill every row, column, and box with the numbers 1 to 9.",
             ci::Color::black(),
             ci::vec2(600, 30),
             ci::vec2(win_center_.x, getWindowBounds().y1 + 50),
-            def_text_size_);
+            kRegTextSize);
   PrintText("Use your mouse and number pad to fill in the board.",
             ci::Color::black(),
             ci::vec2(600, 30),
             ci::vec2(win_center_.x, getWindowBounds().y1 + 80),
-            def_text_size_);
+            kRegTextSize);
 
   PrintText("This symbol shows what entry mode you're in.",
             ci::Color::black(),
@@ -536,12 +538,12 @@ void MyApp::DrawGameOver() const {
               ci::Color::black(),
               ci::vec2(250, 50),
               ci::vec2(win_center_.x, win_center_.y - 50),
-              50);
+              kBigTextSize);
     PrintText(player_name_,
               ci::Color::black(),
               ci::vec2(600, 50),
               win_center_,
-              50);
+              kBigTextSize);
   } else {
     DrawLeaderboard();
 
@@ -551,13 +553,21 @@ void MyApp::DrawGameOver() const {
               ci::Color(0, 0, 1),
               ci::vec2(95, 45),
               ci::vec2(GetMiddleOfBox(play_again_btn)),
-              def_text_size_);
+              kRegTextSize);
   }
 }
 
 void MyApp::DrawLeaderboard() const {
-  PrintText("Player", ci::Color::black(), ci::vec2(300, 50), ci::vec2(win_center_.x - 50, win_center_.y - 190), 50);
-  PrintText("Time", ci::Color::black(), ci::vec2(300, 50), ci::vec2(win_center_.x + 250, win_center_.y - 190), 50);
+  PrintText("Player",
+            ci::Color::black(),
+            ci::vec2(300, 50),
+            ci::vec2(win_center_.x - 50, win_center_.y - 190),
+            kBigTextSize);
+  PrintText("Time",
+            ci::Color::black(),
+            ci::vec2(300, 50),
+            ci::vec2(win_center_.x + 250, win_center_.y - 190),
+            kBigTextSize);
 
   //Print top 10 scores
   ci::Color color;
@@ -574,21 +584,21 @@ void MyApp::DrawLeaderboard() const {
               ci::vec2(100, 50),
               ci::vec2(getWindowBounds().x1 + 125,
                            win_center_.y - 140 + i * 50),
-              50);
+              kBigTextSize);
 
     PrintText(top_players_[i].name,
               color,
               ci::vec2(300, 50),
               ci::vec2(win_center_.x - 50,
                            win_center_.y - 140 + i * 50),
-              50);
+              kBigTextSize);
 
     PrintText(std::to_string(top_players_[i].time),
               color,
               ci::vec2(300, 50),
               ci::vec2(win_center_.x + 250,
                            win_center_.y - 140 + i * 50),
-              50);
+              kBigTextSize);
   }
 }
 

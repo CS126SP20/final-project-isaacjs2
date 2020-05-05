@@ -55,7 +55,6 @@ class MyApp : public cinder::app::App {
   ci::vec2 mouse_pos_;
   ci::vec2 win_center_;
   pair<int, int> sel_box_;
-  int def_text_size_;
   sudoku::Engine engine_;
   sudoku::LeaderBoard leaderboard_;
   vector<sudoku::Player> top_players_;
