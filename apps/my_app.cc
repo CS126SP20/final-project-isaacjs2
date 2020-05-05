@@ -256,6 +256,10 @@ void MyApp::DrawMenu() const {
   }
 
   DrawSettings();
+
+  if (want_instructions_) {
+    PrintMenuInstructions();
+  }
 }
 
 void MyApp::PrintGameModes() const {
@@ -318,6 +322,40 @@ void MyApp::DrawSettings() const {
                          instructions_btn.first.y - 20),
             40);
   DrawBox(instructions_btn, ci::Color::black());
+}
+
+void MyApp::PrintMenuInstructions() const {
+  PrintText("Classic game of the desired difficulty",
+            ci::Color::black(),
+            ci::vec2(250, 60),
+            ci::vec2(win_center_.x - 250,
+                          GetMiddleOfBox(game_start_btns_[0]).y),
+            kRegTextSize);
+  PrintText("Three games in a row of one difficutly",
+            ci::Color::black(),
+            ci::vec2(250, 60),
+            ci::vec2(win_center_.x - 250,
+                          GetMiddleOfBox(game_start_btns_[1]).y),
+            kRegTextSize);
+  PrintText("Three games in a row going from Easy to Hard",
+            ci::Color::black(),
+            ci::vec2(270, 60),
+            ci::vec2(win_center_.x - 260,
+                          GetMiddleOfBox(game_start_btns_[2]).y),
+            kRegTextSize);
+
+  PrintText("Choose your difficulty before starting a game",
+            ci::Color::black(),
+            ci::vec2(250, 60),
+            ci::vec2(GetMiddleOfBox(difficulty_btn_).x + 180,
+                          GetMiddleOfBox(difficulty_btn_).y),
+            kRegTextSize);
+  PrintText("These go away when you turn off instructions",
+            ci::Color::black(),
+            ci::vec2(250, 60),
+            ci::vec2(GetMiddleOfBox(instructions_btn).x - 180,
+                          GetMiddleOfBox(instructions_btn).y),
+            kRegTextSize);
 }
 
 void MyApp::DrawGrid() const {
@@ -402,7 +440,7 @@ void MyApp::DrawGameScreen() {
   PrintBoardEntries();
 
   if (want_instructions_) {
-    DrawGameInstructions();
+    PrintGameInstructions();
   }
 }
 
@@ -459,7 +497,7 @@ void MyApp::PrintBoardEntries() const {
   }
 }
 
-void MyApp::DrawGameInstructions() const {
+void MyApp::PrintGameInstructions() const {
   PrintText("Welcome to Sudoku! To solve the puzzle,",
             ci::Color::black(),
             ci::vec2(600, 30),

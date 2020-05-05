@@ -43,11 +43,12 @@ class MyApp : public cinder::app::App {
   void SetupGameOver();
   void DrawGrid() const;
   void DrawGameScreen();
-  void DrawGameInstructions() const;
+  void PrintGameInstructions() const;
   void PrintBoardEntries() const;
   void DrawMenu() const;
   void PrintGameModes() const;
   void DrawSettings() const;
+  void PrintMenuInstructions() const;
   void DrawGameOver() const;
   void DrawLeaderboard() const;
   void ResetApp();
