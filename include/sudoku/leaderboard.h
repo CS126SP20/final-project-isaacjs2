@@ -17,11 +17,11 @@ class LeaderBoard {
   explicit LeaderBoard(const std::string& db_path);
 
   // Adds a player to the leaderboard.
-  void AddTimeToLeaderBoard(const Player&);
+  void AddTimeToLeaderBoard(const Player&, std::string mode, std::string difficulty);
 
   // Returns a list of the players with the highest scores, in decreasing order.
   // The size of the list should be no greater than `limit`.
-  std::vector<Player> RetrieveBestTimes(const size_t limit);
+  std::vector<Player> RetrieveBestTimes(const size_t limit, std::string mode, std::string difficulty);
 
  private:
   sqlite::database db_;

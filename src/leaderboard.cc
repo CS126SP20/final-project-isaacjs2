@@ -19,6 +19,8 @@ LeaderBoard::LeaderBoard(const string& db_path) : db_{db_path} {
     db_ << "CREATE TABLE if not exists leaderboard (\n"
            "  name  TEXT NOT NULL,\n"
            "  time INTEGER NOT NULL\n"
+           "  mode TEXT NOT NULL\n"
+           "  difficulty TEXT NOT NULL\n"
            ");";
   } catch (const sqlite::sqlite_exception& e) {
     std::cerr  << e.get_code() << ": " << e.what() << " during "
@@ -26,11 +28,13 @@ LeaderBoard::LeaderBoard(const string& db_path) : db_{db_path} {
   }
 }
 
-void LeaderBoard::AddTimeToLeaderBoard(const Player& player) {
+void LeaderBoard::AddTimeToLeaderBoard(const Player& player, std::string mode, std::string difficulty) {
   try {
-    db_ << "insert into leaderboard (name, time) values (?,?);"
+    db_ << "insert into leaderboard (name, time, mode, difficulty) values (?,?,?,?);"
         << player.name
-        << player.time;
+        << player.time
+        << mode
+        << difficulty;
   } catch (const sqlite::sqlite_exception& e) {
     std::cerr  << e.get_code() << ": " << e.what() << " during "
                << e.get_sql() << std::endl;
@@ -51,11 +55,14 @@ vector<Player> GetPlayers(sqlite::database_binder* rows) {
   return players;
 }
 
-vector<Player> LeaderBoard::RetrieveBestTimes(const size_t limit) {
+vector<Player> LeaderBoard::RetrieveBestTimes(const size_t limit, std::string mode, std::string difficulty) {
   try {
     auto rows = db_ << "select name,time from leaderboard "
+                       "where mode = ? and difficulty = ? "
                        "order by time asc "
                        "limit ?;"
+                    << mode
+                    << difficulty
                     << limit;
     return GetPlayers(&rows);
   } catch (const sqlite::sqlite_exception& e) {
