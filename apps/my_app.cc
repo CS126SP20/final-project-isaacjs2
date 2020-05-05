@@ -702,6 +702,27 @@ void MyApp::keyDown(KeyEvent event) {
         }
       }
     }
+
+    // Navigate board with arrow keys
+    if (event.getCode() == KeyEvent::KEY_UP && sel_box_.first > 0) {
+        sel_box_.first--;
+    } else if (event.getCode() == KeyEvent::KEY_DOWN && sel_box_.first < 8) {
+        sel_box_.first++;
+    } else if (event.getCode() == KeyEvent::KEY_LEFT && sel_box_.second > 0) {
+        sel_box_.second--;
+    } else if (event.getCode() == KeyEvent::KEY_RIGHT && sel_box_.second < 8) {
+        sel_box_.second++;
+    }
+  }
+
+  // If an arrow key is pressed and no box is selected, select the middle box
+  if (state_ == GameState::kPlaying && sel_box_.first == -1) {
+      if (event.getCode() == KeyEvent::KEY_UP
+          || event.getCode() == KeyEvent::KEY_DOWN
+          || event.getCode() == KeyEvent::KEY_LEFT
+          || event.getCode() == KeyEvent::KEY_RIGHT) {
+          sel_box_ = {4, 4};
+      }
   }
 
   if (state_ == GameState::kGameOver && is_entering_name_) {
