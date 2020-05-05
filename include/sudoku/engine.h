@@ -9,6 +9,7 @@
 #include <chrono>
 
 using std::array;
+using std::pair;
 
 namespace sudoku {
 
@@ -31,17 +32,17 @@ class Engine {
 
   Engine();
   void CreateGame(Difficulty difficulty);
-  int GetEntry(int row, int col) const;
-  void SetEntry(int row, int col, int num);
-  bool IsPenciled(int row, int col, int num) const;
-  void ChangePencilMark(int row, int col, int num);
-  void ClearPencilMarks(int row, int col);
+  int GetEntry(pair<int, int> entry) const;
+  void SetEntry(pair<int, int> entry, int num);
+  bool IsPenciled(pair<int, int> entry, int num) const;
+  void ChangePencilMark(pair<int, int> entry, int num);
+  void ClearPencilMarks(pair<int, int> entry);
   bool IsPenciling() const;
   void SwitchEntryMode();
   Difficulty GetDifficulty() const;
   void IncreaseDifficulty();
-  EntryState GetEntryState(int row, int col) const;
-  void ResetEntryState(int row, int col);
+  EntryState GetEntryState(pair<int, int> entry) const;
+  void ResetEntryState(pair<int, int> entry);
   void CheckBoard();
   bool IsGameOver() const;
   int GetGameTime() const;

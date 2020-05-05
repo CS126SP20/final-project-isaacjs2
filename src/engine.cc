@@ -9,6 +9,7 @@
 #include <utility>
 
 using nlohmann::json;
+using std::pair;
 
 namespace sudoku {
 Engine::Engine() : difficulty_{Difficulty::kEasy},
@@ -68,25 +69,26 @@ void Engine::ImportGameBoard() {
   board_data.at("solution").get_to(solution_);
 }
 
-int Engine::GetEntry(int row, int col) const {
-  return current_entries_[row][col];
+int Engine::GetEntry(pair<int, int> entry) const {
+  return current_entries_[entry.first][entry.second];
 }
 
-void Engine::SetEntry(int row, int col, int num) {
-  current_entries_[row][col] = num;
+void Engine::SetEntry(pair<int, int> entry, int num) {
+  current_entries_[entry.first][entry.second] = num;
 }
 
-bool Engine::IsPenciled(int row, int col, int num) const {
-  return pencil_marks_[row][col][num - 1];
+bool Engine::IsPenciled(pair<int, int> entry, int num) const {
+  return pencil_marks_[entry.first][entry.second][num - 1];
 }
 
-void Engine::ChangePencilMark(int row, int col, int num) {
-  pencil_marks_[row][col][num - 1] = !pencil_marks_[row][col][num - 1];
+void Engine::ChangePencilMark(pair<int, int> entry, int num) {
+  pencil_marks_[entry.first][entry.second][num - 1]
+      = !pencil_marks_[entry.first][entry.second][num - 1];
 }
 
-void Engine::ClearPencilMarks(int row, int col) {
+void Engine::ClearPencilMarks(pair<int, int> entry) {
   for (size_t num = 0; num < kBoardSize; num++) {
-    pencil_marks_[row][col][num] = false;
+    pencil_marks_[entry.first][entry.second][num] = false;
   }
 }
 bool Engine::IsPenciling() const {
@@ -108,12 +110,12 @@ void Engine::IncreaseDifficulty() {
   }
 }
 
-Engine::EntryState Engine::GetEntryState(int row, int col) const {
-  return entry_states_[row][col];
+Engine::EntryState Engine::GetEntryState(pair<int, int> entry) const {
+  return entry_states_[entry.first][entry.second];
 }
 
-void Engine::ResetEntryState(int row, int col) {
-  entry_states_[row][col] = EntryState::kUnknown;
+void Engine::ResetEntryState(pair<int, int> entry) {
+  entry_states_[entry.first][entry.second] = EntryState::kUnknown;
 }
 
 void Engine::CheckBoard() {
@@ -133,7 +135,7 @@ void Engine::CheckBoard() {
 bool Engine::IsGameOver() const {
   for (size_t row = 0; row < kBoardSize; row++) {
     for (size_t col = 0; col < kBoardSize; col++) {
-      if (GetEntryState(row, col) != sudoku::Engine::EntryState::kCorrect) {
+      if (GetEntryState({row, col}) != sudoku::Engine::EntryState::kCorrect) {
         return false;
       }
     }
@@ -146,7 +148,8 @@ int Engine::GetGameTime() const {
   return game_time_;
 }
 
-void Engine::SetGameTime(std::chrono::duration<long long, std::ratio<1, 10000000>> time) {
+void Engine::SetGameTime(
+    std::chrono::duration<long long, std::ratio<1, 10000000>> time) {
   game_time_ = (int) time.count() / 10000000;
 }
 
@@ -157,12 +160,10 @@ void Engine::ResetGame() {
   for (size_t row = 0; row < kBoardSize; row++) {
     for (size_t col = 0; col < kBoardSize; col++) {
       current_entries_[row][col] = 0;
-      ResetEntryState(row, col);
-      ClearPencilMarks(row, col);
+      ResetEntryState({row, col});
+      ClearPencilMarks({row, col});
     }
   }
-
-
 }
 
 }  // namespace sudoku

@@ -412,10 +412,10 @@ void MyApp::PrintBoardEntries() const {
 
   for (size_t row = 0; row < kBoardSize; row++) {
     for (size_t col = 0; col < kBoardSize; col++) {
-      if (engine_.GetEntry(row, col) == 0) {
+      if (engine_.GetEntry({row, col}) == 0) {
         // Print pencil marks
         for (size_t num = 1; num < kBoardSize + 1; num++) {
-          if (engine_.IsPenciled(row, col, num)) {
+          if (engine_.IsPenciled({row, col}, num)) {
             ci::vec2 mark_loc(game_grid_[row][col].first.x
                                   + tile_size / 6
                                   + ((num - 1) % 3) * tile_size / 3,
@@ -437,7 +437,7 @@ void MyApp::PrintBoardEntries() const {
                           game_grid_[row][col].first.y + tile_size / 2);
 
         ci::Color color(ci::Color::black());
-        switch (engine_.GetEntryState(row, col)) {
+        switch (engine_.GetEntryState({row, col})) {
           case sudoku::Engine::EntryState::kCorrect :
             color = ci::Color(0, 0, 1);
             break;
@@ -449,7 +449,7 @@ void MyApp::PrintBoardEntries() const {
             break;
         }
 
-        PrintText(std::to_string(engine_.GetEntry(row, col)),
+        PrintText(std::to_string(engine_.GetEntry({row, col})),
                   color,
                   text_size,
                   GetMiddleOfBox(game_grid_[row][col]),
@@ -614,12 +614,12 @@ void MyApp::keyDown(KeyEvent event) {
   // Erase the current contents of a box
   if (event.getCode() == KeyEvent::KEY_BACKSPACE
       && sel_box_.first != -1
-      && engine_.GetEntryState(sel_box_.first, sel_box_.second)
+      && engine_.GetEntryState(sel_box_)
           != sudoku::Engine::EntryState::kCorrect) {
-    if (engine_.GetEntry(sel_box_.first, sel_box_.second) == 0) {
-      engine_.ClearPencilMarks(sel_box_.first, sel_box_.second);
+    if (engine_.GetEntry(sel_box_) == 0) {
+      engine_.ClearPencilMarks(sel_box_);
     } else {
-      engine_.SetEntry(sel_box_.first, sel_box_.second, 0);
+      engine_.SetEntry(sel_box_, 0);
     }
   }
 
@@ -628,22 +628,22 @@ void MyApp::keyDown(KeyEvent event) {
 
     // Update current pencil marks
     if (engine_.IsPenciling()
-        && engine_.GetEntry(sel_box_.first, sel_box_.second) == 0) {
+        && engine_.GetEntry(sel_box_) == 0) {
       for (size_t i = 1; i < kBoardSize + 1; i++) {
         if (event.getCode() == i + key_code_offset) {
-          engine_.ChangePencilMark(sel_box_.first, sel_box_.second, i);
+          engine_.ChangePencilMark(sel_box_, i);
 
           break;
         }
       }
     // Update board entries
     } else if (!engine_.IsPenciling()
-               && engine_.GetEntryState(sel_box_.first, sel_box_.second)
+               && engine_.GetEntryState(sel_box_)
                    != sudoku::Engine::EntryState::kCorrect) {
       for (size_t i = 1; i < kBoardSize + 1; i++) {
         if (event.getCode() == i + key_code_offset) {
-          engine_.SetEntry(sel_box_.first, sel_box_.second, i);
-          engine_.ResetEntryState(sel_box_.first, sel_box_.second);
+          engine_.SetEntry(sel_box_, i);
+          engine_.ResetEntryState(sel_box_);
 
           break;
         }
