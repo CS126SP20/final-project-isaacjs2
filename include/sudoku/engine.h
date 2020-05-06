@@ -50,6 +50,7 @@ class Engine {
   void SetDifficulty(Difficulty difficulty);
   EntryState GetEntryState(pair<int, int> entry) const;
   void ResetEntryState(pair<int, int> entry);
+  void FillInCorrectEntry(pair<int, int> entry);
   void CheckBoard();
   bool IsGameOver() const;
   int GetGameTime() const;

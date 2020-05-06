@@ -68,6 +68,7 @@ class MyApp : public cinder::app::App {
   pair<ci::vec2, ci::vec2> difficulty_btn_;
   pair<ci::vec2, ci::vec2> instructions_btn;
   pair<ci::vec2, ci::vec2> menu_return_btn_;
+  pair<ci::vec2, ci::vec2> hint_btn_;
   pair<ci::vec2, ci::vec2> check_board_btn;
   pair<ci::vec2, ci::vec2> entry_mode_indicator_;
   array<array<pair<ci::vec2, ci::vec2>, kBoardSize>, kBoardSize> game_grid_;

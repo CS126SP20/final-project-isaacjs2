@@ -127,6 +127,12 @@ void Engine::ResetEntryState(pair<int, int> entry) {
   entry_states_[entry.first][entry.second] = EntryState::kUnknown;
 }
 
+void Engine::FillInCorrectEntry(pair<int, int> entry) {
+  current_entries_[entry.first][entry.second]
+                                         = solution_[entry.first][entry.second];
+  entry_states_[entry.first][entry.second] = EntryState::kCorrect;
+}
+
 void Engine::CheckBoard() {
   for (size_t row = 0; row < kBoardSize; row++) {
     for (size_t col = 0; col < kBoardSize; col++) {

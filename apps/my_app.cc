@@ -28,7 +28,7 @@ const size_t kRegTextSize = 30;
 const size_t kBigTextSize = 50;
 
 MyApp::MyApp()
-    : state_{GameState::kGameOver},
+    : state_{GameState::kMenu},
     mouse_pos_{ci::vec2(-1, -1)},
     win_center_{getWindowCenter()},
     sel_box_{-1, -1},
@@ -82,7 +82,8 @@ void MyApp::SetupGameScreen() {
   entry_type_images_[0] = marker_image;
 
   ci::gl::Texture2dRef pencil_image = ci::gl::Texture2d::create(
-      ci::loadImage(loadAsset("pencil2.png")));
+      ci::loadImage(loadAsset(
+                                          "pencil2.png")));
   entry_type_images_[1] = pencil_image;
 
   SetupGameBoard();
@@ -90,6 +91,9 @@ void MyApp::SetupGameScreen() {
   // Record the positions of other boxes on game screen
   menu_return_btn_.first = {5, 5};
   menu_return_btn_.second = {105, 55};
+
+  hint_btn_.first = {game_grid_[0][0].first.x - 100, game_grid_[kBoardSize - 1][0].second.y - 105};
+  hint_btn_.second = {game_grid_[0][0].first.x - 5, game_grid_[kBoardSize - 1][0].second.y - 55};
 
   check_board_btn.first = {game_grid_[0][0].first.x - 100,
                             game_grid_[kBoardSize - 1][0].second.y - 50};
@@ -122,8 +126,10 @@ void MyApp::SetupGameBoard() {
 
 void MyApp::SetupGameOver() {
   // Record position of play again button
-  play_again_btn.first = {win_center_.x - 50, getWindowBounds().y2 - 55};
-  play_again_btn.second = {win_center_.x + 50, getWindowBounds().y2 - 5};
+  play_again_btn.first = {win_center_.x - 50,
+                          getWindowBounds().y2 - 55};
+  play_again_btn.second = {win_center_.x + 50,
+                           getWindowBounds().y2 - 5};
 }
 
 void MyApp::update() {
@@ -161,7 +167,11 @@ void MyApp::update() {
         difficulty = "Easy";
       }
 
-      leaderboard_.AddTimeToLeaderBoard({player_name_, static_cast<size_t>(engine_.GetGameTime())}, mode, difficulty);
+      leaderboard_.AddTimeToLeaderBoard({player_name_,
+                                         static_cast<size_t>(
+                                                 engine_.GetGameTime())},
+                                             mode,
+                                             difficulty);
 
       top_players_ = leaderboard_.RetrieveBestTimes(10, mode, difficulty);
     }
@@ -464,12 +474,20 @@ void MyApp::DrawGameScreen() {
                          game_grid_[0][kBoardSize - 1].first.y + 60),
             kRegTextSize);
 
+  // Draw hint button
+  DrawBox(hint_btn_, ci::Color(0, 0, 1));
+  PrintText("Hint",
+           ci::Color(1, 0, 0),
+           ci::vec2(95, 45),
+           GetMiddleOfBox(hint_btn_),
+           kRegTextSize);
+
   // Draw check board button
-  DrawBox(check_board_btn, ci::Color::black());
+  DrawBox(check_board_btn, ci::Color(0, 0, 1));
   PrintText("Check Board",
-            ci::Color::black(),
+            ci::Color(1, 0, 0),
             ci::vec2(95, 45),
-            ci::vec2(GetMiddleOfBox(check_board_btn)),
+            GetMiddleOfBox(check_board_btn),
             kRegTextSize);
 
   // Draw entry mode indicator
@@ -844,6 +862,10 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
         state_ = GameState::kMenu;
 
         sel_box_ = {-1, -1};
+      }
+
+      if (IsMouseInBox(mouse_pos_, hint_btn_) && sel_box_.first != -1) {
+        engine_.FillInCorrectEntry(sel_box_);
       }
 
       if (IsMouseInBox(mouse_pos_, check_board_btn)) {
