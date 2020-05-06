@@ -34,7 +34,7 @@ const size_t kRegTextSize = 30;
 const size_t kBigTextSize = 50;
 
 MyApp::MyApp()
-    : state_{GameState::kMenu},
+    : state_{GameState::kGameOver},
     mouse_pos_{ci::vec2(-1, -1)},
     win_center_{getWindowCenter()},
     sel_box_{-1, -1},
@@ -227,8 +227,10 @@ void MyApp::SetupGameScreen() {
   menu_return_btn_.first = {5, 5};
   menu_return_btn_.second = {105, 55};
 
-  hint_btn_.first = {game_grid_[0][0].first.x - 100, game_grid_[kBoardSize - 1][0].second.y - 105};
-  hint_btn_.second = {game_grid_[0][0].first.x - 5, game_grid_[kBoardSize - 1][0].second.y - 55};
+  hint_btn_.first = {game_grid_[0][0].first.x - 100,
+                     game_grid_[kBoardSize - 1][0].second.y - 105};
+  hint_btn_.second = {game_grid_[0][0].first.x - 5,
+                      game_grid_[kBoardSize - 1][0].second.y - 55};
 
   check_board_btn_.first = {game_grid_[0][0].first.x - 100,
                             game_grid_[kBoardSize - 1][0].second.y - 50};
@@ -598,6 +600,10 @@ void MyApp::DrawGameOver() const {
            60);
 
   if (is_entering_name_) {
+    if (want_instructions_) {
+      PrintEnterNameInstructions();
+    }
+
     PrintText("Enter name:",
               ci::Color::black(),
               ci::vec2(250, 50),
@@ -828,49 +834,67 @@ void MyApp::PrintGameInstructions() const {
   PrintText("This symbol shows what entry mode you're in.",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(620, game_grid_[kBoardSize - 1][0].second.y + 10),
+            ci::vec2(620,
+                         game_grid_[kBoardSize - 1][0].second.y + 10),
             20);
   PrintText("Pen mode is for filling in the board, and",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(620, game_grid_[kBoardSize - 1][0].second.y + 30),
+            ci::vec2(620,
+                         game_grid_[kBoardSize - 1][0].second.y + 30),
             20);
   PrintText("pencil mode is for making notes when you're",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(620, game_grid_[kBoardSize - 1][0].second.y + 50),
+            ci::vec2(620,
+                         game_grid_[kBoardSize - 1][0].second.y + 50),
             20);
   PrintText("not sure what number goes in a box yet.",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(620, game_grid_[kBoardSize - 1][0].second.y + 70),
+            ci::vec2(620,
+                         game_grid_[kBoardSize - 1][0].second.y + 70),
             20);
 
-  PrintText("Click this button to check your solution so far.",
+  PrintText("Click 'Check Board' lock in correct entries and",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(175, game_grid_[kBoardSize - 1][0].second.y + 10),
+            ci::vec2(175,
+                         game_grid_[kBoardSize - 1][0].second.y + 10),
             20);
-  PrintText("Correct entries will lock in and turn blue.",
+  PrintText("highlight wrong ones. When you think you have",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(175, game_grid_[kBoardSize - 1][0].second.y + 30),
+            ci::vec2(175,
+                         game_grid_[kBoardSize - 1][0].second.y + 30),
             20);
-  PrintText("Wrong ones will turn red. When you think you've",
+  PrintText("the solution, click it one more time to end the",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(175, game_grid_[kBoardSize - 1][0].second.y + 50),
+            ci::vec2(175,
+                         game_grid_[kBoardSize - 1][0].second.y + 50),
             20);
-  PrintText("solved the puzzle, click the button one last time",
+  PrintText("game. Click 'Hint' to fill in the box you have",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(175, game_grid_[kBoardSize - 1][0].second.y + 70),
+            ci::vec2(175,
+                         game_grid_[kBoardSize - 1][0].second.y + 70),
             20);
-  PrintText("to get your time and score.",
+  PrintText("highlighted with the correct number.",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(175, game_grid_[kBoardSize - 1][0].second.y + 90),
+            ci::vec2(175,
+                         game_grid_[kBoardSize - 1][0].second.y + 90),
             20);
+}
+
+void MyApp::PrintEnterNameInstructions() const {
+  PrintText("Enter a name between 1 and 10 characters "
+                 "and hit enter to submit it",
+            ci::Color::black(), 
+            ci::vec2(500, 60),
+            ci::vec2(win_center_.x, win_center_.y + 300),
+            kRegTextSize);
 }
 
 std::string MyApp::GetModeAsString() const {

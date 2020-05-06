@@ -89,6 +89,7 @@ class MyApp : public cinder::app::App {
   // Print instructions for different parts of the app
   void PrintMenuInstructions() const;
   void PrintGameInstructions() const;
+  void PrintEnterNameInstructions() const;
 
   // Translate game characteristics into strings for printing
   string GetModeAsString() const;
