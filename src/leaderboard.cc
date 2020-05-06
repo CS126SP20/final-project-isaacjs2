@@ -28,7 +28,9 @@ LeaderBoard::LeaderBoard(const string& db_path) : db_{db_path} {
   }
 }
 
-void LeaderBoard::AddTimeToLeaderBoard(const Player& player, std::string mode, std::string difficulty) {
+void LeaderBoard::AddTimeToLeaderBoard(const Player& player,
+                                       std::string mode,
+                                       std::string difficulty) {
   try {
     db_ << "insert into leaderboard (name, time, mode, difficulty) values (?,?,?,?);"
         << player.name
@@ -55,7 +57,9 @@ vector<Player> GetPlayers(sqlite::database_binder* rows) {
   return players;
 }
 
-vector<Player> LeaderBoard::RetrieveBestTimes(const size_t limit, std::string mode, std::string difficulty) {
+vector<Player> LeaderBoard::RetrieveBestTimes(const size_t limit,
+                                              std::string mode,
+                                              std::string difficulty) {
   try {
     auto rows = db_ << "select name,time from leaderboard "
                        "where mode = ? and difficulty = ? "

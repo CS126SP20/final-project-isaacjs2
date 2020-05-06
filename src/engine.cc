@@ -163,6 +163,10 @@ int Engine::GetGameTime() const {
   return game_time_;
 }
 
+void Engine::SetGameMode(GameMode mode) {
+  game_mode_ = mode;
+}
+
 void Engine::UpdateGameTime() {
   game_time_ = (int) std::chrono::duration_cast<std::chrono::seconds>
       (std::chrono::system_clock::now() - start_time_).count();
@@ -170,10 +174,6 @@ void Engine::UpdateGameTime() {
 
 Engine::GameMode Engine::GetGameMode() const {
   return game_mode_;
-}
-
-void Engine::SetGameMode(GameMode mode) {
-  game_mode_ = mode;
 }
 
 int Engine::GetGamesCompleted() const {

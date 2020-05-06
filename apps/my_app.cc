@@ -891,7 +891,7 @@ void MyApp::PrintGameInstructions() const {
 void MyApp::PrintEnterNameInstructions() const {
   PrintText("Enter a name between 1 and 10 characters "
                  "and hit enter to submit it",
-            ci::Color::black(), 
+            ci::Color::black(),
             ci::vec2(500, 60),
             ci::vec2(win_center_.x, win_center_.y + 300),
             kRegTextSize);

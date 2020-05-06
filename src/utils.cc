@@ -40,6 +40,7 @@ void DrawLine(float x1, float y1, float x2, float y2, const ci::Color& color) {
 }
 
 ci::vec2 GetMiddleOfBox(std::pair<ci::vec2, ci::vec2> box) {
+  // Calculate width and height of box
   float x_diff = box.second.x - box.first.x;
   float y_diff = box.second.y - box.first.y;
 

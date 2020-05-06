@@ -17,8 +17,10 @@
 
 namespace sudoku {
 
+// Draw a box from the given top left and bottom right points
 void DrawBox(std::pair<ci::vec2, ci::vec2> bounds, const ci::Color& color);
 
+// Draw a line from (x1,y1) to (x2,y2)
 void DrawLine(float x1, float y1, float x2, float y2, const ci::Color& color);
 
 ci::vec2 GetMiddleOfBox(std::pair<ci::vec2, ci::vec2> box);
