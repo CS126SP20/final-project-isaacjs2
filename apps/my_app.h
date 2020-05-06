@@ -54,7 +54,10 @@ class MyApp : public cinder::app::App {
   void PrintMenuInstructions() const;
   void DrawGameOver() const;
   void DrawLeaderboard() const;
+  void ExecuteArrowKeyMovement(int key_code);
   void UpdatePlayerName(cinder::app::KeyEvent event);
+  void ExecuteGameClick();
+  void StartNewGame(int mode);
   void ResetApp();
   string GetModeAsString() const;
   string GetDifficultyAsString() const;

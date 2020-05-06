@@ -34,7 +34,7 @@ const size_t kRegTextSize = 30;
 const size_t kBigTextSize = 50;
 
 MyApp::MyApp()
-    : state_{GameState::kGameOver},
+    : state_{GameState::kMenu},
     mouse_pos_{ci::vec2(-1, -1)},
     win_center_{getWindowCenter()},
     sel_box_{-1, -1},
@@ -133,28 +133,9 @@ void MyApp::keyDown(KeyEvent event) {
         engine_.ResetEntryState(sel_box_);
       }
     }
-
-    // Navigate board with arrow keys
-    if (event.getCode() == KeyEvent::KEY_UP && sel_box_.first > 0) {
-      sel_box_.first--;
-    } else if (event.getCode() == KeyEvent::KEY_DOWN && sel_box_.first < 8) {
-      sel_box_.first++;
-    } else if (event.getCode() == KeyEvent::KEY_LEFT && sel_box_.second > 0) {
-      sel_box_.second--;
-    } else if (event.getCode() == KeyEvent::KEY_RIGHT && sel_box_.second < 8) {
-      sel_box_.second++;
-    }
   }
 
-  // If an arrow key is pressed and no box is selected, select the middle box
-  if (state_ == GameState::kPlaying && sel_box_.first == -1) {
-    if (event.getCode() == KeyEvent::KEY_UP
-        || event.getCode() == KeyEvent::KEY_DOWN
-        || event.getCode() == KeyEvent::KEY_LEFT
-        || event.getCode() == KeyEvent::KEY_RIGHT) {
-      sel_box_ = {4, 4};
-    }
-  }
+  ExecuteArrowKeyMovement(event.getCode());
 
   if (state_ == GameState::kGameOver && is_entering_name_) {
     UpdatePlayerName(event);
@@ -164,22 +145,10 @@ void MyApp::keyDown(KeyEvent event) {
 void MyApp::mouseDown(ci::app::MouseEvent event) {
   if (event.isLeft()) {
     if (state_ == GameState::kMenu) { //combine into for loop
-      if (IsMouseInBox(mouse_pos_, game_start_btns_[0])) {
-        state_ = GameState::kPlaying;
-        engine_.SetGameMode(GameMode::kStandard);
-        engine_.CreateGame();
-        engine_.SetStartTime(std::chrono::system_clock::now());
-      } else if (IsMouseInBox(mouse_pos_, game_start_btns_[1])) {
-        state_ = GameState::kPlaying;
-        engine_.SetGameMode(GameMode::kTimeTrial);
-        engine_.CreateGame();
-        engine_.SetStartTime(std::chrono::system_clock::now());
-      } else if (IsMouseInBox(mouse_pos_, game_start_btns_[2])) {
-        state_ = GameState::kPlaying;
-        engine_.SetDifficulty(Difficulty::kEasy);
-        engine_.SetGameMode(GameMode::kTimeAttack);
-        engine_.CreateGame();
-        engine_.SetStartTime(std::chrono::system_clock::now());
+      for (size_t i = 0; i < game_start_btns_.size(); i++) {
+        if (IsMouseInBox(mouse_pos_, game_start_btns_[i])) {
+          StartNewGame(i);
+        }
       }
 
       // Change difficulty
@@ -192,27 +161,7 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
         want_instructions_ = !want_instructions_;
       }
     } else if (state_ == GameState::kPlaying) {
-      if (IsMouseInBox(mouse_pos_, menu_return_btn_)) {
-        state_ = GameState::kMenu;
-
-        sel_box_ = {-1, -1};
-      }
-
-      if (IsMouseInBox(mouse_pos_, hint_btn_) && sel_box_.first != -1) {
-        engine_.FillInCorrectEntry(sel_box_);
-      }
-
-      if (IsMouseInBox(mouse_pos_, check_board_btn)) {
-        engine_.CheckBoard();
-      }
-
-      for (size_t row = 0; row < kBoardSize; row++) {
-        for (size_t col = 0; col < kBoardSize; col++) {
-          if (IsMouseInBox(mouse_pos_, game_grid_[row][col])) {
-            sel_box_ = {row, col};
-          }
-        }
-      }
+      ExecuteGameClick();
     } else if (state_ == GameState::kGameOver && !is_entering_name_) {
       if (IsMouseInBox(mouse_pos_, play_again_btn)) {
         ResetApp();
@@ -823,6 +772,31 @@ void MyApp::DrawLeaderboard() const {
   }
 }
 
+void MyApp::ExecuteArrowKeyMovement(int key_code) {
+  if (sel_box_.first != -1) {
+    // Navigate board with arrow keys
+    if (key_code == KeyEvent::KEY_UP && sel_box_.first > 0) {
+      sel_box_.first--;
+    } else if (key_code == KeyEvent::KEY_DOWN && sel_box_.first < 8) {
+      sel_box_.first++;
+    } else if (key_code == KeyEvent::KEY_LEFT && sel_box_.second > 0) {
+      sel_box_.second--;
+    } else if (key_code == KeyEvent::KEY_RIGHT && sel_box_.second < 8) {
+      sel_box_.second++;
+    }
+  }
+
+  // If an arrow key is pressed and no box is selected, select the middle box
+  if (state_ == GameState::kPlaying && sel_box_.first == -1) {
+    if (key_code == KeyEvent::KEY_UP
+        || key_code == KeyEvent::KEY_DOWN
+        || key_code == KeyEvent::KEY_LEFT
+        || key_code == KeyEvent::KEY_RIGHT) {
+      sel_box_ = {4, 4};
+    }
+  }
+}
+
 void MyApp::UpdatePlayerName(KeyEvent event) {
   int max_name_len = 10;
 
@@ -850,6 +824,47 @@ void MyApp::UpdatePlayerName(KeyEvent event) {
     player_name_ = player_name_.substr(0,
                                      player_name_.length() - 1);
   }
+}
+
+void MyApp::ExecuteGameClick() {
+  if (IsMouseInBox(mouse_pos_, menu_return_btn_)) {
+    ResetApp();
+  }
+
+  if (IsMouseInBox(mouse_pos_, hint_btn_) && sel_box_.first != -1) {
+    engine_.FillInCorrectEntry(sel_box_);
+  }
+
+  if (IsMouseInBox(mouse_pos_, check_board_btn)) {
+    engine_.CheckBoard();
+  }
+
+  for (size_t row = 0; row < kBoardSize; row++) {
+    for (size_t col = 0; col < kBoardSize; col++) {
+      if (IsMouseInBox(mouse_pos_, game_grid_[row][col])) {
+        sel_box_ = {row, col};
+      }
+    }
+  }
+}
+
+void MyApp::StartNewGame(int mode) {
+  switch (mode) {
+    case 0:
+      engine_.SetGameMode(GameMode::kStandard);
+      break;
+    case 1:
+      engine_.SetGameMode(GameMode::kTimeTrial);
+      break;
+    case 2:
+      engine_.SetGameMode(GameMode::kTimeAttack);
+      engine_.SetDifficulty(Difficulty::kEasy);
+      break;
+  }
+
+  state_ = GameState::kPlaying;
+  engine_.CreateGame();
+  engine_.SetStartTime(std::chrono::system_clock::now());
 }
 
 void MyApp::ResetApp() {
