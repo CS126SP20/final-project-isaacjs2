@@ -26,10 +26,10 @@ Engine::Engine() : difficulty_{Difficulty::kEasy},
               {}
 
 void Engine::CreateGame() {
-  // Get a board of the right difficulty
   unsigned seed = time(nullptr);
   std::srand(seed);
 
+  // Get a board of the right difficulty
   switch (difficulty_) {
     case Difficulty::kEasy :
       board_path_ = kResourcePath + easy_boards_[std::rand() % 3];
@@ -44,6 +44,31 @@ void Engine::CreateGame() {
 
   ImportGameBoard();
 
+  // Mark the starting entries as correct
+  for (size_t row = 0; row < kBoardSize; row++) {
+    for (size_t col = 0; col < kBoardSize; col++) {
+      if (current_entries_[row][col] != 0) {
+        entry_states_[row][col] = EntryState::kCorrect;
+      } else {
+        entry_states_[row][col] = EntryState::kUnknown;
+      }
+
+      // Start with no numbers penciled in
+      for (size_t num = 0; num < kBoardSize; num++) {
+        pencil_marks_[row][col][num] = false;
+      }
+    }
+  }
+
+  is_penciling_ = false;
+}
+
+void Engine::CreateGame(std::string filepath) {
+  board_path_ = filepath;
+
+  ImportGameBoard();
+
+  // Mark the starting entries as correct
   for (size_t row = 0; row < kBoardSize; row++) {
     for (size_t col = 0; col < kBoardSize; col++) {
       if (current_entries_[row][col] != 0) {

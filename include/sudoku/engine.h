@@ -43,6 +43,9 @@ class Engine {
   // Loads a random board and fill out current_entries_ with starting numbers
   void CreateGame();
 
+  // Create a game with a specific board, only used for testing
+  void CreateGame(std::string filepath);
+
   int GetEntry(pair<int, int> entry) const;
   void SetEntry(pair<int, int> entry, int num);
 
