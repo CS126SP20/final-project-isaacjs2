@@ -7,6 +7,7 @@
 #include <cinder/Text.h>
 #include <cinder/Vector.h>
 #include <cinder/app/App.h>
+
 #include <cinder/gl/Texture.h>
 #include <cinder/gl/draw.h>
 #include <cinder/gl/gl.h>

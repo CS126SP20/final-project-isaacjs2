@@ -2,6 +2,7 @@
 
 #include <sudoku/leaderboard.h>
 #include <sudoku/player.h>
+
 #include <sqlite_modern_cpp.h>
 
 #include <string>

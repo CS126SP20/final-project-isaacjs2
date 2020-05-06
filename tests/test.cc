@@ -2,22 +2,12 @@
 
 #define CATCH_CONFIG_MAIN
 
-#include <cinder/Rand.h>
-#include <cinder/Font.h>
-#include <cinder/ImageIo.h>
-#include <cinder/Path2d.h>
-#include <cinder/Text.h>
 #include <cinder/Vector.h>
-#include <cinder/app/App.h>
-#include <cinder/gl/Texture.h>
-#include <cinder/gl/draw.h>
-#include <cinder/gl/gl.h>
+
 #include <sudoku/engine.h>
 #include <sudoku/utils.h>
 
 #include <catch2/catch.hpp>
-
-#include "../include/sudoku/utils.h"
 
 using Difficulty = sudoku::Engine::Difficulty;
 using EntryState = sudoku::Engine::EntryState;

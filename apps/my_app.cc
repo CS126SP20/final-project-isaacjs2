@@ -8,9 +8,11 @@
 #include <cinder/Text.h>
 #include <cinder/Vector.h>
 #include <cinder/app/App.h>
+
 #include <cinder/gl/Texture.h>
 #include <cinder/gl/draw.h>
 #include <cinder/gl/gl.h>
+
 #include <sudoku/engine.h>
 #include <sudoku/utils.h>
 
@@ -21,10 +23,13 @@ const char kDbPath[] = "leaderboard.db";
 namespace myapp {
 
 using cinder::app::KeyEvent;
+
 using Difficulty = sudoku::Engine::Difficulty;
 using EntryState = sudoku::Engine::EntryState;
 using GameMode = sudoku::Engine::GameMode;
+
 using sudoku::kBoardSize;
+
 using sudoku::DrawBox;
 using sudoku::DrawLine;
 using sudoku::GetMiddleOfBox;

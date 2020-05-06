@@ -4,11 +4,14 @@
 
 #include <chrono>
 #include <fstream>
+
 #include <nlohmann/json.hpp>
+
 #include <ratio>
 #include <utility>
 
 using nlohmann::json;
+
 using std::pair;
 
 namespace sudoku {
