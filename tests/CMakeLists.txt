@@ -12,7 +12,7 @@ ci_make_app(
         APP_NAME    test
         CINDER_PATH ${CINDER_PATH}
         SOURCES     ${SOURCE_LIST}
-        LIBRARIES   mylibrary catch2
+        LIBRARIES   sudoku catch2
         BLOCKS
 )
 
