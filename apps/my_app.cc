@@ -11,8 +11,10 @@
 #include <cinder/gl/Texture.h>
 #include <cinder/gl/draw.h>
 #include <cinder/gl/gl.h>
-#include <fstream>
 #include <sudoku/engine.h>
+#include <sudoku/utils.h>
+
+#include <fstream>
 
 const char kDbPath[] = "leaderboard.db";
 
@@ -23,12 +25,16 @@ using Difficulty = sudoku::Engine::Difficulty;
 using EntryState = sudoku::Engine::EntryState;
 using GameMode = sudoku::Engine::GameMode;
 using sudoku::kBoardSize;
+using sudoku::DrawBox;
+using sudoku::DrawLine;
+using sudoku::GetMiddleOfBox;
+using sudoku::IsMouseInBox;
 
 const size_t kRegTextSize = 30;
 const size_t kBigTextSize = 50;
 
 MyApp::MyApp()
-    : state_{GameState::kMenu},
+    : state_{GameState::kGameOver},
     mouse_pos_{ci::vec2(-1, -1)},
     win_center_{getWindowCenter()},
     sel_box_{-1, -1},
@@ -46,6 +52,177 @@ void MyApp::setup() {
   SetupMenu();
   SetupGameScreen();
   SetupGameOver();
+}
+
+void MyApp::update() {
+  mouse_pos_ = getMousePos() - getWindowPos();
+
+  if (state_ == GameState::kPlaying) {
+    engine_.UpdateGameTime();
+  }
+
+  if (engine_.IsGameOver()) {
+    engine_.IncreaseGamesCompleted();
+
+    if (engine_.GetGameMode() == GameMode::kStandard) {
+      state_ = GameState::kGameOver;
+    } else {
+      if (engine_.GetGamesCompleted() < 3) {
+        if (engine_.GetGameMode() == GameMode::kTimeAttack) {
+          engine_.IncreaseDifficulty();
+        }
+
+        engine_.CreateGame();
+      } else {
+        state_ = GameState::kGameOver;
+      }
+    }
+  }
+
+  if (state_ == GameState::kGameOver) {
+    UpdateLeaderboard();
+  }
+}
+
+void MyApp::draw() {
+  cinder::gl::enableAlphaBlending();
+  cinder::gl::clear(ci::Color((float) 188/256,
+                              (float) 188/256,
+                              (float) 188/256));
+
+  if (state_ == GameState::kMenu) {
+    DrawMenu();
+  } else if (state_ == GameState::kPlaying) {
+    // Highlight the box that the player has selected
+    if (sel_box_.first != -1) {
+      HighlightSelectedBox();
+    }
+
+    DrawGameScreen();
+  } else if (state_ == GameState::kGameOver) {
+    DrawGameOver();
+  }
+}
+
+void MyApp::keyDown(KeyEvent event) {
+  // Erase the current contents of a box
+  if (event.getCode() == KeyEvent::KEY_BACKSPACE
+      && sel_box_.first != -1
+      && engine_.GetEntryState(sel_box_)
+         != sudoku::Engine::EntryState::kCorrect) {
+    if (engine_.GetEntry(sel_box_) == 0) {
+      engine_.ClearPencilMarks(sel_box_);
+    } else {
+      engine_.SetEntry(sel_box_, 0);
+    }
+  }
+
+  if (sel_box_.first != -1) {
+    int key_code_offset = 48;
+
+    // If the key pressed is a number, update the board accordingly
+    if (event.getCode() > 48 && event.getCode() < 58) {
+      if (engine_.IsPenciling() && engine_.GetEntry(sel_box_) == 0) {
+        engine_.ChangePencilMark(sel_box_,
+                                 event.getCode() - key_code_offset);
+      } else if (!engine_.IsPenciling()
+                 && engine_.GetEntryState(sel_box_)
+                    != sudoku::Engine::EntryState::kCorrect) {
+        engine_.SetEntry(sel_box_,
+                         event.getCode() - key_code_offset);
+        engine_.ResetEntryState(sel_box_);
+      }
+    }
+
+    // Navigate board with arrow keys
+    if (event.getCode() == KeyEvent::KEY_UP && sel_box_.first > 0) {
+      sel_box_.first--;
+    } else if (event.getCode() == KeyEvent::KEY_DOWN && sel_box_.first < 8) {
+      sel_box_.first++;
+    } else if (event.getCode() == KeyEvent::KEY_LEFT && sel_box_.second > 0) {
+      sel_box_.second--;
+    } else if (event.getCode() == KeyEvent::KEY_RIGHT && sel_box_.second < 8) {
+      sel_box_.second++;
+    }
+  }
+
+  // If an arrow key is pressed and no box is selected, select the middle box
+  if (state_ == GameState::kPlaying && sel_box_.first == -1) {
+    if (event.getCode() == KeyEvent::KEY_UP
+        || event.getCode() == KeyEvent::KEY_DOWN
+        || event.getCode() == KeyEvent::KEY_LEFT
+        || event.getCode() == KeyEvent::KEY_RIGHT) {
+      sel_box_ = {4, 4};
+    }
+  }
+
+  if (state_ == GameState::kGameOver && is_entering_name_) {
+    UpdatePlayerName(event);
+  }
+}
+
+void MyApp::mouseDown(ci::app::MouseEvent event) {
+  if (event.isLeft()) {
+    if (state_ == GameState::kMenu) { //combine into for loop
+      if (IsMouseInBox(mouse_pos_, game_start_btns_[0])) {
+        state_ = GameState::kPlaying;
+        engine_.SetGameMode(GameMode::kStandard);
+        engine_.CreateGame();
+        engine_.SetStartTime(std::chrono::system_clock::now());
+      } else if (IsMouseInBox(mouse_pos_, game_start_btns_[1])) {
+        state_ = GameState::kPlaying;
+        engine_.SetGameMode(GameMode::kTimeTrial);
+        engine_.CreateGame();
+        engine_.SetStartTime(std::chrono::system_clock::now());
+      } else if (IsMouseInBox(mouse_pos_, game_start_btns_[2])) {
+        state_ = GameState::kPlaying;
+        engine_.SetDifficulty(Difficulty::kEasy);
+        engine_.SetGameMode(GameMode::kTimeAttack);
+        engine_.CreateGame();
+        engine_.SetStartTime(std::chrono::system_clock::now());
+      }
+
+      // Change difficulty
+      if (IsMouseInBox(mouse_pos_, difficulty_btn_)) {
+        engine_.IncreaseDifficulty();
+      }
+
+      // Toggle instructions
+      if (IsMouseInBox(mouse_pos_, instructions_btn)) {
+        want_instructions_ = !want_instructions_;
+      }
+    } else if (state_ == GameState::kPlaying) {
+      if (IsMouseInBox(mouse_pos_, menu_return_btn_)) {
+        state_ = GameState::kMenu;
+
+        sel_box_ = {-1, -1};
+      }
+
+      if (IsMouseInBox(mouse_pos_, hint_btn_) && sel_box_.first != -1) {
+        engine_.FillInCorrectEntry(sel_box_);
+      }
+
+      if (IsMouseInBox(mouse_pos_, check_board_btn)) {
+        engine_.CheckBoard();
+      }
+
+      for (size_t row = 0; row < kBoardSize; row++) {
+        for (size_t col = 0; col < kBoardSize; col++) {
+          if (IsMouseInBox(mouse_pos_, game_grid_[row][col])) {
+            sel_box_ = {row, col};
+          }
+        }
+      }
+    } else if (state_ == GameState::kGameOver && !is_entering_name_) {
+      if (IsMouseInBox(mouse_pos_, play_again_btn)) {
+        ResetApp();
+      }
+    }
+  }
+
+  if (event.isRight() && state_ == GameState::kPlaying) {
+    engine_.SwitchEntryMode();
+  }
 }
 
 void MyApp::SetupMenu() {
@@ -132,49 +309,23 @@ void MyApp::SetupGameOver() {
                            getWindowBounds().y2 - 5};
 }
 
-void MyApp::update() {
-  mouse_pos_ = getMousePos() - getWindowPos();
+void MyApp::UpdateLeaderboard() {
+  if (top_players_.empty() && !is_entering_name_) {
+    std::string mode = GetModeAsString();
+    std::string difficulty = GetDifficultyAsString();
 
-  if (state_ == GameState::kPlaying) {
-    engine_.UpdateGameTime();
-  }
-
-  if (engine_.IsGameOver()) {
-    engine_.IncreaseGamesCompleted();
-
-    if (engine_.GetGameMode() == GameMode::kStandard) {
-        state_ = GameState::kGameOver;
-    } else {
-      if (engine_.GetGamesCompleted() < 3) {
-        if (engine_.GetGameMode() == GameMode::kTimeAttack) {
-          engine_.IncreaseDifficulty();
-        }
-
-        engine_.CreateGame();
-      } else {
-        state_ = GameState::kGameOver;
-      }
+    // This mode goes through all the difficulties, so I standardize it here
+    if (engine_.GetGameMode() == GameMode::kTimeAttack) {
+      difficulty = "Easy";
     }
-  }
 
-  if (state_ == GameState::kGameOver) {
-    if (top_players_.empty() && !is_entering_name_) {
-      std::string mode = GetModeAsString();
-      std::string difficulty = GetDifficultyAsString();
+    leaderboard_.AddTimeToLeaderBoard({player_name_,
+                                       static_cast<size_t>(
+                                           engine_.GetGameTime())},
+                                      mode,
+                                      difficulty);
 
-      // This mode goes through all the difficulties, so I standardize it here
-      if (engine_.GetGameMode() == GameMode::kTimeAttack) {
-        difficulty = "Easy";
-      }
-
-      leaderboard_.AddTimeToLeaderBoard({player_name_,
-                                         static_cast<size_t>(
-                                                 engine_.GetGameTime())},
-                                             mode,
-                                             difficulty);
-
-      top_players_ = leaderboard_.RetrieveBestTimes(10, mode, difficulty);
-    }
+    top_players_ = leaderboard_.RetrieveBestTimes(10, mode, difficulty);
   }
 }
 
@@ -204,36 +355,6 @@ std::string MyApp::GetDifficultyAsString() const {
   return difficulty;
 }
 
-ci::vec2 GetMiddleOfBox(std::pair<ci::vec2, ci::vec2> box) {
-  float x_diff = box.second.x - box.first.x;
-  float y_diff = box.second.y - box.first.y;
-
-  return ci::vec2(box.first.x + x_diff / 2, box.first.y + y_diff / 2);
-}
-
-void DrawBox(std::pair<ci::vec2, ci::vec2> bounds, const ci::Color& color) {
-  ci::gl::color(color);
-
-  ci::Path2d box;
-  box.moveTo(bounds.first);
-  box.lineTo(ci::vec2(bounds.second.x, bounds.first.y));
-  box.lineTo(bounds.second);
-  box.lineTo(ci::vec2(bounds.first.x, bounds.second.y));
-
-  box.close();
-  ci::gl::draw(box);
-}
-
-void DrawLine(float x1, float y1, float x2, float y2, const ci::Color& color) {
-  ci::gl::color(color);
-
-  ci::Path2d line;
-  line.moveTo(x1, y1);
-  line.lineTo(x2, y2);
-  line.close();
-  ci::gl::draw(line);
-}
-
 template <typename C>
 void PrintText(const std::string& text,
                const C& color,
@@ -258,43 +379,6 @@ void PrintText(const std::string& text,
   const auto surface = box.render();
   const auto texture = cinder::gl::Texture::create(surface);
   cinder::gl::draw(texture, locp);
-}
-
-void MyApp::draw() {
-  cinder::gl::enableAlphaBlending();
-  cinder::gl::clear(ci::Color((float) 188/256,
-                                  (float) 188/256,
-                                   (float) 188/256));
-
-  if (state_ == GameState::kMenu) {
-    DrawMenu();
-  } else if (state_ == GameState::kPlaying) {
-    // Highlight the box that the player has selected
-    if (sel_box_.first != -1) {
-      ci::Color color(1, 0, 0);
-      DrawBox(game_grid_[sel_box_.first][sel_box_.second], color);
-      DrawBox({
-        ci::vec2(
-            game_grid_[sel_box_.first][sel_box_.second].first.x - 1,
-            game_grid_[sel_box_.first][sel_box_.second].first.y - 1),
-        ci::vec2(
-            game_grid_[sel_box_.first][sel_box_.second].second.x + 1,
-            game_grid_[sel_box_.first][sel_box_.second].second.y + 1)},
-              color);
-      DrawBox({
-        ci::vec2(
-            game_grid_[sel_box_.first][sel_box_.second].first.x + 1,
-            game_grid_[sel_box_.first][sel_box_.second].first.y + 1),
-        ci::vec2(
-            game_grid_[sel_box_.first][sel_box_.second].second.x - 1,
-            game_grid_[sel_box_.first][sel_box_.second].second.y - 1)},
-              color);
-    }
-
-    DrawGameScreen();
-  } else if (state_ == GameState::kGameOver) {
-    DrawGameOver();
-  }
 }
 
 void MyApp::DrawMenu() const {
@@ -561,6 +645,29 @@ void MyApp::PrintBoardEntries() const {
   }
 }
 
+void MyApp::HighlightSelectedBox() const {
+  ci::Color color(1, 0, 0);
+  DrawBox(game_grid_[sel_box_.first][sel_box_.second], color);
+  DrawBox({
+              ci::vec2(
+                  game_grid_[sel_box_.first][sel_box_.second].first.x - 1,
+                  game_grid_[sel_box_.first][sel_box_.second].first.y - 1),
+              ci::vec2(
+                  game_grid_[sel_box_.first][sel_box_.second].second.x + 1,
+                  game_grid_[sel_box_.first][sel_box_.second].second.y
+                      + 1)},
+          color);
+  DrawBox({
+              ci::vec2(
+                  game_grid_[sel_box_.first][sel_box_.second].first.x + 1,
+                  game_grid_[sel_box_.first][sel_box_.second].first.y + 1),
+              ci::vec2(
+                  game_grid_[sel_box_.first][sel_box_.second].second.x - 1,
+                  game_grid_[sel_box_.first][sel_box_.second].second.y
+                      - 1)},
+          color);
+}
+
 void MyApp::PrintGameInstructions() const {
   PrintText("Welcome to Sudoku! To solve the puzzle,",
             ci::Color::black(),
@@ -716,6 +823,35 @@ void MyApp::DrawLeaderboard() const {
   }
 }
 
+void MyApp::UpdatePlayerName(KeyEvent event) {
+  int max_name_len = 10;
+
+  // The bounds on the event code make sure the key pressed has a char on it
+  // For example, letters and symbols are valid but F1 is not
+  if (player_name_.length() < max_name_len
+      && event.getCode() > 32
+      && event.getCode() < 123) {
+    player_name_ = player_name_ + event.getChar();
+  }
+
+  if (player_name_.length() >= max_name_len) {
+    is_entering_name_ = false;
+  }
+
+  if (event.getCode() == KeyEvent::KEY_RETURN) {
+    if (player_name_.length() == 0) {
+      player_name_ = "Anonymous";
+    }
+
+    is_entering_name_ = false;
+  }
+
+  if (event.getCode() == KeyEvent::KEY_BACKSPACE && player_name_.length() > 0) {
+    player_name_ = player_name_.substr(0,
+                                     player_name_.length() - 1);
+  }
+}
+
 void MyApp::ResetApp() {
   state_ = GameState::kMenu;
   engine_.ResetGame();
@@ -726,168 +862,4 @@ void MyApp::ResetApp() {
   player_name_ = "";
 }
 
-void MyApp::keyDown(KeyEvent event) {
-  // Erase the current contents of a box
-  if (event.getCode() == KeyEvent::KEY_BACKSPACE
-      && sel_box_.first != -1
-      && engine_.GetEntryState(sel_box_)
-          != sudoku::Engine::EntryState::kCorrect) {
-    if (engine_.GetEntry(sel_box_) == 0) {
-      engine_.ClearPencilMarks(sel_box_);
-    } else {
-      engine_.SetEntry(sel_box_, 0);
-    }
-  }
-
-  if (sel_box_.first != -1) {
-    int key_code_offset = 48;
-
-    // Update current pencil marks
-    if (engine_.IsPenciling()
-        && engine_.GetEntry(sel_box_) == 0) {
-      for (size_t i = 1; i < kBoardSize + 1; i++) {
-        if (event.getCode() == i + key_code_offset) {
-          engine_.ChangePencilMark(sel_box_, i);
-
-          break;
-        }
-      }
-    // Update board entries
-    } else if (!engine_.IsPenciling()
-               && engine_.GetEntryState(sel_box_)
-                   != sudoku::Engine::EntryState::kCorrect) {
-      for (size_t i = 1; i < kBoardSize + 1; i++) {
-        if (event.getCode() == i + key_code_offset) {
-          engine_.SetEntry(sel_box_, i);
-          engine_.ResetEntryState(sel_box_);
-
-          break;
-        }
-      }
-    }
-
-    // Navigate board with arrow keys
-    if (event.getCode() == KeyEvent::KEY_UP && sel_box_.first > 0) {
-        sel_box_.first--;
-    } else if (event.getCode() == KeyEvent::KEY_DOWN && sel_box_.first < 8) {
-        sel_box_.first++;
-    } else if (event.getCode() == KeyEvent::KEY_LEFT && sel_box_.second > 0) {
-        sel_box_.second--;
-    } else if (event.getCode() == KeyEvent::KEY_RIGHT && sel_box_.second < 8) {
-        sel_box_.second++;
-    }
-  }
-
-  // If an arrow key is pressed and no box is selected, select the middle box
-  if (state_ == GameState::kPlaying && sel_box_.first == -1) {
-      if (event.getCode() == KeyEvent::KEY_UP
-          || event.getCode() == KeyEvent::KEY_DOWN
-          || event.getCode() == KeyEvent::KEY_LEFT
-          || event.getCode() == KeyEvent::KEY_RIGHT) {
-          sel_box_ = {4, 4};
-      }
-  }
-
-  if (state_ == GameState::kGameOver && is_entering_name_) {
-    int max_name_len = 10;
-
-    // The bounds on the event code make sure the key pressed has a char on it
-    // For example, letters and symbols are valid but F1 is not
-    if (player_name_.length() < max_name_len
-        && event.getCode() > 32
-        && event.getCode() < 123) {
-      player_name_ = player_name_ + event.getChar();
-    }
-
-    if (player_name_.length() >= max_name_len) {
-      is_entering_name_ = false;
-    }
-
-    if (event.getCode() == KeyEvent::KEY_RETURN) {
-      if (player_name_.length() == 0) {
-        player_name_ = "Anonymous";
-      }
-
-      is_entering_name_ = false;
-    }
-
-    if (event.getCode() == KeyEvent::KEY_BACKSPACE
-          && player_name_.length() > 0) {
-      player_name_ = player_name_.substr(0,
-                                       player_name_.length() - 1);
-    }
-  }
-}
-
-bool IsMouseInBox(const ci::vec2& mouse_pos,
-                  const std::pair<ci::vec2, ci::vec2>& box_bounds) {
-  return mouse_pos.x > box_bounds.first.x
-         && mouse_pos.x < box_bounds.second.x
-         && mouse_pos.y > box_bounds.first.y
-         && mouse_pos.y < box_bounds.second.y;
-}
-
-void MyApp::mouseDown(ci::app::MouseEvent event) {
-  if (event.isLeft()) {
-    if (state_ == GameState::kMenu) { //combine into for loop
-      if (IsMouseInBox(mouse_pos_, game_start_btns_[0])) {
-        state_ = GameState::kPlaying;
-        engine_.SetGameMode(GameMode::kStandard);
-        engine_.CreateGame();
-        engine_.SetStartTime(std::chrono::system_clock::now());
-      } else if (IsMouseInBox(mouse_pos_, game_start_btns_[1])) {
-        state_ = GameState::kPlaying;
-        engine_.SetGameMode(GameMode::kTimeTrial);
-        engine_.CreateGame();
-        engine_.SetStartTime(std::chrono::system_clock::now());
-      } else if (IsMouseInBox(mouse_pos_, game_start_btns_[2])) {
-        state_ = GameState::kPlaying;
-        engine_.SetDifficulty(Difficulty::kEasy);
-        engine_.SetGameMode(GameMode::kTimeAttack);
-        engine_.CreateGame();
-        engine_.SetStartTime(std::chrono::system_clock::now());
-      }
-
-      // Change difficulty
-      if (IsMouseInBox(mouse_pos_, difficulty_btn_)) {
-        engine_.IncreaseDifficulty();
-      }
-
-      // Toggle instructions
-      if (IsMouseInBox(mouse_pos_, instructions_btn)) {
-        want_instructions_ = !want_instructions_;
-      }
-    } else if (state_ == GameState::kPlaying) {
-      if (IsMouseInBox(mouse_pos_, menu_return_btn_)) {
-        state_ = GameState::kMenu;
-
-        sel_box_ = {-1, -1};
-      }
-
-      if (IsMouseInBox(mouse_pos_, hint_btn_) && sel_box_.first != -1) {
-        engine_.FillInCorrectEntry(sel_box_);
-      }
-
-      if (IsMouseInBox(mouse_pos_, check_board_btn)) {
-        engine_.CheckBoard();
-      }
-
-      for (size_t row = 0; row < kBoardSize; row++) {
-        for (size_t col = 0; col < kBoardSize; col++) {
-          if (IsMouseInBox(mouse_pos_, game_grid_[row][col])) {
-            sel_box_ = {row, col};
-          }
-        }
-      }
-    } else if (state_ == GameState::kGameOver && !is_entering_name_) {
-      if (IsMouseInBox(mouse_pos_, play_again_btn)) {
-        ResetApp();
-      }
-    }
-  }
-
-  if (event.isRight() && state_ == GameState::kPlaying) {
-    engine_.SwitchEntryMode();
-  }
-}
 }  // namespace myapp

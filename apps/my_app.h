@@ -4,6 +4,7 @@
 #define FINALPROJECT_APPS_MYAPP_H_
 
 #include <cinder/app/App.h>
+#include <cinder/app/KeyEvent.h>
 #include <cinder/gl/Texture.h>
 #include <sudoku/leaderboard.h>
 
@@ -41,16 +42,19 @@ class MyApp : public cinder::app::App {
   void SetupGameScreen();
   void SetupGameBoard();
   void SetupGameOver();
+  void UpdateLeaderboard();
   void DrawGrid() const;
   void DrawGameScreen();
   void PrintGameInstructions() const;
   void PrintBoardEntries() const;
+  void HighlightSelectedBox() const;
   void DrawMenu() const;
   void PrintGameModes() const;
   void DrawSettings() const;
   void PrintMenuInstructions() const;
   void DrawGameOver() const;
   void DrawLeaderboard() const;
+  void UpdatePlayerName(cinder::app::KeyEvent event);
   void ResetApp();
   string GetModeAsString() const;
   string GetDifficultyAsString() const;
