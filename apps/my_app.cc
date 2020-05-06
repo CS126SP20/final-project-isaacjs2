@@ -34,7 +34,7 @@ const size_t kRegTextSize = 30;
 const size_t kBigTextSize = 50;
 
 MyApp::MyApp()
-    : state_{GameState::kGameOver},
+    : state_{AppState::kMenu},
     mouse_pos_{ci::vec2(-1, -1)},
     win_center_{getWindowCenter()},
     sel_box_{-1, -1},
@@ -57,7 +57,7 @@ void MyApp::setup() {
 void MyApp::update() {
   mouse_pos_ = getMousePos() - getWindowPos();
 
-  if (state_ == GameState::kPlaying) {
+  if (state_ == AppState::kPlaying) {
     engine_.UpdateGameTime();
   }
 
@@ -66,7 +66,7 @@ void MyApp::update() {
 
     // End the game or give a new board based on the mode and boards completed
     if (engine_.GetGameMode() == GameMode::kStandard) {
-      state_ = GameState::kGameOver;
+      state_ = AppState::kGameOver;
     } else {
       if (engine_.GetGamesCompleted() < 3) {
         if (engine_.GetGameMode() == GameMode::kTimeAttack) {
@@ -75,12 +75,12 @@ void MyApp::update() {
 
         engine_.CreateGame();
       } else {
-        state_ = GameState::kGameOver;
+        state_ = AppState::kGameOver;
       }
     }
   }
 
-  if (state_ == GameState::kGameOver) {
+  if (state_ == AppState::kGameOver) {
     UpdateLeaderboard();
   }
 }
@@ -91,16 +91,16 @@ void MyApp::draw() {
                               (float) 188/256,
                               (float) 188/256));
 
-  if (state_ == GameState::kMenu) {
+  if (state_ == AppState::kMenu) {
     DrawMenu();
-  } else if (state_ == GameState::kPlaying) {
+  } else if (state_ == AppState::kPlaying) {
     // Highlight the box that the player has selected
     if (sel_box_.first != -1) {
       HighlightSelectedBox();
     }
 
     DrawGameScreen();
-  } else if (state_ == GameState::kGameOver) {
+  } else if (state_ == AppState::kGameOver) {
     DrawGameOver();
   }
 }
@@ -143,14 +143,14 @@ void MyApp::keyDown(KeyEvent event) {
 
   ExecuteArrowKeyMovement(event.getCode());
 
-  if (state_ == GameState::kGameOver && is_entering_name_) {
+  if (state_ == AppState::kGameOver && is_entering_name_) {
     UpdatePlayerName(event);
   }
 }
 
 void MyApp::mouseDown(ci::app::MouseEvent event) {
   if (event.isLeft()) {
-    if (state_ == GameState::kMenu) {
+    if (state_ == AppState::kMenu) {
       // Start a game based on the mode clicked
       for (size_t i = 0; i < game_start_btns_.size(); i++) {
         if (IsMouseInBox(mouse_pos_, game_start_btns_[i])) {
@@ -167,10 +167,10 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
       if (IsMouseInBox(mouse_pos_, instructions_btn_)) {
         want_instructions_ = !want_instructions_;
       }
-    } else if (state_ == GameState::kPlaying) {
+    } else if (state_ == AppState::kPlaying) {
       // Check if any of the buttons or grid boxes were clicked
       ExecuteGameClick();
-    } else if (state_ == GameState::kGameOver && !is_entering_name_) {
+    } else if (state_ == AppState::kGameOver && !is_entering_name_) {
       if (IsMouseInBox(mouse_pos_, play_again_btn_)) {
         ResetApp();
       }
@@ -178,7 +178,7 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
   }
 
   // Toggle between pen and pencil mode
-  if (event.isRight() && state_ == GameState::kPlaying) {
+  if (event.isRight() && state_ == AppState::kPlaying) {
     engine_.SwitchEntryMode();
   }
 }
@@ -711,7 +711,7 @@ void MyApp::ExecuteArrowKeyMovement(int key_code) {
   }
 
   // If an arrow key is pressed and no box is selected, select the middle box
-  if (state_ == GameState::kPlaying && sel_box_.first == -1) {
+  if (state_ == AppState::kPlaying && sel_box_.first == -1) {
     if (key_code == KeyEvent::KEY_UP
         || key_code == KeyEvent::KEY_DOWN
         || key_code == KeyEvent::KEY_LEFT
@@ -763,13 +763,13 @@ void MyApp::StartNewGame(int mode) {
       break;
   }
 
-  state_ = GameState::kPlaying;
+  state_ = AppState::kPlaying;
   engine_.CreateGame();
   engine_.SetStartTime(std::chrono::system_clock::now());
 }
 
 void MyApp::ResetApp() {
-  state_ = GameState::kMenu;
+  state_ = AppState::kMenu;
   engine_.ResetGame();
   top_players_.clear();
   sel_box_ = {-1, -1};

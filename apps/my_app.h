@@ -22,7 +22,7 @@ using std::pair;
 
 namespace myapp {
 
-enum class GameState {
+enum class AppState {
   kMenu,
   kPlaying,
   kGameOver,
@@ -96,7 +96,7 @@ class MyApp : public cinder::app::App {
   string GetDifficultyAsString() const;
 
   // The state of the app indicates what screen it is on
-  GameState state_;
+  AppState state_;
 
   // x,y position of the mouse relative to the window
   ci::vec2 mouse_pos_;
