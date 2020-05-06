@@ -28,7 +28,7 @@ const size_t kRegTextSize = 30;
 const size_t kBigTextSize = 50;
 
 MyApp::MyApp()
-    : state_{GameState::kMenu},
+    : state_{GameState::kGameOver},
     mouse_pos_{ci::vec2(-1, -1)},
     win_center_{getWindowCenter()},
     sel_box_{-1, -1},
@@ -158,7 +158,7 @@ void MyApp::update() {
 
       // This mode goes through all the difficulties, so I standardize it here
       if (engine_.GetGameMode() == GameMode::kTimeAttack) {
-        difficulty = "easy";
+        difficulty = "Easy";
       }
 
       leaderboard_.AddTimeToLeaderBoard({player_name_, static_cast<size_t>(engine_.GetGameTime())}, mode, difficulty);
@@ -171,11 +171,11 @@ void MyApp::update() {
 std::string MyApp::GetModeAsString() const {
   std::string mode;
   if (engine_.GetGameMode() == GameMode::kStandard) {
-    mode = "standard";
+    mode = "Standard";
   } else if (engine_.GetGameMode() == GameMode::kTimeTrial) {
-    mode = "trial";
+    mode = "Time Trial";
   } else if (engine_.GetGameMode() == GameMode::kTimeAttack) {
-    mode = "attack";
+    mode = "Time Attack";
   }
 
   return mode;
@@ -184,11 +184,11 @@ std::string MyApp::GetModeAsString() const {
 std::string MyApp::GetDifficultyAsString() const {
   std::string difficulty;
   if (engine_.GetDifficulty() == Difficulty::kEasy) {
-    difficulty = "easy";
+    difficulty = "Easy";
   } else if (engine_.GetDifficulty() == Difficulty::kMedium) {
-    difficulty = "medium";
+    difficulty = "Medium";
   } else if (engine_.GetDifficulty() == Difficulty::kHard) {
-    difficulty = "hard";
+    difficulty = "Hard";
   }
 
   return difficulty;
@@ -616,6 +616,18 @@ void MyApp::DrawGameOver() const {
             ci::vec2(700, 120),
             ci::vec2(win_center_.x, getWindowBounds().y1 + 60),
             60);
+
+  std::string game_type;
+  if (engine_.GetGameMode() == GameMode::kTimeAttack) {
+      game_type = GetModeAsString();
+  } else {
+      game_type = GetDifficultyAsString() + " " + GetModeAsString();
+  }
+  PrintText("Mode: " + game_type,
+           ci::Color(0, 0, 1),
+           ci::vec2(700, 60),
+           ci::vec2(win_center_.x, getWindowBounds().y1 + 150),
+           60);
 
   if (is_entering_name_) {
     PrintText("Enter name:",
