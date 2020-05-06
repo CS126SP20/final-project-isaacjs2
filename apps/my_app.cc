@@ -581,48 +581,48 @@ void MyApp::PrintGameInstructions() const {
   PrintText("This symbol shows what entry mode you're in.",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(620, getWindowBounds().y2 - 90),
+            ci::vec2(620, game_grid_[kBoardSize - 1][0].second.y + 10),
             20);
   PrintText("Pen mode is for filling in the board, and",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(620, getWindowBounds().y2 - 70),
+            ci::vec2(620, game_grid_[kBoardSize - 1][0].second.y + 30),
             20);
   PrintText("pencil mode is for making notes when you're",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(620, getWindowBounds().y2 - 50),
+            ci::vec2(620, game_grid_[kBoardSize - 1][0].second.y + 50),
             20);
   PrintText("not sure what number goes in a box yet.",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(620, getWindowBounds().y2 - 30),
+            ci::vec2(620, game_grid_[kBoardSize - 1][0].second.y + 70),
             20);
 
   PrintText("Click this button to check your solution so far.",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(175, getWindowBounds().y2 - 90),
+            ci::vec2(175, game_grid_[kBoardSize - 1][0].second.y + 10),
             20);
   PrintText("Correct entries will lock in and turn blue.",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(175, getWindowBounds().y2 - 70),
+            ci::vec2(175, game_grid_[kBoardSize - 1][0].second.y + 30),
             20);
   PrintText("Wrong ones will turn red. When you think you've",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(175, getWindowBounds().y2 - 50),
+            ci::vec2(175, game_grid_[kBoardSize - 1][0].second.y + 50),
             20);
   PrintText("solved the puzzle, click the button one last time",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(175, getWindowBounds().y2 - 30),
+            ci::vec2(175, game_grid_[kBoardSize - 1][0].second.y + 70),
             20);
   PrintText("to get your time and score.",
             ci::Color::black(),
             ci::vec2(350, 20),
-            ci::vec2(175, getWindowBounds().y2 - 10),
+            ci::vec2(175, game_grid_[kBoardSize - 1][0].second.y + 90),
             20);
 }
 
