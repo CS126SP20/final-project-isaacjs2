@@ -466,6 +466,7 @@ void MyApp::DrawGameButtons() {
 
 void MyApp::DrawGrid() const {
   float tile_size = std::floor(600 / kBoardSize);
+
   ci::Color color = ci::Color::black();
 
   // Draw each box of the grid
@@ -478,10 +479,10 @@ void MyApp::DrawGrid() const {
   // Make the lines around each 3x3 box thicker
   for (size_t i = 0; i < kBoardSize + 1; i+= 3) {
     // Vertical lines
-    DrawLine(game_grid_[0][0].first.x + i * tile_size - 1,
-                 game_grid_[0][0].first.y,
-             game_grid_[0][0].first.x + i * tile_size - 1,
-             game_grid_[kBoardSize - 1][0].second.y,
+    DrawLine( game_grid_[0][0].first.x + i * tile_size - 1,
+                  game_grid_[0][0].first.y,
+              game_grid_[0][0].first.x + i * tile_size - 1,
+              game_grid_[kBoardSize - 1][0].second.y,
              color);
     DrawLine(game_grid_[0][0].first.x + i * tile_size + 1,
                  game_grid_[0][0].first.y,
@@ -504,9 +505,9 @@ void MyApp::DrawGrid() const {
 }
 
 void MyApp::PrintBoardEntries() const {
-  // Print pencil marks and board entries
   float tile_size = std::floor(600 / kBoardSize);
 
+  // Print pencil marks and board entries
   for (size_t row = 0; row < kBoardSize; row++) {
     for (size_t col = 0; col < kBoardSize; col++) {
       if (engine_.GetEntry({row, col}) == 0) {

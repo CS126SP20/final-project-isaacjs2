@@ -33,7 +33,8 @@ void LeaderBoard::AddTimeToLeaderBoard(const Player& player,
                                        std::string mode,
                                        std::string difficulty) {
   try {
-    db_ << "insert into leaderboard (name, time, mode, difficulty) values (?,?,?,?);"
+    db_ << "insert into leaderboard (name, time, mode, difficulty) "
+           "values (?,?,?,?);"
         << player.name
         << player.time
         << mode
