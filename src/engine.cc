@@ -10,13 +10,14 @@
 #include <ratio>
 #include <utility>
 
+#include <cinder/app/App.h>
+#include <cinder/app/Platform.h>
+
 using nlohmann::json;
 
 using std::pair;
 
 namespace sudoku {
-
-std::string kResourcePath = R"(C:\Users\isaac\CLionProjects\Cinder\my-projects\final-project-isaacjs2\resources\)";
 
 Engine::Engine() : difficulty_{Difficulty::kEasy},
               game_mode_{GameMode::kStandard},
@@ -35,13 +36,13 @@ void Engine::CreateGame() {
   // Get a board of the right difficulty
   switch (difficulty_) {
     case Difficulty::kEasy :
-      board_path_ = kResourcePath + easy_boards_[std::rand() % 3];
+      board_path_ = easy_boards_[std::rand() % 3];
       break;
     case Difficulty::kMedium :
-      board_path_ = kResourcePath + medium_boards_[std::rand() % 3];
+      board_path_ = medium_boards_[std::rand() % 3];
       break;
     case Difficulty::kHard :
-      board_path_ = kResourcePath + hard_boards_[std::rand() % 3];
+      board_path_ = hard_boards_[std::rand() % 3];
       break;
   }
 
@@ -92,7 +93,7 @@ void Engine::CreateGame(std::string filepath) {
 
 void Engine::ImportGameBoard() {
   std::ifstream infile;
-  infile.open(board_path_);
+  infile.open(ci::app::getAssetPath(board_path_));
 
   // Load the file data into a JSON object
   nlohmann::json board_data;
@@ -212,7 +213,8 @@ void Engine::IncreaseGamesCompleted() {
   games_completed_++;
 }
 
-void Engine::SetStartTime(std::chrono::time_point<std::chrono::system_clock> time) {
+void Engine::SetStartTime(std::chrono::time_point
+                                       <std::chrono::system_clock> time) {
   start_time_ = time;
 }
 

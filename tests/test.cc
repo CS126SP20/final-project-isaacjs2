@@ -43,9 +43,7 @@ TEST_CASE("Check if mouse is in a given box", "[utils]") {
 
 TEST_CASE("Check if a number is penciled in a box", "[engine][pencil]") {
   sudoku::Engine engine;
-  engine.CreateGame("C:\\Users\\isaac\\CLionProjects\\Cinder"
-                    "\\my-projects\\final-project-isaacjs2\\tests"
-                    "\\assets\\test_board.json");
+  engine.CreateGame("test_board.json");
 
   SECTION("Not penciled") {
     REQUIRE(!engine.IsPenciled({0, 0}, 1));
@@ -60,9 +58,7 @@ TEST_CASE("Check if a number is penciled in a box", "[engine][pencil]") {
 
 TEST_CASE("Change pencil marks", "[engine][pencil]") {
   sudoku::Engine engine;
-  engine.CreateGame("C:\\Users\\isaac\\CLionProjects\\Cinder"
-                    "\\my-projects\\final-project-isaacjs2\\tests"
-                    "\\assets\\test_board.json");
+  engine.CreateGame("test_board.json");
 
   SECTION("Penciled") {
     engine.ChangePencilMark({0, 0}, 1);
@@ -80,9 +76,7 @@ TEST_CASE("Change pencil marks", "[engine][pencil]") {
 
 TEST_CASE("Clear pencil marks", "[engine][pencil]") {
   sudoku::Engine engine;
-  engine.CreateGame("C:\\Users\\isaac\\CLionProjects\\Cinder"
-                    "\\my-projects\\final-project-isaacjs2\\tests"
-                    "\\assets\\test_board.json");
+  engine.CreateGame("test_board.json");
 
   SECTION("No pencil marks to clear") {
     engine.ClearPencilMarks({0, 0});
@@ -135,9 +129,7 @@ TEST_CASE("Increase difficulty", "[engine]") {
 
 TEST_CASE("Fill in correct entry", "[engine]") {
   sudoku::Engine engine;
-  engine.CreateGame("C:\\Users\\isaac\\CLionProjects\\Cinder"
-                    "\\my-projects\\final-project-isaacjs2\\tests"
-                    "\\assets\\test_board.json");
+  engine.CreateGame("test_board.json");
 
   SECTION("Fill in empty box") {
     engine.FillInCorrectEntry({0, 0});
@@ -173,9 +165,7 @@ TEST_CASE("Fill in correct entry", "[engine]") {
 
 TEST_CASE("Check board", "[engine]") {
   sudoku::Engine engine;
-  engine.CreateGame("C:\\Users\\isaac\\CLionProjects\\Cinder"
-                    "\\my-projects\\final-project-isaacjs2\\tests"
-                    "\\assets\\test_board.json");
+  engine.CreateGame("test_board.json");
 
   SECTION("Empty entry") {
     engine.CheckBoard();
@@ -202,9 +192,7 @@ TEST_CASE("Check board", "[engine]") {
 
 TEST_CASE("Check if game is over", "[engine]") {
   sudoku::Engine engine;
-  engine.CreateGame("C:\\Users\\isaac\\CLionProjects\\Cinder"
-                    "\\my-projects\\final-project-isaacjs2\\tests"
-                    "\\assets\\test_board.json");
+  engine.CreateGame("test_board.json");
 
   SECTION("Empty board") {
     REQUIRE(!engine.IsGameOver());
