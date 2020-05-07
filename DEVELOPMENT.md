@@ -59,3 +59,15 @@
 - Added the other two game modes
 - The times from all 3 modes are going to the same leaderboard, so I need to make a 3rd column in my database table and 
 adjust my database functions
+
+**5/5/20**
+- Added arrow key navigation on the game board
+- Fixed a bunch of bugs having to do with playing multiple games
+- Added a hint button
+- Cleaned up code with more helper functions, comments, and more logical function order
+- Changed leaderboard to sort by game mode and difficulty
+
+**5/6/20**
+- Wrote tests
+- Fixed up proposal
+- Wrote README
